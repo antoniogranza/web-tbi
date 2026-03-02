@@ -1,11 +1,9 @@
-
 <script setup>
 import { ref, reactive } from "vue";
 
 const email = ref("");
 const password = ref("");
 const rememberMe = ref(false);
-
 const loading = ref(false);
 const apiError = ref("");
 
@@ -14,51 +12,18 @@ const errors = reactive({
   password: ""
 });
 
-const validate = () => {
-  errors.email = "";
-  errors.password = "";
-
-  let valid = true;
-
-  if (!email.value) {
-    errors.email = "Email is required";
-    valid = false;
-  }
-
-  if (!password.value) {
-    errors.password = "Password is required";
-    valid = false;
-  }
-
-  return valid;
-};
-
 const handleLogin = async () => {
-  apiError.value = "";
-
-  if (!validate()) return;
-
   loading.value = true;
 
   try {
-    // Replace with real API call
-    await new Promise(resolve => setTimeout(resolve, 1200));
-
-    console.log({
-      email: email.value,
-      password: password.value,
-      rememberMe: rememberMe.value
-    });
-
-    alert("Login successful!");
-  } catch (err) {
-    apiError.value = "Invalid credentials";
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  } catch {
+    apiError.value = "Login failed";
   } finally {
     loading.value = false;
   }
 };
 </script>
-
 
 <template>
   <v-container class="fill-height d-flex justify-center align-center">
@@ -113,12 +78,3 @@ const handleLogin = async () => {
     </v-card>
   </v-container>
 </template>
-
-
-
-<style scoped>
-.text-error {
-  color: #ef4444;
-  font-size: 14px;
-}
-</style>
