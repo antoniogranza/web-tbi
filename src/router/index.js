@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import PublicLayout from "@/components/layout/PublicLayout.vue";
+import LoginView from "@/views/LoginView.vue";
 
 import Home from "@/views/tbi_main/HomeView.vue";
 import About from "@/views/tbi_main/AboutView.vue";
@@ -14,6 +15,14 @@ import News from "@/views/tbi_main/NewsView.vue";
 import Apply from "@/views/tbi_main/ApplyView.vue";
 
 const routes = [
+
+
+  // ✅ Standalone Login Route
+  {
+    path: "/login",
+    component: LoginView
+  },
+
   {
     path: "/",
     component: PublicLayout,
@@ -28,6 +37,7 @@ const routes = [
       { path: "events", component: Events },
       { path: "news", component: News },
       { path: "apply", component: Apply }
+
     ]
   }
 ];
