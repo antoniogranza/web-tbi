@@ -44,12 +44,7 @@
             <v-col cols="12" md="5">
               <v-card rounded="xl" elevation="0" class="about-image-card overflow-hidden">
                 <div class="about-image-bg d-flex align-center justify-center">
-                  <v-icon
-                    icon="mdi-microphone-variant"
-                    size="80"
-                    color="white"
-                    style="opacity: 0.6"
-                  />
+                  <v-img color="surface-variant" height="500" src="/images/imga.JPG" cover />
                   <div class="about-image-overlay">
                     <v-chip color="white" variant="elevated" size="small" class="font-weight-bold">
                       <v-icon start icon="mdi-lightning-bolt" size="14" />
