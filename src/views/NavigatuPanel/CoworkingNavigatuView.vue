@@ -162,18 +162,12 @@
                       <!-- Left: Photo -->
                       <v-col cols="12" sm="4">
                         <div class="testimonial-photo" :style="{ background: testimonial.photoBg }">
-                          <v-icon
-                            :icon="testimonial.photoIcon"
-                            size="72"
-                            color="white"
-                            style="opacity: 0.35"
+                          <v-img
+                            color="surface-variant"
+                            height="280"
+                            src="/images/imgb.png"
+                            cover
                           />
-                          <!-- Decorative text overlay like the real photo -->
-                          <div class="photo-deco-text">
-                            <span>OF INNOVATION</span>
-                            <span>INSPIRATION &amp; ORIGINALITY</span>
-                            <span>DELIVERED</span>
-                          </div>
                         </div>
                       </v-col>
 
@@ -538,7 +532,7 @@ const testimonials = ref([
 
 /* Testimonial card */
 .testimonial-card {
-  border: 1px solid #e8eaf0;
+  border: 1px solid #44acff;
   overflow: hidden;
   min-height: 240px;
 }
@@ -552,28 +546,6 @@ const testimonials = ref([
   justify-content: center;
   position: relative;
   overflow: hidden;
-}
-
-/* Decorative photo overlay text (like in the screenshot) */
-.photo-deco-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
-  gap: 4px;
-  pointer-events: none;
-}
-.photo-deco-text span {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 800;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.18);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  line-height: 1.4;
 }
 
 /* Right quote side */
