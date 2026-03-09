@@ -114,7 +114,7 @@
               >
                 <!-- Background gradient as placeholder for image -->
                 <div class="facility-img" :style="{ background: facility.gradient }">
-                  <v-icon :icon="facility.icon" size="64" color="white" style="opacity: 0.25" />
+                  <v-img :src="facility.photo" height="280" cover />
                 </div>
 
                 <!-- Hover overlay -->
@@ -152,7 +152,7 @@
                 v-model="activeTestimonial"
                 hide-delimiter-background
                 :show-arrows="false"
-                delimiter-icon="mdi-circle-small"
+                delimiter-icon="mdi-circle"
                 height="auto"
                 class="testimonial-carousel"
               >
@@ -219,6 +219,7 @@ const facilities = ref([
     name: 'Co-Working Space',
     desc: 'A vibrant open-floor workspace designed to foster collaboration and creativity among startup teams and entrepreneurs.',
     icon: 'mdi-laptop',
+    photo: '/images/imga.JPG',
     gradient: 'linear-gradient(145deg, #1565C0 0%, #42A5F5 100%)',
     hovered: false,
   },
@@ -226,6 +227,7 @@ const facilities = ref([
     name: 'Lounge & Breakout Area',
     desc: 'Comfortable seating and relaxed zones where teams can brainstorm, hold informal discussions, and recharge.',
     icon: 'mdi-sofa-outline',
+    photo: '/images/FacilityB.jpg',
     gradient: 'linear-gradient(145deg, #37474F 0%, #78909C 100%)',
     hovered: false,
   },
@@ -233,6 +235,7 @@ const facilities = ref([
     name: 'Open Innovation Lab',
     desc: 'A fully-equipped lab for prototyping and development, complete with workstations, tools, and ping-pong for breaks.',
     icon: 'mdi-test-tube',
+    photo: '/images/FacilityC.jpg',
     gradient: 'linear-gradient(145deg, #1B5E20 0%, #66BB6A 100%)',
     hovered: false,
   },
@@ -240,6 +243,7 @@ const facilities = ref([
     name: 'Inspiration Wall — iTecH',
     desc: 'The iconic "Embark on a Voyage of Innovation" mural wall — the heart and soul of the Navigatú spirit.',
     icon: 'mdi-wall',
+    photo: '/images/FacilityD.png',
     gradient: 'linear-gradient(145deg, #4A148C 0%, #AB47BC 100%)',
     hovered: false,
   },
@@ -512,15 +516,16 @@ const testimonials = ref([
   overflow: visible !important;
 }
 :deep(.v-carousel__controls) {
+  padding-top: 20px !important;
   bottom: -40px !important;
 }
 :deep(.v-btn--icon.v-carousel__controls__item .v-icon) {
-  font-size: 12px !important;
+  font-size: 10px !important;
   color: #1565c0 !important;
   opacity: 0.4;
 }
 :deep(.v-btn--icon.v-carousel__controls__item.v-btn--active .v-icon) {
-  opacity: 1;
+  opacity: 5;
   color: #1565c0 !important;
 }
 
