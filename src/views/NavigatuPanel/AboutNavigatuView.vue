@@ -16,9 +16,15 @@
         <v-spacer />
 
         <div class="d-none d-md-flex align-center mr-6 gap-nav">
-          <v-btn variant="text" class="nav-link" to="#">About</v-btn>
-          <v-btn variant="text" class="nav-link" append-icon="mdi-chevron-down">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="#">Coworking</v-btn>
+          <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
+          <v-btn
+            variant="text"
+            class="nav-link"
+            to="/services-navigatu"
+            append-icon="mdi-chevron-down"
+            >Services</v-btn
+          >
+          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
           <v-btn variant="text" icon="mdi-magnify" size="small" />
         </div>
 
@@ -499,6 +505,7 @@ const leaders = ref([
   border-radius: 16px 16px 0 0;
 }
 .service-card-title {
+  padding-left: 15px !important;
   font-size: 1rem !important;
   font-weight: 700 !important;
   color: #1a1a1a;

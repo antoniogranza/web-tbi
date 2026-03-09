@@ -5,6 +5,8 @@ import LoginView from '@/views/LoginView.vue'
 
 //Navigatu Routing
 import AboutNavigatuView from '@/views/NavigatuPanel/AboutNavigatuView.vue'
+import CoworkingNavigatuView from '@/views/NavigatuPanel/CoworkingNavigatuView.vue'
+import ServiceNavigatuView from '@/views/NavigatuPanel/ServiceNavigatuView.vue'
 
 import Home from '@/views/tbi_main/HomeView.vue'
 import About from '@/views/tbi_main/AboutView.vue'
@@ -41,10 +43,18 @@ const routes = [
     ],
   },
 
-  // ✅ Navigatu Panel Route
+  // ✅ Navigatu Pages Route
   {
-    path: '/navigatu-panel',
+    path: '/about-navigatu',
     component: AboutNavigatuView,
+  },
+  {
+    path: '/coworking-navigatu',
+    component: CoworkingNavigatuView,
+  },
+  {
+    path: '/services-navigatu',
+    component: ServiceNavigatuView,
   },
 ]
 
