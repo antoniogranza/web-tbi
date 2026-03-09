@@ -162,12 +162,7 @@
                       <!-- Left: Photo -->
                       <v-col cols="12" sm="4">
                         <div class="testimonial-photo" :style="{ background: testimonial.photoBg }">
-                          <v-img
-                            color="surface-variant"
-                            height="280"
-                            src="/images/imgb.png"
-                            cover
-                          />
+                          <v-img :src="testimonial.photo" height="280" cover />
                         </div>
                       </v-col>
 
@@ -257,15 +252,14 @@ const testimonials = ref([
       'Working at Navigatu TBI provides a warm and inspiring atmosphere, enhanced by the open-space concept design, which truly elevates our productivity and creativity.',
     name: 'Riah',
     role: 'Director, TBI',
-    photoIcon: 'mdi-account',
-    photoBg: 'linear-gradient(145deg, #37474F 0%, #607D8B 100%)',
+    photo: '/images/TestimonialA.jpg',
   },
   {
     quote:
       'Being part of Navigatú has transformed how I see entrepreneurship. The mentorship, the community, and the facilities here are second to none in the region.',
     name: 'Marco',
     role: 'Program Manager, TBI',
-    photoIcon: 'mdi-account',
+    photo: '/images/TestimonialB.png',
     photoBg: 'linear-gradient(145deg, #1565C0 0%, #42A5F5 100%)',
   },
   {
@@ -273,7 +267,7 @@ const testimonials = ref([
       'The energy inside iTecH is contagious. Every day I walk in, I am reminded of the mission we share — to cultivate the next generation of Filipino innovators.',
     name: 'Carla',
     role: 'Innovation Lead, TBI',
-    photoIcon: 'mdi-account',
+    photo: '/images/TestimonialC.jpg',
     photoBg: 'linear-gradient(145deg, #1B5E20 0%, #66BB6A 100%)',
   },
 ])
