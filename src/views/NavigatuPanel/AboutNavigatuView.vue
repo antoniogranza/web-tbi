@@ -15,7 +15,7 @@
 
         <v-spacer />
 
-        <div class="d-none d-md-flex align-center mr-6 gap-nav">
+        <div class="d-none d-md-flex align-center mr-6">
           <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
           <v-btn
             variant="text"
