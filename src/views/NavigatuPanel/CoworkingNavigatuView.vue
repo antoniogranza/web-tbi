@@ -67,25 +67,36 @@
             </v-col>
 
             <!-- Right: Image collage -->
+            <!-- FIX: All heights are explicit pixel values, never "100%" -->
             <v-col cols="12" md="7">
               <div class="hero-collage">
+                <!-- Main large image -->
                 <div class="hero-collage-main">
-                  <div class="collage-img collage-img--main">
-                    <v-icon
-                      icon="mdi-office-building"
-                      size="64"
-                      color="white"
-                      style="opacity: 0.35"
-                    />
-                  </div>
+                  <v-img
+                    src="/images/CollageImg1.jpg"
+                    height="260"
+                    cover
+                    rounded="lg"
+                    class="collage-main-img"
+                  />
                 </div>
+
+                <!-- Two stacked small images -->
                 <div class="hero-collage-grid">
-                  <div class="collage-img collage-img--sm collage-img--blue">
-                    <v-icon icon="mdi-sofa" size="36" color="white" style="opacity: 0.4" />
-                  </div>
-                  <div class="collage-img collage-img--sm collage-img--teal">
-                    <v-icon icon="mdi-desk" size="36" color="white" style="opacity: 0.4" />
-                  </div>
+                  <v-img
+                    src="/images/CollageImg2.JPG"
+                    height="125"
+                    cover
+                    rounded="lg"
+                    class="collage-sm-img"
+                  />
+                  <v-img
+                    src="/images/CollageImg3.JPG"
+                    height="125"
+                    cover
+                    rounded="lg"
+                    class="collage-sm-img"
+                  />
                 </div>
               </div>
             </v-col>
@@ -104,17 +115,21 @@
           </p>
 
           <v-row>
-            <v-col v-for="facility in facilities" :key="facility.name" cols="12" sm="6">
-              <!-- Hover card with overlay name reveal -->
+            <v-col
+              v-for="facility in facilities"
+              :key="facility.name"
+              cols="12"
+              sm="6"
+              class="mb-2"
+            >
+              <!-- FIX: facility-card wraps v-img directly; overlay sits on top via position:absolute -->
               <div
                 class="facility-card"
                 @mouseenter="facility.hovered = true"
                 @mouseleave="facility.hovered = false"
               >
-                <!-- Background gradient as placeholder for image -->
-                <div class="facility-img" :style="{ background: facility.gradient }">
-                  <v-img :src="facility.photo" height="280" cover />
-                </div>
+                <!-- Image — explicit 280px height -->
+                <v-img :src="facility.photo" height="280" cover class="facility-base-img" />
 
                 <!-- Hover overlay -->
                 <div
@@ -126,8 +141,8 @@
                   <p class="facility-overlay-desc">{{ facility.desc }}</p>
                 </div>
 
-                <!-- Bottom label (always visible) -->
-                <div class="facility-label">
+                <!-- Bottom pill label — always visible, hides on hover -->
+                <div class="facility-label" :class="{ 'facility-label--hidden': facility.hovered }">
                   <v-icon :icon="facility.icon" size="16" color="white" class="mr-1" />
                   {{ facility.name }}
                 </div>
@@ -145,7 +160,7 @@
             <span class="testimonial-title-italic"> Staff Testimonials</span>
           </h2>
 
-          <v-row justify="center" class="mt-10">
+          <v-row justify="center" class="mt-10 pb-12">
             <v-col cols="12" md="10">
               <v-carousel
                 v-model="activeTestimonial"
@@ -158,23 +173,21 @@
                 <v-carousel-item v-for="(testimonial, i) in testimonials" :key="i">
                   <v-card class="testimonial-card" flat rounded="xl">
                     <v-row no-gutters align="stretch">
-                      <!-- Left: Photo -->
+                      <!-- Left: Photo — explicit 280px height -->
                       <v-col cols="12" sm="4">
-                        <div class="testimonial-photo" :style="{ background: testimonial.photoBg }">
-                          <v-img :src="testimonial.photo" height="280" cover />
-                        </div>
+                        <v-img
+                          :src="testimonial.photo"
+                          height="280"
+                          cover
+                          class="testimonial-photo-img"
+                        />
                       </v-col>
 
                       <!-- Right: Quote content -->
                       <v-col cols="12" sm="8">
                         <div class="testimonial-content pa-8 pa-md-10">
-                          <!-- Big quote mark -->
                           <div class="quote-mark">"</div>
-
-                          <p class="testimonial-text mt-2">
-                            {{ testimonial.quote }}
-                          </p>
-
+                          <p class="testimonial-text mt-2">{{ testimonial.quote }}</p>
                           <div class="testimonial-author mt-6">
                             <span class="author-name">{{ testimonial.name }}</span>
                             <span class="author-role">{{ testimonial.role }}</span>
@@ -209,17 +222,18 @@ import { ref } from 'vue'
 // ── Mobile drawer ────────────────────────────────────────────────────────────
 const drawer = ref(false)
 
-// ── Active testimonial index for carousel ────────────────────────────────────
+// ── Active testimonial index ─────────────────────────────────────────────────
 const activeTestimonial = ref(0)
 
-// ── Facility cards with hover state ─────────────────────────────────────────
+// ── Facility cards ───────────────────────────────────────────────────────────
+// FIX: hovered is a plain boolean inside a ref([]) array.
+// @mouseenter/@mouseleave toggle it directly on each object.
 const facilities = ref([
   {
     name: 'Co-Working Space',
     desc: 'A vibrant open-floor workspace designed to foster collaboration and creativity among startup teams and entrepreneurs.',
     icon: 'mdi-laptop',
     photo: '/images/imga.JPG',
-    gradient: 'linear-gradient(145deg, #1565C0 0%, #42A5F5 100%)',
     hovered: false,
   },
   {
@@ -227,7 +241,6 @@ const facilities = ref([
     desc: 'Comfortable seating and relaxed zones where teams can brainstorm, hold informal discussions, and recharge.',
     icon: 'mdi-sofa-outline',
     photo: '/images/FacilityB.jpg',
-    gradient: 'linear-gradient(145deg, #37474F 0%, #78909C 100%)',
     hovered: false,
   },
   {
@@ -235,20 +248,18 @@ const facilities = ref([
     desc: 'A fully-equipped lab for prototyping and development, complete with workstations, tools, and ping-pong for breaks.',
     icon: 'mdi-test-tube',
     photo: '/images/FacilityC.jpg',
-    gradient: 'linear-gradient(145deg, #1B5E20 0%, #66BB6A 100%)',
     hovered: false,
   },
   {
     name: 'Inspiration Wall — iTecH',
-    desc: 'The iconic "Embark on a Voyage of Innovation" mural wall — the heart and soul of the Navigatú spirit.',
+    desc: 'The iconic "Embark on a Voyage of Innovation" mural — the heart and soul of the Navigatú spirit.',
     icon: 'mdi-wall',
     photo: '/images/FacilityD.png',
-    gradient: 'linear-gradient(145deg, #4A148C 0%, #AB47BC 100%)',
     hovered: false,
   },
 ])
 
-// ── Testimonials data ────────────────────────────────────────────────────────
+// ── Testimonials ─────────────────────────────────────────────────────────────
 const testimonials = ref([
   {
     quote:
@@ -263,7 +274,6 @@ const testimonials = ref([
     name: 'Marco',
     role: 'Program Manager, TBI',
     photo: '/images/TestimonialB.png',
-    photoBg: 'linear-gradient(145deg, #1565C0 0%, #42A5F5 100%)',
   },
   {
     quote:
@@ -271,13 +281,12 @@ const testimonials = ref([
     name: 'Carla',
     role: 'Innovation Lead, TBI',
     photo: '/images/TestimonialC.jpg',
-    photoBg: 'linear-gradient(145deg, #1B5E20 0%, #66BB6A 100%)',
   },
 ])
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&family=Caveat:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 /* ── Global ──────────────────────────────────────────────────────────────────── */
 .v-application {
@@ -353,50 +362,47 @@ const testimonials = ref([
   letter-spacing: 0.2px !important;
 }
 
-/* Hero collage */
+/* ── HERO COLLAGE ─────────────────────────────────────────────────────────────
+   FIX SUMMARY:
+   - .hero-collage has explicit height: 260px
+   - .hero-collage-main has explicit height: 260px (not "100%")
+   - .hero-collage-grid has explicit height: 260px (not "100%")
+   - v-img uses height="260" and height="125" (pixel numbers, never "100%")
+   - Each v-img sits directly inside the flex child with overflow:hidden
+──────────────────────────────────────────────────────────────────────────────── */
 .hero-collage {
   display: flex;
   gap: 10px;
-  height: 260px;
+  height: 260px; /* explicit total height */
   border-radius: 16px;
   overflow: hidden;
 }
+
 .hero-collage-main {
   flex: 2;
+  height: 260px; /* explicit — required for v-img to fill correctly */
+  overflow: hidden;
+  border-radius: 12px;
 }
+
+.collage-main-img {
+  width: 100%;
+  border-radius: 12px;
+}
+
 .hero-collage-grid {
   flex: 1;
+  height: 260px; /* explicit — required */
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.collage-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
   overflow: hidden;
 }
-.collage-img--main {
-  background: linear-gradient(145deg, #1a237e 0%, #1565c0 60%, #42a5f5 100%);
-  flex-direction: column;
-  gap: 8px;
-}
-.collage-img--blue {
-  background: linear-gradient(145deg, #37474f, #78909c);
-}
-.collage-img--teal {
-  background: linear-gradient(145deg, #004d40, #26a69a);
-}
-.collage-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 1px;
+
+.collage-sm-img {
+  width: 100%;
+  border-radius: 12px;
+  /* height is set via the height prop on v-img: height="125" */
 }
 
 /* ── FACILITY OFFERED ────────────────────────────────────────────────────────── */
@@ -404,12 +410,17 @@ const testimonials = ref([
   background: #f5f7fb;
 }
 
+/*
+  FIX: .facility-card wraps v-img directly.
+  position:relative on the card + position:absolute on overlay = correct stacking.
+  No nested .facility-img div needed — v-img IS the background.
+*/
 .facility-card {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  height: 280px;
+  /* height is driven by v-img height="280" */
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
   transition:
     box-shadow 0.3s ease,
@@ -420,19 +431,17 @@ const testimonials = ref([
   transform: translateY(-4px);
 }
 
-.facility-img {
+.facility-base-img {
+  display: block;
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* scale on hover via CSS transform */
   transition: transform 0.4s ease;
 }
-.facility-card:hover .facility-img {
+.facility-card:hover .facility-base-img {
   transform: scale(1.06);
 }
 
-/* Hover overlay */
+/* Hover overlay — sits on top of the image */
 .facility-overlay {
   position: absolute;
   inset: 0;
@@ -449,6 +458,7 @@ const testimonials = ref([
     opacity 0.35s ease,
     transform 0.35s ease;
   border-radius: 16px;
+  z-index: 2;
 }
 .facility-overlay--visible {
   opacity: 1;
@@ -463,12 +473,12 @@ const testimonials = ref([
 }
 .facility-overlay-desc {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.7;
   margin: 0;
 }
 
-/* Bottom label pill (always visible) */
+/* Bottom pill label */
 .facility-label {
   position: absolute;
   bottom: 14px;
@@ -482,11 +492,12 @@ const testimonials = ref([
   display: flex;
   align-items: center;
   backdrop-filter: blur(4px);
+  z-index: 3;
   transition: opacity 0.3s ease;
   letter-spacing: 0.3px;
 }
-.facility-overlay--visible ~ .facility-label {
-  opacity: 0;
+.facility-label--hidden {
+  opacity: 0; /* FIX: explicit class toggle instead of sibling selector */
 }
 
 /* ── TESTIMONIALS ─────────────────────────────────────────────────────────────── */
@@ -509,51 +520,48 @@ const testimonials = ref([
   color: #1565c0;
 }
 
-/* Vuetify carousel overrides */
+/* Carousel wrapper — pb-12 on the row gives space for the dot delimiters */
 .testimonial-carousel {
   border-radius: 16px !important;
   overflow: visible !important;
 }
 :deep(.v-carousel__controls) {
-  padding-top: 20px !important;
-  bottom: -40px !important;
+  bottom: -44px !important;
 }
 :deep(.v-btn--icon.v-carousel__controls__item .v-icon) {
   font-size: 10px !important;
   color: #1565c0 !important;
-  opacity: 0.4;
+  opacity: 0.35;
 }
 :deep(.v-btn--icon.v-carousel__controls__item.v-btn--active .v-icon) {
-  opacity: 5;
+  opacity: 1 !important;
   color: #1565c0 !important;
 }
 
 /* Testimonial card */
 .testimonial-card {
-  border: 1px solid #44acff;
-  overflow: hidden;
-  min-height: 240px;
-}
-
-/* Left photo side */
-.testimonial-photo {
-  height: 100%;
-  min-height: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  border: 1px solid #e0e8f5;
   overflow: hidden;
 }
 
-/* Right quote side */
+/*
+  FIX: testimonial photo is now a plain v-img with height="280".
+  No wrapper div needed — v-img handles its own sizing with an explicit height prop.
+*/
+.testimonial-photo-img {
+  display: block;
+  width: 100%;
+  /* height driven by height="280" prop */
+}
+
+/* Quote panel */
 .testimonial-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: #ffffff;
+  min-height: 280px;
 }
-
 .quote-mark {
   font-family: 'Playfair Display', serif;
   font-size: 4rem;
@@ -562,7 +570,6 @@ const testimonials = ref([
   font-weight: 700;
   opacity: 0.75;
 }
-
 .testimonial-text {
   font-size: 0.9rem;
   color: #444;
@@ -570,7 +577,6 @@ const testimonials = ref([
   margin: 0;
   max-width: 420px;
 }
-
 .testimonial-author {
   display: flex;
   align-items: baseline;
