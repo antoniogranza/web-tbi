@@ -77,7 +77,6 @@
                       color="white"
                       style="opacity: 0.35"
                     />
-                    <span class="collage-label">iTecH Main Hall</span>
                   </div>
                 </div>
                 <div class="hero-collage-grid">
