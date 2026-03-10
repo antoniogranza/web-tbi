@@ -371,14 +371,14 @@ const achievements = ref([
 
 // ── Incubatees data ───────────────────────────────────────────────────────────
 const incubatees = ref([
-  { name: 'AgroTech AI', icon: 'mdi-sprout', color: '#558B2F', bg: '#F1F8E9' },
-  { name: 'EcoHarvest', icon: 'mdi-leaf', color: '#2E7D32', bg: '#E8F5E9' },
-  { name: 'Care Connect', icon: 'mdi-heart-pulse', color: '#1565C0', bg: '#E3F2FD' },
-  { name: 'VisionDrive', icon: 'mdi-eye-outline', color: '#4527A0', bg: '#EDE7F6' },
-  { name: 'PinedaCraft', icon: 'mdi-paw', color: '#AD1457', bg: '#FCE4EC' },
-  { name: 'GreenCycle', icon: 'mdi-recycle', color: '#00695C', bg: '#E0F7FA' },
-  { name: 'SnapSocial', icon: 'mdi-camera-outline', color: '#E65100', bg: '#FFF3E0' },
-  { name: 'Proton', icon: 'mdi-atom', color: '#1565C0', bg: '#E8EAF6' },
+  { name: 'Ascribo AI', icon: 'mdi-sprout', color: '#558B2F', bg: '#F1F8E9' },
+  { name: 'BizNest', icon: 'mdi-leaf', color: '#2E7D32', bg: '#E8F5E9' },
+  { name: 'Care Guardian', icon: 'mdi-heart-pulse', color: '#1565C0', bg: '#E3F2FD' },
+  { name: 'Vision Drive', icon: 'mdi-eye-outline', color: '#4527A0', bg: '#EDE7F6' },
+  { name: 'Sinawali Showdown', icon: 'mdi-paw', color: '#AD1457', bg: '#FCE4EC' },
+  { name: 'ScrapCycle', icon: 'mdi-recycle', color: '#00695C', bg: '#E0F7FA' },
+  { name: 'Snap Scout', icon: 'mdi-camera-outline', color: '#E65100', bg: '#FFF3E0' },
+  { name: 'ParaGo', icon: 'mdi-atom', color: '#1565C0', bg: '#E8EAF6' },
 ])
 
 // ── Leadership data ───────────────────────────────────────────────────────────
