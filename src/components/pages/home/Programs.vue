@@ -10,30 +10,75 @@
           </div>
           <div style="font-family:'Instrument Serif',serif;font-size:clamp(1.9rem,2.8vw,2.75rem);color:#111810;letter-spacing:-0.025em;line-height:1.1;font-weight:400;">Find Your Right Track</div>
         </div>
-        <v-btn to="/program" variant="text" color="#25671E" append-icon="mdi-arrow-right" style="text-transform:none;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;">All programs</v-btn>
+        <v-btn to="/program" variant="text" color="#25671E" append-icon="mdi-arrow-right"
+          style="text-transform:none;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;">
+          All programs
+        </v-btn>
       </div>
 
       <v-row>
         <v-col v-for="prog in programs" :key="prog.title" cols="12" md="4">
-          <v-card :to="'/program'" rounded="xl" elevation="0" border color="white" hover style="height:100%;border-color:#E8E0D8;">
-            <v-sheet :color="prog.color" height="3" rounded="0" style="border-radius:12px 12px 0 0;" />
+          <v-card :to="'/program'" rounded="xl" elevation="0" border color="white" hover
+            style="height:100%;border-color:#E8E0D8;overflow:hidden;">
+
+            <!-- ── Photo slot ── -->
+            <div style="position:relative;aspect-ratio:16/9;overflow:hidden;">
+              <!-- Real image — shown when photoUrl is provided -->
+              <img
+                v-if="prog.photoUrl"
+                :src="prog.photoUrl"
+                :alt="prog.title"
+                style="width:100%;height:100%;object-fit:cover;display:block;"
+              />
+              <!-- Placeholder — shown until photo is dropped in -->
+              <div
+                v-else
+                class="d-flex flex-column align-center justify-center"
+                :style="`background:${prog.placeholderBg};width:100%;height:100%;`"
+              >
+                <v-avatar :color="prog.color" variant="tonal" rounded="xl" size="52" class="mb-2">
+                  <v-icon :icon="prog.icon" :color="prog.color" size="24" />
+                </v-avatar>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#B8B0A8;">
+                  Program Photo
+                </span>
+              </div>
+              <!-- Color strip overlay at bottom of image -->
+              <div
+                :style="`position:absolute;bottom:0;left:0;right:0;height:3px;background:${prog.color};`"
+              />
+            </div>
+
             <v-card-text class="pa-7">
               <div class="d-flex justify-space-between align-center mb-4">
-                <v-chip variant="tonal" :color="prog.color" size="small" style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;">{{ prog.badge }}</v-chip>
+                <v-chip variant="tonal" :color="prog.color" size="small"
+                  style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;">
+                  {{ prog.badge }}
+                </v-chip>
                 <v-icon size="15" color="#C8C0B8">mdi-arrow-top-right</v-icon>
               </div>
-              <div style="font-family:'Instrument Serif',serif;font-size:1.3rem;color:#111810;letter-spacing:-0.018em;margin-bottom:8px;font-weight:400;line-height:1.2;">{{ prog.title }}</div>
-              <p style="font-family:'Inter',sans-serif;font-size:14px;font-weight:400;color:#6B7B6A;line-height:1.67;margin-bottom:20px;letter-spacing:-0.008em;">{{ prog.desc }}</p>
+
+              <div style="font-family:'Instrument Serif',serif;font-size:1.3rem;color:#111810;letter-spacing:-0.018em;margin-bottom:8px;font-weight:400;line-height:1.2;">
+                {{ prog.title }}
+              </div>
+              <p style="font-family:'Inter',sans-serif;font-size:14px;font-weight:400;color:#6B7B6A;line-height:1.67;margin-bottom:20px;letter-spacing:-0.008em;">
+                {{ prog.desc }}
+              </p>
+
               <v-divider class="mb-3" />
-              <div v-for="f in prog.feats" :key="f" class="d-flex align-center ga-2 py-2" style="border-bottom:1px solid #F0EAE0;">
+              <div v-for="f in prog.feats" :key="f" class="d-flex align-center ga-2 py-2"
+                style="border-bottom:1px solid #F0EAE0;">
                 <v-icon size="8" :color="prog.color">mdi-circle</v-icon>
                 <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:400;color:#111810;letter-spacing:-0.008em;">{{ f }}</span>
               </div>
+
               <div class="d-flex align-center flex-wrap ga-2 mt-4">
                 <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#9eaa9c;">For</span>
-                <v-chip v-for="t in prog.for" :key="t" :color="prog.color" variant="tonal" size="x-small" style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;">{{ t }}</v-chip>
+                <v-chip v-for="t in prog.for" :key="t" :color="prog.color" variant="tonal" size="x-small"
+                  style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;">{{ t }}</v-chip>
               </div>
             </v-card-text>
+
           </v-card>
         </v-col>
       </v-row>
@@ -45,21 +90,27 @@
 <script setup>
 const programs = [
   {
-    badge: 'Institutional', color: '#25671E',
+    badge: 'Institutional', color: '#25671E', icon: 'mdi-flask-outline',
+    placeholderBg: '#EDF5E8',
+    photoUrl: '', // → drop in e.g. '/src/assets/programs/institutional.jpg'
     title: 'Institutional Incubation',
     desc: 'For university-based researchers and faculty ready to commercialize their work within an institutional framework.',
     feats: ['IP ownership & disclosure support', 'Faculty entrepreneur fast-track', 'Lab-to-market pathway', 'Research grant linkages'],
     for: ['Students', 'Faculty', 'Researchers'],
   },
   {
-    badge: 'Regional', color: '#48A111',
+    badge: 'Regional', color: '#48A111', icon: 'mdi-map-marker-radius-outline',
+    placeholderBg: '#EDF5E8',
+    photoUrl: '', // → drop in e.g. '/src/assets/programs/regional.jpg'
     title: 'Regional Incubation',
     desc: 'Open to innovators across the region regardless of institutional affiliation. Local problems, scalable solutions.',
     feats: ['Open cohort applications', 'Regional mentor network', 'Co-working space access', 'Demo Day & investor connect'],
     for: ['MSMEs', 'External Startups'],
   },
   {
-    badge: 'Spin-Off', color: '#e09000',
+    badge: 'Spin-Off', color: '#e09000', icon: 'mdi-source-branch',
+    placeholderBg: '#FDF5E0',
+    photoUrl: '', // → drop in e.g. '/src/assets/programs/spinoff.jpg'
     title: 'Spin-Off Support',
     desc: 'Dedicated support for ventures separating from parent institutions — legal structuring and launch acceleration.',
     feats: ['Corporate separation support', 'Equity & cap table advisory', 'Seed funding facilitation', 'Post-spin growth programs'],

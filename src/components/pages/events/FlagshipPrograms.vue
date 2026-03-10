@@ -21,15 +21,34 @@
         </v-col>
       </v-row>
 
+      <!-- 3-column grid with bullet lists — matching wireframe -->
       <v-row>
-        <v-col v-for="prog in flagshipPrograms" :key="prog.name" cols="12" md="6">
+        <v-col v-for="prog in flagshipPrograms" :key="prog.name" cols="12" sm="6" md="4">
           <v-card color="#FAFAF8" rounded="xl" elevation="0" border style="border-color:#E8E0D8;height:100%;">
+            <v-sheet :color="prog.color" height="4" rounded="0" style="border-radius:12px 12px 0 0;" />
             <v-card-text class="pa-7">
-              <v-avatar :color="prog.color" variant="tonal" rounded="lg" size="44" class="mb-4">
-                <v-icon :icon="prog.icon" size="20" :color="prog.color" />
+
+              <!-- Icon -->
+              <v-avatar :color="prog.color" variant="tonal" rounded="lg" size="48" class="mb-5">
+                <v-icon :icon="prog.icon" size="22" :color="prog.color" />
               </v-avatar>
-              <div style="font-weight:700;font-size:16px;color:#111810;margin-bottom:6px;">{{ prog.name }}</div>
-              <p style="font-size:13px;color:#6B7B6A;line-height:1.65;margin:0;">{{ prog.desc }}</p>
+
+              <!-- Title -->
+              <div style="font-family:'Instrument Serif',serif;font-size:1.15rem;color:#111810;margin-bottom:10px;">
+                {{ prog.name }}
+              </div>
+
+              <!-- Description -->
+              <p style="font-size:13px;color:#6B7B6A;line-height:1.65;margin-bottom:18px;">
+                {{ prog.desc }}
+              </p>
+
+              <!-- Bullet feature list -->
+              <div v-for="feat in prog.features" :key="feat" class="d-flex align-center ga-3 mb-2">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#48A111;flex-shrink:0;">→</span>
+                <span style="font-size:13px;color:#6B7B6A;">{{ feat }}</span>
+              </div>
+
             </v-card-text>
           </v-card>
         </v-col>
@@ -42,20 +61,40 @@
 <script setup>
 const flagshipPrograms = [
   {
-    name: 'Startup Bootcamp Series', icon: 'mdi-school-outline', color: '#48A111',
-    desc: 'An intensive training program for early-stage startup teams focused on entrepreneurial capability development, business model design, and market validation.',
+    name: 'Startup Bootcamp Series',
+    icon: 'mdi-school-outline', color: '#48A111',
+    desc: 'Quarterly intensive training programs covering all aspects of startup development.',
+    features: ['3-day intensive format', 'Expert mentors', 'Hands-on workshops', 'Pitch practice'],
   },
   {
-    name: 'Technology Demo Day', icon: 'mdi-lightbulb-outline', color: '#25671E',
-    desc: 'A showcase platform for incubated startups and university innovators to present technologies to industry partners, investors, and government agencies.',
+    name: 'Technology Demo Day',
+    icon: 'mdi-lightbulb-on-outline', color: '#25671E',
+    desc: 'Biannual showcase of innovative technologies and startup pitches to investors.',
+    features: ['Live demonstrations', 'Investor matching', 'Industry connections', 'Media coverage'],
   },
   {
-    name: 'AgriTech Expo (TARA)', icon: 'mdi-sprout-outline', color: '#48A111',
-    desc: 'An agricultural technology showcase organized under the TARA Agri-Aqua Technology Business Incubator connecting innovators with farmers and agribusiness stakeholders.',
+    name: 'Innovation Week',
+    icon: 'mdi-star-shooting-outline', color: '#48A111',
+    desc: 'Annual week-long festival celebrating innovation and entrepreneurship.',
+    features: ['Multiple events', 'Competitions', 'Exhibitions', 'Networking sessions'],
   },
   {
-    name: 'ICT Hackathon (NAVIGATU)', icon: 'mdi-laptop', color: '#25671E',
-    desc: 'A technology innovation competition focused on ICT and engineering solutions addressing regional challenges and industry needs.',
+    name: 'AgriTech Expo',
+    icon: 'mdi-sprout-outline', color: '#25671E',
+    desc: 'Annual exhibition focused on agricultural technology innovations under TARA-ATBI.',
+    features: ['Technology showcase', 'Farmer engagement', 'Product demonstrations', 'Business matching'],
+  },
+  {
+    name: 'ICT Hackathon',
+    icon: 'mdi-laptop', color: '#48A111',
+    desc: 'Annual coding competition solving real-world challenges under NAVIGATU.',
+    features: ['48-hour format', 'Industry challenges', 'Cash prizes', 'Incubation opportunity'],
+  },
+  {
+    name: 'Investor Pitch Competition',
+    icon: 'mdi-podium', color: '#25671E',
+    desc: 'Quarterly pitch event connecting pre-qualified startups with investors.',
+    features: ['Pre-qualified startups', 'Angel investors', 'Funding opportunities', 'Mentorship prizes'],
   },
 ]
 </script>
