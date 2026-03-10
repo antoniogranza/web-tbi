@@ -50,7 +50,7 @@
             <v-col cols="12" md="5">
               <v-card rounded="xl" elevation="0" class="about-image-card overflow-hidden">
                 <div class="about-image-bg d-flex align-center justify-center">
-                  <v-img color="surface-variant" height="500" src="/images/imga.JPG" cover />
+                  <v-img src="/images/imga.JPG" height="280" cover rounded="xl" />
                   <div class="about-image-overlay">
                     <v-chip color="white" variant="elevated" size="small" class="font-weight-bold">
                       <v-icon start icon="mdi-lightning-bolt" size="14" />
@@ -110,9 +110,10 @@
 
       <!-- ===== VISION BANNER ===== -->
       <v-container fluid class="vision-banner pa-0">
-        <v-row no-gutters>
+        <v-row no-gutters class="banner-row">
+          <!-- Left: Text -->
           <v-col cols="12" md="6" class="vision-content d-flex align-center">
-            <div class="pa-10 pa-md-16">
+            <div class="banner-text-inner px-8 px-sm-12 px-md-16 py-10 py-md-0">
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Vision</h2>
               <p class="banner-body">
@@ -121,17 +122,17 @@
               </p>
             </div>
           </v-col>
-          <v-col cols="12" md="6" class="vision-image d-flex align-center justify-center">
-            <div class="banner-image-inner">
-              <v-icon icon="mdi-account-group" size="80" color="white" style="opacity: 0.5" />
-              <v-chip
-                color="white"
-                variant="elevated"
-                size="small"
-                class="mt-4 font-weight-bold letter-spacing"
-              >
-                A VOYAGE
-              </v-chip>
+
+          <!-- Right: Image -->
+          <v-col cols="12" md="6" class="vision-image-col d-flex align-center justify-center">
+            <div class="banner-img-wrap">
+              <v-img
+                src="/images/VisionImg.jpg"
+                height="320"
+                cover
+                rounded="xl"
+                class="banner-img"
+              />
             </div>
           </v-col>
         </v-row>
@@ -167,9 +168,10 @@
 
       <!-- ===== MISSION BANNER ===== -->
       <v-container fluid class="mission-banner pa-0">
-        <v-row no-gutters>
+        <v-row no-gutters class="banner-row">
+          <!-- Left: Text -->
           <v-col cols="12" md="6" class="mission-content d-flex align-center">
-            <div class="pa-10 pa-md-16">
+            <div class="banner-text-inner px-8 px-sm-12 px-md-16 py-10 py-md-0">
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Mission</h2>
               <p class="banner-body">
@@ -178,17 +180,17 @@
               </p>
             </div>
           </v-col>
-          <v-col cols="12" md="6" class="mission-image d-flex align-center justify-center">
-            <div class="banner-image-inner">
-              <v-icon icon="mdi-rocket-launch" size="80" color="white" style="opacity: 0.5" />
-              <v-chip
-                color="white"
-                variant="elevated"
-                size="small"
-                class="mt-4 font-weight-bold letter-spacing"
-              >
-                A VOYAGE
-              </v-chip>
+
+          <!-- Right: Image -->
+          <v-col cols="12" md="6" class="mission-image-col d-flex align-center justify-center">
+            <div class="banner-img-wrap">
+              <v-img
+                src="/images/MissionImg.jpg"
+                height="320"
+                cover
+                rounded="xl"
+                class="banner-img"
+              />
             </div>
           </v-col>
         </v-row>
@@ -395,7 +397,7 @@ const leaders = ref([
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-/* ── Global typography ─────────────────────────────────────────────────────── */
+/* ── Global ──────────────────────────────────────────────────────────────────── */
 .v-application {
   font-family: 'DM Sans', sans-serif !important;
 }
@@ -423,7 +425,7 @@ const leaders = ref([
   gap: 4px;
 }
 
-/* ── About section ───────────────────────────────────────────────────────────── */
+/* ── About ───────────────────────────────────────────────────────────────────── */
 .about-section {
   background: #ffffff;
 }
@@ -437,6 +439,7 @@ const leaders = ref([
   background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #42a5f5 100%);
   position: relative;
   border-radius: 16px;
+  overflow: hidden;
 }
 .about-image-overlay {
   position: absolute;
@@ -490,7 +493,6 @@ const leaders = ref([
 .services-section {
   background: #f5f7fb;
 }
-
 .service-card {
   transition:
     transform 0.2s ease,
@@ -499,7 +501,6 @@ const leaders = ref([
 .service-card:hover {
   transform: translateY(-6px);
 }
-
 .service-card-img {
   height: 180px;
   border-radius: 16px 16px 0 0;
@@ -521,16 +522,26 @@ const leaders = ref([
 /* ── Vision / Mission banners ─────────────────────────────────────────────────── */
 .vision-banner {
   background: #1565c0;
-  min-height: 260px;
+  min-height: 420px; /* increased from 300px */
 }
 .mission-banner {
   background: #0d47a1;
-  min-height: 260px;
+  min-height: 420px; /* increased from 300px */
 }
-
 .vision-content,
 .mission-content {
   background: transparent;
+}
+
+/* .banner-row makes the v-row stretch to fill the banner's min-height */
+.banner-row {
+  min-height: 420px;
+}
+
+/* Text side — full height flex so content stays vertically centered */
+.banner-text-inner {
+  width: 100%;
+  max-width: 520px;
 }
 
 .banner-eyebrow {
@@ -543,45 +554,75 @@ const leaders = ref([
 }
 .banner-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-size: clamp(2rem, 3.5vw, 2.8rem); /* slightly larger */
   font-weight: 700;
   color: #ffffff;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   line-height: 1.1;
 }
 .banner-body {
   color: rgba(255, 255, 255, 0.82);
-  line-height: 1.8;
-  font-size: 0.95rem;
-  max-width: 480px;
+  line-height: 1.9;
+  font-size: 1rem; /* slightly larger than before */
+  max-width: 460px;
 }
-.vision-image,
-.mission-image {
-  min-height: 260px;
-  background: rgba(255, 255, 255, 0.06);
+
+/* Image columns — padding creates visible banner bg on all sides */
+.vision-image-col {
+  padding: 40px 48px; /* generous padding so bg shows around image */
+  min-height: 420px; /* ensures col fills banner height on desktop */
 }
-.banner-image-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.mission-image-col {
+  padding: 40px 48px;
+  min-height: 420px;
 }
-.letter-spacing {
-  letter-spacing: 2px !important;
+
+/* Image wrapper — constrained width, rounded corners, shadow */
+.banner-img-wrap {
+  width: 100%;
+  max-width: 440px; /* wider than before (was 380px) */
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.32);
+}
+.banner-img {
+  display: block;
+  width: 100%;
+  /* height controlled by height="320" on the v-img prop */
+}
+
+/* ── Responsive: stack vertically on mobile ──────────────────────────────────── */
+@media (max-width: 959px) {
+  .vision-banner,
+  .mission-banner {
+    min-height: unset; /* let content define height on mobile */
+  }
+  .banner-row {
+    min-height: unset;
+  }
+  .vision-image-col,
+  .mission-image-col {
+    min-height: unset;
+    padding: 0 24px 32px; /* less padding on mobile, top handled by text col */
+  }
+  .banner-img-wrap {
+    max-width: 100%; /* full width on mobile */
+  }
+  .banner-text-inner {
+    max-width: 100%;
+  }
 }
 
 /* ── Achievements ─────────────────────────────────────────────────────────────── */
 .achievements-section {
   background: #ffffff;
 }
-
 .achievement-card {
   transition: transform 0.2s ease;
 }
 .achievement-card:hover {
   transform: translateY(-4px);
 }
-
 .achievement-icon-row {
   height: 72px;
   border-radius: 16px 16px 0 0;
@@ -612,7 +653,6 @@ const leaders = ref([
 .incubatees-section {
   background: #f5f7fb;
 }
-
 .incubatee-card {
   overflow: hidden;
   transition: transform 0.2s ease;
@@ -620,12 +660,10 @@ const leaders = ref([
 .incubatee-card:hover {
   transform: translateY(-4px);
 }
-
 .incubatee-logo {
   height: 100px;
   border-radius: 16px 16px 0 0;
 }
-
 .incubatee-btn {
   border-radius: 0 !important;
   font-size: 0.75rem !important;
@@ -637,7 +675,6 @@ const leaders = ref([
 .leadership-section {
   background: #ffffff;
 }
-
 .leader-card {
   overflow: hidden;
   transition: transform 0.2s ease;
@@ -645,7 +682,6 @@ const leaders = ref([
 .leader-card:hover {
   transform: translateY(-4px);
 }
-
 .leader-photo {
   padding: 24px 0 16px;
   background: #eef2fa;
