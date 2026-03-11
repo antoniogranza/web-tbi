@@ -211,7 +211,7 @@
                   class="incubatee-logo d-flex align-center justify-center"
                   :style="{ background: company.bg }"
                 >
-                  <v-img :src="company.photo" height="280" cover class="facility-base-img" />
+                  <v-img :src="company.photo" height="280" cover class="incubatee-img" />
                 </div>
                 <v-btn
                   block
@@ -371,19 +371,54 @@ const achievements = ref([
 
 // ── Incubatees data ───────────────────────────────────────────────────────────
 const incubatees = ref([
-  { name: 'Ascribo AI', photo: '/images/AscriboAi.png', color: '#558B2F', bg: '#F1F8E9' },
-  { name: 'BizNest', photo: '/images/BizNest.jpg', color: '#2E7D32', bg: '#E8F5E9' },
-  { name: 'Care Guardian', photo: '/images/Care_Guardian.jpg', color: '#1565C0', bg: '#E3F2FD' },
-  { name: 'Vision Drive', photo: '/images/Vision_Drive.jpg', color: '#4527A0', bg: '#EDE7F6' },
+  {
+    name: 'Ascribo AI',
+    photo: '/images/incubatees/AscriboAi.png',
+    color: '#558B2F',
+    bg: '#F1F8E9',
+  },
+  {
+    name: 'BizNest',
+    photo: '/images/incubatees/BizNest.jpg',
+    color: '#2E7D32',
+    bg: '#E8F5E9',
+  },
+  {
+    name: 'Care Guardian',
+    photo: '/images/incubatees/CareGuardian.png',
+    color: '#1565C0',
+    bg: '#E3F2FD',
+  },
+  {
+    name: 'Vision Drive',
+    photo: '/images/incubatees/VisionDrive.png',
+    color: '#4527A0',
+    bg: '#EDE7F6',
+  },
   {
     name: 'Sinawali Showdown',
-    photo: '/images/Sinawali_Showdown.jpg',
+    photo: '/images/incubatees/Sinawali.png',
     color: '#AD1457',
     bg: '#FCE4EC',
   },
-  { name: 'ScrapCycle', photo: '/images/ScrapCycle.jpg', color: '#00695C', bg: '#E0F7FA' },
-  { name: 'Snap Scout', photo: '/images/Snap_Scout.jpg', color: '#E65100', bg: '#FFF3E0' },
-  { name: 'ParaGo', photo: '/images/ParaGo.jpg', color: '#1565C0', bg: '#E8EAF6' },
+  {
+    name: 'Atong Ani',
+    photo: '/images/incubatees/AtongAni.png',
+    color: '#00695C',
+    bg: '#E0F7FA',
+  },
+  {
+    name: 'Farm2Home',
+    photo: '/images/incubatees/Farm2Home.png',
+    color: '#E65100',
+    bg: '#FFF3E0',
+  },
+  {
+    name: 'Naviport',
+    photo: '/images/incubatees/NaviPort.png',
+    color: '#1565C0',
+    bg: '#E8EAF6',
+  },
 ])
 
 // ── Leadership data ───────────────────────────────────────────────────────────
