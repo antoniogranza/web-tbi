@@ -113,7 +113,7 @@
         <v-row no-gutters class="banner-row">
           <!-- Left: Text -->
           <v-col cols="12" md="6" class="vision-content d-flex align-center">
-            <div class="banner-text-inner px-8 px-sm-12 px-md-16 py-10 py-md-0">
+            <div class="banner-text-inner px-8 px-sm-10 px-md-12 py-10 py-md-0">
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Vision</h2>
               <p class="banner-body">
@@ -171,7 +171,7 @@
         <v-row no-gutters class="banner-row">
           <!-- Left: Text -->
           <v-col cols="12" md="6" class="mission-content d-flex align-center">
-            <div class="banner-text-inner px-8 px-sm-12 px-md-16 py-10 py-md-0">
+            <div class="banner-text-inner px-8 px-sm-10 px-md-12 py-10 py-md-0">
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Mission</h2>
               <p class="banner-body">
@@ -204,26 +204,31 @@
           </h2>
           <p class="section-subtitle text-center mb-10">Our milestones for 7 Years of Operations</p>
 
-          <v-row>
+          <v-row justify="center">
             <v-col v-for="company in incubatees" :key="company.name" cols="6" sm="4" md="3">
-              <v-card rounded="xl" elevation="2" class="incubatee-card" hover>
-                <div
-                  class="incubatee-logo d-flex align-center justify-center"
-                  :style="{ background: company.bg }"
-                >
-                  <v-img :src="company.photo" height="280" cover class="incubatee-img" />
+              <!--
+                Clickable card — navigates to company route on click.
+                White background top (logo area) + blue label bar revealed on hover.
+              -->
+              <div
+                class="incubatee-card"
+                @click="$router.push(company.route)"
+                @mouseenter="company.hovered = true"
+                @mouseleave="company.hovered = false"
+              >
+                <!-- White logo area -->
+                <div class="incubatee-logo-area">
+                  <v-img :src="company.photo" height="150" contain class="incubatee-img" />
                 </div>
-                <v-btn
-                  block
-                  color="primary"
-                  variant="flat"
-                  rounded="0"
-                  class="incubatee-btn"
-                  size="small"
+
+                <!-- Blue label bar — slides up on hover -->
+                <div
+                  class="incubatee-label"
+                  :class="{ 'incubatee-label--visible': company.hovered }"
                 >
-                  {{ company.name }}
-                </v-btn>
-              </v-card>
+                  <span class="incubatee-label-text">{{ company.name }}</span>
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -374,50 +379,50 @@ const incubatees = ref([
   {
     name: 'Ascribo AI',
     photo: '/images/incubatees/AscriboAi.png',
-    color: '#558B2F',
-    bg: '#F1F8E9',
+    route: '/incubatees/ascribo-ai',
+    hovered: false,
   },
   {
     name: 'BizNest',
     photo: '/images/incubatees/BizNest.jpg',
-    color: '#2E7D32',
-    bg: '#E8F5E9',
+    route: '/incubatees/biznest',
+    hovered: false,
   },
   {
     name: 'Care Guardian',
     photo: '/images/incubatees/CareGuardian.png',
-    color: '#1565C0',
-    bg: '#E3F2FD',
+    route: '/incubatees/care-guardian',
+    hovered: false,
   },
   {
     name: 'Vision Drive',
     photo: '/images/incubatees/VisionDrive.png',
-    color: '#4527A0',
-    bg: '#EDE7F6',
+    route: '/incubatees/vision-drive',
+    hovered: false,
   },
   {
     name: 'Sinawali Showdown',
     photo: '/images/incubatees/Sinawali.png',
-    color: '#AD1457',
-    bg: '#FCE4EC',
+    route: '/incubatees/sinawali-showdown',
+    hovered: false,
   },
   {
-    name: 'Atong Ani',
+    name: 'AtongAni',
     photo: '/images/incubatees/AtongAni.png',
-    color: '#00695C',
-    bg: '#E0F7FA',
+    route: '/incubatees/atongani',
+    hovered: false,
   },
   {
     name: 'Farm2Home',
     photo: '/images/incubatees/Farm2Home.png',
-    color: '#E65100',
-    bg: '#FFF3E0',
+    route: '/incubatees/farm2home',
+    hovered: false,
   },
   {
-    name: 'Naviport',
+    name: 'NaviPort',
     photo: '/images/incubatees/NaviPort.png',
-    color: '#1565C0',
-    bg: '#E8EAF6',
+    route: '/incubatees/naviport',
+    hovered: false,
   },
 ])
 
@@ -693,22 +698,82 @@ const leaders = ref([
 .incubatees-section {
   background: #f5f7fb;
 }
+
+/*
+  Card wrapper — plain div (not v-card) so we control everything.
+  White background, rounded corners, shadow, pointer cursor for clickability.
+  position:relative so the label bar can be absolutely positioned at the bottom.
+  height: 200px kept as requested — logo area fills top, label slides up from bottom.
+*/
 .incubatee-card {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: #ffffff;
+  border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 .incubatee-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(21, 101, 192, 0.18);
 }
-.incubatee-logo {
-  height: 100px;
-  border-radius: 16px 16px 0 0;
+
+/* White logo area — takes the full card space above the label */
+.incubatee-logo-area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 16px;
 }
-.incubatee-btn {
-  border-radius: 0 !important;
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.3px !important;
+
+/* Logo image — contain so it never crops, stays fully visible */
+.incubatee-img {
+  display: block;
+  width: 100%;
+}
+
+/*
+  Blue label bar — sits at the bottom of the card.
+  Hidden by default (translateY(100%) pushes it below the card).
+  On hover (.incubatee-label--visible) it slides up into view.
+  Height matches the screenshot: ~48px solid primary blue.
+*/
+.incubatee-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: #1565c0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  transform: translateY(100%); /* hidden below card by default */
+  transition: transform 0.3s ease;
+}
+.incubatee-label--visible {
+  transform: translateY(0); /* slides up into view on hover */
+}
+
+.incubatee-label-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.3px;
+  text-align: center;
 }
 
 /* ── Leadership ────────────────────────────────────────────────────────────────── */

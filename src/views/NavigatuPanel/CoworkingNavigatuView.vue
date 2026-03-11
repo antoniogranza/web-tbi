@@ -266,21 +266,21 @@ const testimonials = ref([
       'Working at Navigatu TBI provides a warm and inspiring atmosphere, enhanced by the open-space concept design, which truly elevates our productivity and creativity.',
     name: 'Riah',
     role: 'Director, TBI',
-    photo: '/images/TestimonialA.jpg',
+    photo: '/images/testimonials/TestimonialA.jpg',
   },
   {
     quote:
       'Being part of Navigatú has transformed how I see entrepreneurship. The mentorship, the community, and the facilities here are second to none in the region.',
     name: 'Marco',
     role: 'Program Manager, TBI',
-    photo: '/images/TestimonialB.png',
+    photo: '/images/testimonials/TestimonialB.png',
   },
   {
     quote:
       'The energy inside iTecH is contagious. Every day I walk in, I am reminded of the mission we share — to cultivate the next generation of Filipino innovators.',
     name: 'Carla',
     role: 'Innovation Lead, TBI',
-    photo: '/images/TestimonialC.jpg',
+    photo: '/images/testimonials/TestimonialC.jpg',
   },
 ])
 </script>
