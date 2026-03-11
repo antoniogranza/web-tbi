@@ -73,7 +73,7 @@
                 <!-- Main large image -->
                 <div class="hero-collage-main">
                   <v-img
-                    src="/images/CollageImg1.jpg"
+                    src="/images/collage/CollageImg1.jpg"
                     height="260"
                     cover
                     rounded="lg"
@@ -84,14 +84,14 @@
                 <!-- Two stacked small images -->
                 <div class="hero-collage-grid">
                   <v-img
-                    src="/images/CollageImg2.JPG"
+                    src="/images/collage/CollageImg2.JPG"
                     height="125"
                     cover
                     rounded="lg"
                     class="collage-sm-img"
                   />
                   <v-img
-                    src="/images/CollageImg3.JPG"
+                    src="/images/collage/CollageImg3.JPG"
                     height="125"
                     cover
                     rounded="lg"
@@ -233,28 +233,28 @@ const facilities = ref([
     name: 'Co-Working Space',
     desc: 'A vibrant open-floor workspace designed to foster collaboration and creativity among startup teams and entrepreneurs.',
     icon: 'mdi-laptop',
-    photo: '/images/imga.JPG',
+    photo: '/images/facilities/FacilityA.JPG',
     hovered: false,
   },
   {
     name: 'Lounge & Breakout Area',
     desc: 'Comfortable seating and relaxed zones where teams can brainstorm, hold informal discussions, and recharge.',
     icon: 'mdi-sofa-outline',
-    photo: '/images/FacilityB.jpg',
+    photo: '/images/facilities/FacilityB.jpg',
     hovered: false,
   },
   {
     name: 'Open Innovation Lab',
     desc: 'A fully-equipped lab for prototyping and development, complete with workstations, tools, and ping-pong for breaks.',
     icon: 'mdi-test-tube',
-    photo: '/images/FacilityC.jpg',
+    photo: '/images/facilities/FacilityC.jpg',
     hovered: false,
   },
   {
     name: 'Inspiration Wall — iTecH',
     desc: 'The iconic "Embark on a Voyage of Innovation" mural — the heart and soul of the Navigatú spirit.',
     icon: 'mdi-wall',
-    photo: '/images/FacilityD.png',
+    photo: '/images/facilities/FacilityD.png',
     hovered: false,
   },
 ])

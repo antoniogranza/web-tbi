@@ -50,7 +50,7 @@
             <v-col cols="12" md="5">
               <v-card rounded="xl" elevation="0" class="about-image-card overflow-hidden">
                 <div class="about-image-bg d-flex align-center justify-center">
-                  <v-img src="/images/imga.JPG" height="280" cover rounded="xl" />
+                  <v-img src="/images/AboutImg.JPG" height="280" cover rounded="xl" />
                   <div class="about-image-overlay">
                     <v-chip color="white" variant="elevated" size="small" class="font-weight-bold">
                       <v-icon start icon="mdi-lightning-bolt" size="14" />
