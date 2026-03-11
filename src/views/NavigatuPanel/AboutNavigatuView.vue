@@ -211,7 +211,7 @@
                   class="incubatee-logo d-flex align-center justify-center"
                   :style="{ background: company.bg }"
                 >
-                  <v-icon :icon="company.icon" size="40" :color="company.color" />
+                  <v-img :src="company.photo" height="280" cover class="facility-base-img" />
                 </div>
                 <v-btn
                   block
@@ -371,14 +371,19 @@ const achievements = ref([
 
 // ── Incubatees data ───────────────────────────────────────────────────────────
 const incubatees = ref([
-  { name: 'Ascribo AI', icon: 'mdi-sprout', color: '#558B2F', bg: '#F1F8E9' },
-  { name: 'BizNest', icon: 'mdi-leaf', color: '#2E7D32', bg: '#E8F5E9' },
-  { name: 'Care Guardian', icon: 'mdi-heart-pulse', color: '#1565C0', bg: '#E3F2FD' },
-  { name: 'Vision Drive', icon: 'mdi-eye-outline', color: '#4527A0', bg: '#EDE7F6' },
-  { name: 'Sinawali Showdown', icon: 'mdi-paw', color: '#AD1457', bg: '#FCE4EC' },
-  { name: 'ScrapCycle', icon: 'mdi-recycle', color: '#00695C', bg: '#E0F7FA' },
-  { name: 'Snap Scout', icon: 'mdi-camera-outline', color: '#E65100', bg: '#FFF3E0' },
-  { name: 'ParaGo', icon: 'mdi-atom', color: '#1565C0', bg: '#E8EAF6' },
+  { name: 'Ascribo AI', photo: '/images/AscriboAi.png', color: '#558B2F', bg: '#F1F8E9' },
+  { name: 'BizNest', photo: '/images/BizNest.jpg', color: '#2E7D32', bg: '#E8F5E9' },
+  { name: 'Care Guardian', photo: '/images/Care_Guardian.jpg', color: '#1565C0', bg: '#E3F2FD' },
+  { name: 'Vision Drive', photo: '/images/Vision_Drive.jpg', color: '#4527A0', bg: '#EDE7F6' },
+  {
+    name: 'Sinawali Showdown',
+    photo: '/images/Sinawali_Showdown.jpg',
+    color: '#AD1457',
+    bg: '#FCE4EC',
+  },
+  { name: 'ScrapCycle', photo: '/images/ScrapCycle.jpg', color: '#00695C', bg: '#E0F7FA' },
+  { name: 'Snap Scout', photo: '/images/Snap_Scout.jpg', color: '#E65100', bg: '#FFF3E0' },
+  { name: 'ParaGo', photo: '/images/ParaGo.jpg', color: '#1565C0', bg: '#E8EAF6' },
 ])
 
 // ── Leadership data ───────────────────────────────────────────────────────────
