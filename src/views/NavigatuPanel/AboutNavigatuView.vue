@@ -246,9 +246,7 @@
             <v-col v-for="leader in leaders" :key="leader.name" cols="12" sm="6" md="3">
               <v-card rounded="xl" elevation="1" class="leader-card" hover>
                 <div class="leader-photo d-flex align-center justify-center">
-                  <v-avatar size="72" color="blue-grey-lighten-3">
-                    <v-icon icon="mdi-account" size="40" color="blue-grey" />
-                  </v-avatar>
+                  <v-img :src="leader.photo" height="320" cover class="leader-img" />
                 </div>
                 <v-card-item class="text-center pb-4">
                   <v-card-title class="leader-name">{{ leader.name }}</v-card-title>
@@ -428,7 +426,11 @@ const incubatees = ref([
 
 // ── Leadership data ───────────────────────────────────────────────────────────
 const leaders = ref([
-  { name: 'Dr. Maria Santos', role: 'TBI Director' },
+  {
+    name: 'Dr. Riah E. Encarnacion',
+    photo: '/images/leaders/TbiDirector.jpg',
+    role: 'TBI Director',
+  },
   { name: 'Engr. Jose Reyes', role: 'Program Manager' },
   { name: 'Ms. Ana Cruz', role: 'Operations Lead' },
   { name: 'Mr. Ben Lim', role: 'Tech Advisor' },
