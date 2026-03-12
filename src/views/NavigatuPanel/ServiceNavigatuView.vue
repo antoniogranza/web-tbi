@@ -225,30 +225,45 @@
           </p>
 
           <v-row justify="center">
-            <v-col v-for="story in successStories" :key="story.name" cols="12" md="10" class="mb-4">
-              <v-card class="story-card pa-0" rounded="xl" flat>
-                <v-row no-gutters align="center">
-                  <v-col cols="12" sm="3">
-                    <div
-                      class="story-logo d-flex align-center justify-center"
-                      :style="{ background: story.logoBg }"
-                    >
-                      <v-icon :icon="story.icon" size="48" :color="story.iconColor" />
+            <v-col v-for="story in successStories" :key="story.name" cols="12" md="10" class="mb-6">
+              <v-card class="story-card pa-0" rounded="xl" elevation="0">
+                <v-row no-gutters align="stretch">
+                  <!-- Left: logo image in a soft white box -->
+                  <v-col cols="12" sm="3" class="d-flex align-center justify-center">
+                    <div class="story-logo-box">
+                      <v-img :src="story.photo" height="160" contain class="story-logo-img" />
                     </div>
                   </v-col>
-                  <v-col cols="12" sm="9" class="pa-6">
-                    <h3 class="story-name mb-2">{{ story.name }}</h3>
-                    <p class="story-desc mb-4">{{ story.desc }}</p>
-                    <div class="d-flex flex-wrap gap-2">
-                      <v-chip size="small" color="primary" variant="tonal">
-                        Industry: <strong class="ml-1">{{ story.industry }}</strong>
-                      </v-chip>
-                      <v-chip size="small" color="success" variant="tonal">
-                        Funding Raised: <strong class="ml-1">{{ story.funding }}</strong>
-                      </v-chip>
-                      <v-chip size="small" color="secondary" variant="tonal">
-                        Year: <strong class="ml-1">{{ story.year }}</strong>
-                      </v-chip>
+
+                  <!-- Right: name, desc, metadata chips -->
+                  <v-col cols="12" sm="9">
+                    <div class="story-content pa-7">
+                      <h3 class="story-name mb-3">{{ story.name }}</h3>
+                      <p class="story-desc mb-6">{{ story.desc }}</p>
+
+                      <!-- Metadata row — each chip now has a leading icon -->
+                      <div class="d-flex flex-wrap story-meta-row">
+                        <div class="story-meta-item mr-6">
+                          <v-icon icon="mdi-tag-outline" size="15" color="#1565c0" class="mr-1" />
+                          <span class="story-meta-label">Industry:</span>
+                          <span class="story-meta-value">{{ story.industry }}</span>
+                        </div>
+                        <div class="story-meta-item mr-6">
+                          <v-icon icon="mdi-cash-multiple" size="15" color="#2e7d32" class="mr-1" />
+                          <span class="story-meta-label">Funding Raised:</span>
+                          <span class="story-meta-value">{{ story.funding }}</span>
+                        </div>
+                        <div class="story-meta-item">
+                          <v-icon
+                            icon="mdi-calendar-outline"
+                            size="15"
+                            color="#e65100"
+                            class="mr-1"
+                          />
+                          <span class="story-meta-label">Year:</span>
+                          <span class="story-meta-value">{{ story.year }}</span>
+                        </div>
+                      </div>
                     </div>
                   </v-col>
                 </v-row>
@@ -256,9 +271,17 @@
             </v-col>
           </v-row>
 
-          <v-row justify="end" class="mt-4">
+          <!-- More button — routes to /success-stories -->
+          <v-row justify="end" class="mt-2">
             <v-col cols="12" md="10" class="text-right">
-              <v-btn variant="outlined" color="primary" rounded="lg" append-icon="mdi-arrow-right">
+              <v-btn
+                variant="outlined"
+                color="primary"
+                rounded="lg"
+                append-icon="mdi-arrow-right"
+                class="more-btn"
+                @click="$router.push('/success-stories')"
+              >
                 More
               </v-btn>
             </v-col>
@@ -358,21 +381,17 @@ const successStories = ref([
     name: 'Ascribo AI',
     desc: 'Ascribo.AI is a context-aware AI language translation platform that delivers accurate, nuanced translations; solving the problem of inaccurate language translations. Those suffering from inaccurate translations oftentimes use services that do not guarantee quality or pay a hefty price of hiring a professional, since most critical fields such as law, medicine, and marketing require accurate translations to avoid chaos.',
     industry: 'Artificial Intelligence',
-    funding: '₱2M',
-    year: '2023',
-    icon: 'mdi-translate',
-    iconColor: '#F9A825',
-    logoBg: '#FFFDE7',
+    funding: '₱4.2M',
+    year: '2025',
+    photo: '/images/incubatees/AscriboAi.png',
   },
   {
     name: 'BizNest',
     desc: 'BizNest is a smart business management platform built for micro and small enterprises in the Philippines. It simplifies operations by integrating inventory management, point-of-sale, financial tracking, and customer relationship tools in one seamless digital workspace.',
-    industry: 'Business Technology',
-    funding: '₱1.5M',
-    year: '2022',
-    icon: 'mdi-store-outline',
-    iconColor: '#1565C0',
-    logoBg: '#E3F2FD',
+    industry: 'Artificial Intelligence',
+    funding: '₱4.2M',
+    year: '2025',
+    photo: '/images/incubatees/BizNest.jpg',
   },
 ])
 </script>
@@ -608,29 +627,100 @@ const successStories = ref([
   background: #ffffff;
 }
 
+/*
+  Card: light grey background matching the screenshot's soft card look.
+  No hard border — relies on background contrast + shadow on hover.
+*/
 .story-card {
-  border: 1px solid #e8eaf0;
-  transition: box-shadow 0.2s ease;
+  background: #f5f6f8;
+  transition:
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
 }
 .story-card:hover {
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.09) !important;
 }
-.story-logo {
+
+/*
+  Logo box — white square, centered, with padding so the image never
+  bleeds to the edges. Matches the screenshot's white logo panel on the left.
+*/
+.story-logo-box {
+  width: 100%;
   height: 100%;
-  min-height: 160px;
+  min-height: 200px;
+  background: #ffffff;
   border-radius: 16px 0 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
+
+/* Logo image — contain so it never crops */
+.story-logo-img {
+  display: block;
+  width: 100%;
+}
+
+/* Content area — padding handled inline via pa-7 class */
+.story-content {
+  height: 100%;
+}
+
 .story-name {
   font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #1a1a1a;
 }
 .story-desc {
   font-size: 0.84rem;
   color: #666;
-  line-height: 1.75;
+  line-height: 1.8;
   margin: 0;
+}
+
+/*
+  Metadata row — plain inline text with leading colored icons.
+  Matches screenshot which uses simple "Industry: X  Funding: Y  Year: Z" inline.
+*/
+.story-meta-row {
+  align-items: center;
+  gap: 0;
+}
+.story-meta-item {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #888;
+}
+.story-meta-label {
+  margin-right: 4px;
+}
+.story-meta-value {
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* More button — same outlined style, slightly more padding */
+.more-btn {
+  text-transform: none !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.2px !important;
+}
+
+/* Mobile: stack logo on top */
+@media (max-width: 599px) {
+  .story-logo-box {
+    border-radius: 16px 16px 0 0;
+    min-height: 160px;
+    padding: 20px;
+  }
+  .story-meta-item {
+    margin-bottom: 4px;
+  }
 }
 
 /* ── FOOTER ──────────────────────────────────────────────────────────────────── */
