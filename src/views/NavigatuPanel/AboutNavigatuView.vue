@@ -527,10 +527,10 @@ const leaders = ref([
 
 /* ── Section common ──────────────────────────────────────────────────────────── */
 .section-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
-  color: #1a1a1a;
+  font-weight: 900;
+  color: #5f5f5f;
   margin-bottom: 4px;
 }
 .italic-accent {
