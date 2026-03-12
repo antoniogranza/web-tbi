@@ -334,10 +334,10 @@ const testimonials = ref([
 }
 
 .hero-eyebrow {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 800;
-  color: #1a1a1a;
+  font-weight: 700;
+  color: #5f5f5f;
   line-height: 1.2;
   margin: 0;
 }
