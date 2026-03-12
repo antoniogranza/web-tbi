@@ -260,7 +260,7 @@
     </v-main>
 
     <!-- ===================== FOOTER ===================== -->
-    <v-footer color="primary-darken-2" class="pa-0">
+    <v-footer color="grey-darken-4" class="pa-0">
       <v-container class="py-8 text-center">
         <div class="footer-logo mb-2">NAVIGATÚ</div>
         <p class="footer-tagline">Technology Business Incubator</p>
