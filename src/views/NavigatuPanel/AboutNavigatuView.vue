@@ -110,7 +110,7 @@
       <v-container fluid class="vision-banner pa-0">
         <v-row no-gutters class="banner-row">
           <!-- Left: Text -->
-          <v-col cols="12" md="6" class="vision-content d-flex align-center">
+          <v-col cols="12" md="6" class="vision-content d-flex align-center pl-lg-16">
             <div class="banner-text-inner px-8 px-sm-10 px-md-12 py-10 py-md-0">
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Vision</h2>
@@ -171,7 +171,7 @@
       <v-container fluid class="mission-banner pa-0">
         <v-row no-gutters class="banner-row">
           <!-- Left: Text -->
-          <v-col cols="12" md="6" class="mission-content d-flex align-center">
+          <v-col cols="12" md="6" class="mission-content d-flex align-center pl-lg-16">
             <div class="banner-text-inner px-8 px-sm-10 px-md-12 py-10 py-md-0">
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Mission</h2>
