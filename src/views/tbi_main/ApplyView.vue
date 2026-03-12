@@ -76,27 +76,7 @@ const cta = {
             </p>
           </v-col>
 
-          <v-col cols="12" md="4" offset-md="1">
-            <v-card color="rgba(255,255,255,0.05)" rounded="xl" elevation="0"
-              style="border:1px solid rgba(255,255,255,0.08);">
-              <v-card-text class="pa-7">
-                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:20px;">
-                  Application Tracks
-                </div>
-                <div v-for="path in applicationPaths" :key="path.id"
-                  class="d-flex align-center ga-4 py-3"
-                  style="border-bottom:1px solid rgba(255,255,255,0.07);">
-                  <v-avatar :color="path.color" variant="tonal" rounded="lg" size="36">
-                    <v-icon :icon="path.icon" size="17" :color="path.color" />
-                  </v-avatar>
-                  <div>
-                    <div style="font-size:13px;font-weight:600;color:#fff;">{{ path.label }}</div>
-                    <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px;">{{ path.sub }}</div>
-                  </div>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
+          
         </v-row>
       </v-container>
     </v-sheet>

@@ -21,39 +21,12 @@
           </p>
         </v-col>
 
-        <v-col cols="12" md="4" offset-md="1">
-          <v-card color="rgba(255,255,255,0.05)" rounded="xl" elevation="0"
-            style="border:1px solid rgba(255,255,255,0.08);">
-            <v-card-text class="pa-7">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:20px;">
-                Program Categories
-              </div>
-              <div
-                v-for="p in programCategories" :key="p.label"
-                class="d-flex align-center ga-4 py-3"
-                style="border-bottom:1px solid rgba(255,255,255,0.07);"
-              >
-                <v-avatar :color="p.color" variant="tonal" rounded="lg" size="36">
-                  <v-icon :icon="p.icon" size="17" :color="p.color" />
-                </v-avatar>
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:#fff;">{{ p.label }}</div>
-                  <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px;">{{ p.sub }}</div>
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
+     
       </v-row>
     </v-container>
   </v-sheet>
 </template>
 
 <script setup>
-const programCategories = [
-  { icon: 'mdi-school-outline',          color: '#48A111', label: 'Startup Bootcamps',    sub: 'Entrepreneurship training programs'        },
-  { icon: 'mdi-lightbulb-outline',       color: '#25671E', label: 'Technology Showcases', sub: 'Research commercialization events'          },
-  { icon: 'mdi-handshake-outline',       color: '#48A111', label: 'Industry Forums',      sub: 'Collaboration with government & industry'   },
-  { icon: 'mdi-rocket-launch-outline',   color: '#25671E', label: 'Startup Recruitment',  sub: 'Incubation intake activities'               },
-]
+
 </script>

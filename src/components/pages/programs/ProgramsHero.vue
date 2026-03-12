@@ -18,44 +18,12 @@
           </p>
         </v-col>
 
-        <v-col cols="12" md="4" offset-md="1">
-          <v-card color="rgba(255,255,255,0.05)" rounded="xl" elevation="0" style="border:1px solid rgba(255,255,255,0.08);">
-            <v-card-text class="pa-6">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;">
-                Jump to
-              </div>
-              <div
-                v-for="nav in pageNav"
-                :key="nav.label"
-                class="d-flex align-center ga-3 py-3"
-                style="border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;"
-                @click="scrollTo(nav.id)"
-              >
-                <v-avatar :color="nav.color" variant="tonal" size="32" rounded="lg">
-                  <v-icon :icon="nav.icon" size="16" :color="nav.color" />
-                </v-avatar>
-                <span style="font-size:13px;color:rgba(255,255,255,0.7);font-weight:500;">{{ nav.label }}</span>
-                <v-spacer />
-                <v-icon size="14" color="rgba(255,255,255,0.3)">mdi-arrow-down</v-icon>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
+   
       </v-row>
     </v-container>
   </v-sheet>
 </template>
 
 <script setup>
-const pageNav = [
-  { label: 'Institutional Incubation', id: 'institutional', icon: 'mdi-school-outline',           color: '#25671E' },
-  { label: 'Regional Incubation',      id: 'regional',      icon: 'mdi-map-marker-radius-outline', color: '#48A111' },
-  { label: 'Spin-Off Track',           id: 'spinoff',       icon: 'mdi-source-branch',             color: '#e09000' },
-  { label: 'Capacity Building',        id: 'capacity',      icon: 'mdi-lightning-bolt-outline',    color: '#48A111' },
-]
 
-function scrollTo(id) {
-  const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
 </script>

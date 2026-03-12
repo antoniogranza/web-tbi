@@ -22,20 +22,30 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col v-for="facility in facilities" :key="facility.title" cols="12" sm="6" md="3">
-          <v-card color="white" rounded="xl" elevation="0" border style="border-color:#E8E0D8;height:100%;overflow:hidden;">
+      <!-- Cards row — align stretch so all cols are equal height -->
+      <v-row align="stretch">
+        <v-col
+          v-for="facility in facilities"
+          :key="facility.title"
+          cols="12" sm="6" md="4"
+          class="d-flex"
+        >
+          <v-card
+            color="white"
+            rounded="xl"
+            elevation="0"
+            border
+            style="border-color:#E8E0D8;width:100%;display:flex;flex-direction:column;overflow:hidden;"
+          >
 
             <!-- ── Photo slot ── -->
-            <div style="position:relative;aspect-ratio:4/3;overflow:hidden;">
-              <!-- Real photo -->
+            <div style="position:relative;aspect-ratio:16/9;overflow:hidden;flex-shrink:0;">
               <img
                 v-if="facility.photoUrl"
                 :src="facility.photoUrl"
                 :alt="facility.title"
                 style="width:100%;height:100%;object-fit:cover;display:block;"
               />
-              <!-- Placeholder -->
               <div
                 v-else
                 class="d-flex flex-column align-center justify-center"
@@ -48,15 +58,18 @@
                   Facility Photo
                 </span>
               </div>
-              <!-- Bottom color strip -->
               <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:#25671E;" />
             </div>
 
-            <v-card-text class="pa-7">
-              <div style="font-family:'Instrument Serif',serif;font-size:1.125rem;color:#111810;margin-bottom:8px;">
+            <!-- Card body — flex:1 so it fills remaining height -->
+            <v-card-text
+              class="pa-7 d-flex flex-column"
+              style="flex:1;"
+            >
+              <div style="font-family:'Instrument Serif',serif;font-size:1.2rem;color:#111810;margin-bottom:8px;">
                 {{ facility.title }}
               </div>
-              <p style="font-size:13px;color:#6B7B6A;line-height:1.65;margin-bottom:16px;">
+              <p style="font-size:13px;color:#6B7B6A;line-height:1.65;margin-bottom:16px;flex:1;">
                 {{ facility.desc }}
               </p>
               <v-divider class="mb-3" />
@@ -106,26 +119,23 @@
 <script setup>
 const facilities = [
   {
-    icon: 'mdi-desk', title: 'Co-working Spaces',
-    photoUrl: '', // → drop in e.g. '/src/assets/facilities/coworking.jpg'
+    icon: 'mdi-desk',
+    title: 'Co-working Spaces',
+    photoUrl: '',
     desc: 'Open and dedicated workstations designed for focused productivity and team collaboration.',
     details: ['Open hot-desking area', 'Private team bays', 'High-speed internet', 'Printing & peripherals'],
   },
   {
-    icon: 'mdi-wrench-outline', title: 'Prototyping Labs',
-    photoUrl: '', // → drop in e.g. '/src/assets/facilities/lab.jpg'
-    desc: 'Equipped fabrication spaces for building and testing hardware, electronics, and physical product prototypes.',
-    details: ['3D printing & fabrication', 'Electronics workbench', 'PCB assembly tools', 'Mechanical testing equipment'],
-  },
-  {
-    icon: 'mdi-presentation', title: 'Meeting Rooms',
-    photoUrl: '', // → drop in e.g. '/src/assets/facilities/meeting.jpg'
+    icon: 'mdi-presentation',
+    title: 'Meeting Rooms',
+    photoUrl: '',
     desc: 'Professional presentation and collaboration suites for client meetings, investor pitches, and workshops.',
     details: ['Boardroom (12-seat)', 'Focus rooms (4-seat)', 'Video conferencing setup', 'Projector & display screens'],
   },
   {
-    icon: 'mdi-microscope', title: 'Equipment Access',
-    photoUrl: '', // → drop in e.g. '/src/assets/facilities/equipment.jpg'
+    icon: 'mdi-microscope',
+    title: 'Equipment Access',
+    photoUrl: '',
     desc: 'Shared access to specialized research and development equipment through university and partner facilities.',
     details: ['Analytical instruments', 'Lab equipment (via CSU)', 'IoT development kits', 'Software licenses & cloud credits'],
   },

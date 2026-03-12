@@ -20,40 +20,12 @@
           </p>
         </v-col>
 
-        <v-col cols="12" md="4" offset-md="1">
-          <v-card color="rgba(255,255,255,0.05)" rounded="xl" elevation="0"
-            style="border:1px solid rgba(255,255,255,0.08);">
-            <v-card-text class="pa-7">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:20px;">
-                Recognition &amp; Mandates
-              </div>
-              <div
-                v-for="rec in recognitions" :key="rec.label"
-                class="d-flex align-center ga-4 py-3"
-                style="border-bottom:1px solid rgba(255,255,255,0.07);"
-              >
-                <v-avatar :color="rec.color" variant="tonal" rounded="lg" size="36">
-                  <v-icon :icon="rec.icon" size="17" :color="rec.color" />
-                </v-avatar>
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:#fff;">{{ rec.label }}</div>
-                  <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px;">{{ rec.sub }}</div>
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
+   
       </v-row>
     </v-container>
   </v-sheet>
 </template>
 
 <script setup>
-const recognitions = [
-  { icon: 'mdi-trophy-outline',      color: '#F2B50B', label: 'IPOPHIL Platinum Award',    sub: '4× consecutive (2020–2023)'                  },
-  { icon: 'mdi-domain',              color: '#25671E', label: 'DOST-PCIEERD Accredited',    sub: 'NAVIGATU ICT/Engineering TBI'                },
-  { icon: 'mdi-sprout-outline',      color: '#48A111', label: 'DOST-PCAARRD Accredited',    sub: 'TARA Agri-Aqua ATBI'                         },
-  { icon: 'mdi-gavel',               color: '#25671E', label: 'BOR Res. No. 85-16, S.2024', sub: 'Official CSU cost center under OVPRDIE'      },
-  { icon: 'mdi-shield-lock-outline', color: '#48A111', label: 'ITSO Network Member',        sub: 'Since 2012 — IP culture & commercialization' },
-]
+
 </script>

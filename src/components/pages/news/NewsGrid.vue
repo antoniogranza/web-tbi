@@ -3,14 +3,9 @@
     <v-container fluid class="pa-10 pa-md-16">
 
       <template v-if="loading">
-        <v-row class="mb-12">
-          <v-col cols="12"><v-skeleton-loader type="image, article" rounded="xl" /></v-col>
-        </v-row>
-        <v-row>
-          <v-col v-for="n in 5" :key="n" cols="12" sm="6" md="4">
-            <v-skeleton-loader type="card" rounded="xl" />
-          </v-col>
-        </v-row>
+        <v-skeleton-loader type="article" rounded="xl" class="mb-4" />
+        <v-skeleton-loader type="article" rounded="xl" class="mb-4" />
+        <v-skeleton-loader type="article" rounded="xl" />
       </template>
 
       <template v-else>
@@ -23,20 +18,16 @@
           </div>
 
           <v-card color="white" rounded="xl" elevation="0" border
-            style="border-color:#E8E0D8;margin-bottom:64px;cursor:pointer;" hover>
-            <v-row no-gutters style="min-height:400px;">
-
-              <!-- Cover -->
+            style="border-color:#E8E0D8;margin-bottom:56px;cursor:pointer;" hover>
+            <v-row no-gutters style="min-height:380px;">
               <v-col cols="12" md="6" order="2" order-md="1">
                 <div v-if="featured.cover_url"
-                  :style="`background:url('${featured.cover_url}') center/cover;height:100%;min-height:300px;border-radius:12px 0 0 12px;`" />
+                  :style="`background:url('${featured.cover_url}') center/cover;height:100%;min-height:280px;border-radius:12px 0 0 12px;`" />
                 <div v-else class="d-flex align-center justify-center"
-                  style="height:100%;min-height:300px;background:#F0EAE0;border-radius:12px 0 0 12px;">
+                  style="height:100%;min-height:280px;background:#F0EAE0;border-radius:12px 0 0 12px;">
                   <v-icon icon="mdi-newspaper-variant-outline" size="64" color="#C8C0B8" />
                 </div>
               </v-col>
-
-              <!-- Content -->
               <v-col cols="12" md="6" order="1" order-md="2">
                 <div class="pa-8 pa-md-10 d-flex flex-column" style="height:100%;">
                   <div class="d-flex align-center ga-3 mb-5">
@@ -48,16 +39,13 @@
                       {{ formatDate(featured.published_at) }}
                     </span>
                   </div>
-
                   <div style="font-family:'Instrument Serif',serif;font-size:clamp(1.5rem,2.2vw,2rem);color:#111810;line-height:1.18;letter-spacing:-0.025em;margin-bottom:16px;">
                     {{ featured.title }}
                   </div>
                   <p style="font-size:14px;color:#6B7B6A;line-height:1.78;margin-bottom:auto;">
                     {{ featured.excerpt }}
                   </p>
-
                   <v-divider class="my-6" />
-
                   <div class="d-flex align-center justify-space-between">
                     <div class="d-flex align-center ga-2">
                       <v-icon size="13" color="#48A111">mdi-account-outline</v-icon>
@@ -72,12 +60,11 @@
                   </div>
                 </div>
               </v-col>
-
             </v-row>
           </v-card>
         </template>
 
-        <!-- ══ FILTER TABS ════════════════════════════════════════ -->
+        <!-- ══ SECTION HEADER + FILTER ═══════════════════════════ -->
         <div class="d-flex align-center justify-space-between flex-wrap ga-4 mb-8">
           <div class="d-flex align-center ga-3">
             <v-divider length="22" color="#48A111" thickness="2" />
@@ -100,89 +87,55 @@
           </div>
         </div>
 
-        <!-- ══ NEWS GRID ══════════════════════════════════════════ -->
-        <v-row v-if="filteredArticles.length">
+        <!-- ══ EDITORIAL LIST GRID ════════════════════════════════ -->
+        <div v-if="filteredArticles.length" class="news-list-grid">
+          <div
+            v-for="(article, index) in filteredArticles"
+            :key="article.id"
+            class="news-list-item"
+            @click="$router.push(`/news/${article.id}`)"
+          >
+            <!-- Thumbnail -->
+            <div class="news-thumb" style="position:relative;flex-shrink:0;">
+              <img
+                v-if="article.cover_url"
+                :src="article.cover_url"
+                :alt="article.title"
+                style="width:100%;height:100%;object-fit:cover;display:block;border-radius:8px;"
+              />
+              <div
+                v-else
+                class="d-flex align-center justify-center"
+                style="width:100%;height:100%;background:#EDF5E8;border-radius:8px;"
+              >
+                <v-icon icon="mdi-image-outline" size="24" color="#C8C0B8" />
+              </div>
+              <!-- Number badge -->
+              <div class="num-badge" :style="`background:${categoryColor(article.category)};`">
+                {{ String(index + 1).padStart(2, '0') }}
+              </div>
+            </div>
 
-          <!-- First 2: half-width with cover image -->
-          <v-col v-for="article in filteredArticles.slice(0,2)" :key="article.id" cols="12" md="6">
-            <v-card color="white" rounded="xl" elevation="0" border
-              style="border-color:#E8E0D8;height:100%;cursor:pointer;" hover
-              @click="$router.push(`/news/${article.id}`)">
-              <div v-if="article.cover_url"
-                :style="`background:url('${article.cover_url}') center/cover;height:200px;border-radius:12px 12px 0 0;`" />
-              <div v-else
-                :style="`height:6px;border-radius:12px 12px 0 0;background:${categoryColor(article.category)};opacity:0.7;`" />
-              <v-card-text class="pa-6">
-                <div class="d-flex align-center justify-space-between mb-3">
-                  <v-chip :color="categoryColor(article.category)" variant="tonal" size="x-small"
-                    style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;">
-                    {{ article.category }}
-                  </v-chip>
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#9eaa9c;">
-                    {{ formatDate(article.published_at) }}
-                  </span>
-                </div>
-                <div style="font-family:'Instrument Serif',serif;font-size:1.15rem;color:#111810;line-height:1.3;letter-spacing:-0.02em;margin-bottom:8px;">
-                  {{ article.title }}
-                </div>
-                <p style="font-size:13px;color:#6B7B6A;line-height:1.65;margin-bottom:16px;">
-                  {{ article.excerpt }}
-                </p>
-                <v-divider class="mb-4" />
-                <div class="d-flex align-center justify-space-between">
-                  <div class="d-flex align-center ga-2">
-                    <v-icon size="13" color="#48A111">mdi-account-outline</v-icon>
-                    <span style="font-size:12px;color:#6B7B6A;">{{ article.author }}</span>
-                  </div>
-                  <v-btn variant="text" size="x-small" append-icon="mdi-arrow-right"
-                    :color="categoryColor(article.category)"
-                    style="text-transform:none;font-weight:600;font-size:12px;">
-                    Read
-                  </v-btn>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-
-          <!-- Remaining: third-width, no image -->
-          <v-col v-for="article in filteredArticles.slice(2)" :key="article.id" cols="12" sm="6" md="4">
-            <v-card color="white" rounded="xl" elevation="0" border
-              style="border-color:#E8E0D8;height:100%;cursor:pointer;" hover
-              @click="$router.push(`/news/${article.id}`)">
-              <div :style="`height:4px;border-radius:12px 12px 0 0;background:${categoryColor(article.category)};opacity:0.6;`" />
-              <v-card-text class="pa-6">
-                <div class="d-flex align-center justify-space-between mb-3">
-                  <v-chip :color="categoryColor(article.category)" variant="tonal" size="x-small"
-                    style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;">
-                    {{ article.category }}
-                  </v-chip>
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#9eaa9c;">
-                    {{ formatDate(article.published_at) }}
-                  </span>
-                </div>
-                <div style="font-family:'Instrument Serif',serif;font-size:1rem;color:#111810;line-height:1.3;letter-spacing:-0.02em;margin-bottom:8px;">
-                  {{ article.title }}
-                </div>
-                <p style="font-size:13px;color:#6B7B6A;line-height:1.65;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
-                  {{ article.excerpt }}
-                </p>
-                <v-divider class="mb-4" />
-                <div class="d-flex align-center justify-space-between">
-                  <div class="d-flex align-center ga-2">
-                    <v-icon size="13" color="#48A111">mdi-account-outline</v-icon>
-                    <span style="font-size:12px;color:#6B7B6A;">{{ article.author }}</span>
-                  </div>
-                  <v-btn variant="text" size="x-small" append-icon="mdi-arrow-right"
-                    :color="categoryColor(article.category)"
-                    style="text-transform:none;font-weight:600;font-size:12px;">
-                    Read
-                  </v-btn>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-
-        </v-row>
+            <!-- Text content -->
+            <div class="news-text">
+              <div class="d-flex align-center ga-2 mb-2">
+                <span class="mono-label" style="font-size:9px;color:#9eaa9c;letter-spacing:0.14em;">
+                  {{ article.category }}
+                </span>
+                <span style="font-size:9px;color:#C8C0B8;font-family:'JetBrains Mono',monospace;">·</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#C8C0B8;letter-spacing:0.06em;">
+                  {{ article.author }}
+                </span>
+              </div>
+              <div class="news-title">
+                {{ article.title }}
+              </div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#C8C0B8;margin-top:8px;letter-spacing:0.04em;">
+                {{ formatDate(article.published_at) }}
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Empty state -->
         <div v-else class="text-center py-16">
@@ -210,7 +163,6 @@ const activeTab  = ref('All')
 const loading    = ref(true)
 const articles   = ref([])
 
-// ── Mock data — swap fetchArticles() for real Supabase call later ──
 const MOCK_ARTICLES = [
   {
     id: 1,
@@ -224,7 +176,7 @@ const MOCK_ARTICLES = [
   {
     id: 2,
     title: 'TBI Startup AquaSense Wins National Innovation Challenge',
-    excerpt: 'AquaSense, an IoT-based water quality monitoring startup incubated at CSU TBI, took home the top prize at the DOST National Innovation Challenge held in Pasay City.',
+    excerpt: 'AquaSense, an IoT-based water quality monitoring startup incubated at CSU TBI, took home the top prize at the DOST National Innovation Challenge.',
     category: 'Award',
     author: 'Maria Santos',
     cover_url: '',
@@ -233,7 +185,7 @@ const MOCK_ARTICLES = [
   {
     id: 3,
     title: 'New IP Filing: Biodegradable Packaging from Banana Fiber',
-    excerpt: 'Researchers at CSU in collaboration with TBI-incubated startup GreenWrap have successfully filed a patent for a novel biodegradable packaging material derived from banana fiber.',
+    excerpt: 'Researchers at CSU in collaboration with TBI-incubated startup GreenWrap have successfully filed a patent for a novel biodegradable packaging material.',
     category: 'Research',
     author: 'Dr. Ramon Cruz',
     cover_url: '',
@@ -242,7 +194,7 @@ const MOCK_ARTICLES = [
   {
     id: 4,
     title: 'CSU TBI Opens Applications for Spring 2026 Incubation Cohort',
-    excerpt: 'Applications are now open for the Spring 2026 cohort. Priority sectors include AgriTech, HealthTech, and CleanEnergy. Deadline for submissions is March 31, 2026.',
+    excerpt: 'Applications are now open for the Spring 2026 cohort. Priority sectors include AgriTech, HealthTech, and CleanEnergy.',
     category: 'Announcement',
     author: 'CSU TBI Team',
     cover_url: '',
@@ -251,7 +203,7 @@ const MOCK_ARTICLES = [
   {
     id: 5,
     title: 'Partnership Signed with DTI Region XIII for Startup Commercialization',
-    excerpt: 'CSU TBI and the Department of Trade and Industry Region XIII have formalized a memorandum of agreement to fast-track the commercialization of startups coming out of the incubator.',
+    excerpt: 'CSU TBI and DTI Region XIII have formalized an MOU to fast-track the commercialization of startups.',
     category: 'Press Release',
     author: 'Office of the Director',
     cover_url: '',
@@ -260,7 +212,7 @@ const MOCK_ARTICLES = [
   {
     id: 6,
     title: 'TBI Graduates 3rd Cohort: 8 Startups Advance to Pre-Seed Stage',
-    excerpt: 'The third cohort of CSU TBI officially graduated last November, with 8 out of 10 startups advancing to pre-seed funding discussions with regional angel investors.',
+    excerpt: 'The third cohort of CSU TBI officially graduated, with 8 out of 10 startups advancing to pre-seed funding discussions.',
     category: 'Announcement',
     author: 'CSU TBI Team',
     cover_url: '',
@@ -269,7 +221,7 @@ const MOCK_ARTICLES = [
   {
     id: 7,
     title: 'HealthTrack PH Named Top 10 Health Startup in Southeast Asia',
-    excerpt: 'HealthTrack PH, a CSU TBI alumni startup, was recognized among the Top 10 Health Startups in Southeast Asia by the SEA Health Innovation Index 2025.',
+    excerpt: 'HealthTrack PH, a CSU TBI alumni startup, was recognized among the Top 10 Health Startups in Southeast Asia.',
     category: 'Award',
     author: 'Maria Santos',
     cover_url: '',
@@ -278,7 +230,7 @@ const MOCK_ARTICLES = [
   {
     id: 8,
     title: 'Research Brief: IoT Applications in Mindanao Small-Scale Fisheries',
-    excerpt: 'A new research brief published by CSU TBI documents the impact of IoT-based monitoring tools on productivity and sustainability outcomes for small-scale fishers in Caraga.',
+    excerpt: 'A new research brief documents the impact of IoT-based monitoring tools on small-scale fishers in Caraga.',
     category: 'Research',
     author: 'Dr. Lina Reyes',
     cover_url: '',
@@ -287,7 +239,7 @@ const MOCK_ARTICLES = [
   {
     id: 9,
     title: 'CSU TBI Joins ASEAN Incubator Network',
-    excerpt: 'CSU TBI has been formally admitted to the ASEAN Incubator Network, opening new pathways for regional collaboration, cross-border mentorship, and international funding access.',
+    excerpt: 'CSU TBI has been formally admitted to the ASEAN Incubator Network, opening new pathways for regional collaboration.',
     category: 'Press Release',
     author: 'Office of the Director',
     cover_url: '',
@@ -296,13 +248,7 @@ const MOCK_ARTICLES = [
 ]
 
 async function fetchArticles() {
-  // TODO: Replace with Supabase fetch when ready
-  // const res = await fetch(`${SUPABASE_URL}/rest/v1/news?select=*&order=published_at.desc`, {
-  //   headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` }
-  // })
-  // articles.value = await res.json()
-
-  await new Promise(r => setTimeout(r, 600)) // simulate network delay
+  await new Promise(r => setTimeout(r, 600))
   articles.value = MOCK_ARTICLES
 }
 
@@ -311,25 +257,25 @@ onMounted(async () => {
   loading.value = false
 })
 
-const featured          = computed(() => articles.value[0] ?? null)
-const filteredArticles  = computed(() => {
+const featured         = computed(() => articles.value[0] ?? null)
+const filteredArticles = computed(() => {
   const rest = articles.value.slice(1)
   return activeTab.value === 'All'
     ? rest
     : rest.filter(a => a.category === activeTab.value)
 })
-const countByCategory   = (cat) => articles.value.slice(1).filter(a => a.category === cat).length
+const countByCategory = (cat) => articles.value.slice(1).filter(a => a.category === cat).length
 
 const categoryColor = (cat) => ({
   'Announcement':  '#48A111',
   'Award':         '#F2B50B',
   'Research':      '#25671E',
-  'Press Release': '#48A111',
+  'Press Release': '#3a7ab5',
 }[cat] ?? '#25671E')
 
 const formatDate = (iso) => {
   if (!iso) return ''
-  return new Date(iso).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date(iso).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 </script>
 
@@ -340,5 +286,86 @@ const formatDate = (iso) => {
   letter-spacing: 0.16em;
   color: #48A111;
   text-transform: uppercase;
+}
+
+/* ── 2-column editorial list grid ── */
+.news-list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .news-list-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Each row item ── */
+.news-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid #E8E0D8;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.news-list-item:hover {
+  opacity: 0.78;
+}
+
+/* Add right padding + border to left column items on desktop */
+@media (min-width: 768px) {
+  .news-list-item:nth-child(odd) {
+    padding-right: 32px;
+    border-right: 1px solid #E8E0D8;
+  }
+  .news-list-item:nth-child(even) {
+    padding-left: 32px;
+  }
+}
+
+/* ── Thumbnail ── */
+.news-thumb {
+  width: 96px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Number badge ── */
+.num-badge {
+  position: absolute;
+  bottom: -6px;
+  left: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+/* ── Title ── */
+.news-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.news-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 0.98rem;
+  color: #111810;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
 }
 </style>
