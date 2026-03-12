@@ -4,9 +4,7 @@
     <v-app-bar flat color="white" border="b" height="64">
       <v-container class="d-flex align-center pa-0" fluid>
         <div class="d-flex align-center ml-4 ml-md-8">
-          <v-avatar color="primary" size="40" class="mr-3">
-            <v-icon icon="mdi-compass" color="white" size="22" />
-          </v-avatar>
+          <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
           <div>
             <div class="nav-brand">NAVIGATÚ</div>
             <div class="nav-sub">Technology Business Incubator</div>
