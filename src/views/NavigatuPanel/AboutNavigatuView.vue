@@ -431,8 +431,16 @@ const leaders = ref([
     photo: '/images/leaders/TbiDirector.jpg',
     role: 'TBI Director',
   },
-  { name: 'Engr. Jose Reyes', role: 'Program Manager' },
-  { name: 'Ms. Ana Cruz', role: 'Operations Lead' },
+  {
+    name: 'John Mark B. Correa',
+    photo: '/images/leaders/JohnMarkCorrea.jpg',
+    role: 'TBI Project Head',
+  },
+  {
+    name: 'Mary Pilar J. Barber',
+    photo: '/images/leaders/MaryPilarBarber.jpg',
+    role: 'Community Development Project Head',
+  },
   { name: 'Mr. Ben Lim', role: 'Tech Advisor' },
   { name: 'Dr. Carlos Tan', role: 'Innovation Head' },
   { name: 'Ms. Liza Dela Cruz', role: 'Finance Officer' },
