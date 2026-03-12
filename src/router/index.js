@@ -7,6 +7,7 @@ import LoginView from '@/views/LoginView.vue'
 import AboutNavigatuView from '@/views/NavigatuPanel/AboutNavigatuView.vue'
 import CoworkingNavigatuView from '@/views/NavigatuPanel/CoworkingNavigatuView.vue'
 import ServiceNavigatuView from '@/views/NavigatuPanel/ServiceNavigatuView.vue'
+import IncubateePageView from '@/views/NavigatuPanel/IncubateePageView.vue'
 
 import Home from '@/views/tbi_main/HomeView.vue'
 import About from '@/views/tbi_main/AboutView.vue'
@@ -55,6 +56,12 @@ const routes = [
   {
     path: '/services-navigatu',
     component: ServiceNavigatuView,
+  },
+  /* testing slug */
+  {
+    path: '/incubatees/:slug',
+    name: 'IncubateePage',
+    component: () => import('@/views/NavigatuPanel/IncubateePageView.vue'),
   },
 ]
 

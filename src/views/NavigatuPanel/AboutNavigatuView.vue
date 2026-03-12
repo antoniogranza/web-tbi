@@ -213,7 +213,7 @@
               -->
               <div
                 class="incubatee-card"
-                @click="$router.push(company.route)"
+                @click="$router.push(`/incubatees/${company.slug}`)"
                 @mouseenter="company.hovered = true"
                 @mouseleave="company.hovered = false"
               >
@@ -276,6 +276,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { incubatees as incubateesData } from '@/data/incubatees'
 
 // ── Mobile drawer state ──────────────────────────────────────────────────────
 const drawer = ref(false)
@@ -365,57 +366,16 @@ const achievements = ref([
   },
 ])
 
-// ── Incubatees data ───────────────────────────────────────────────────────────
-const incubatees = ref([
-  {
-    name: 'Ascribo AI',
-    photo: '/images/incubatees/AscriboAi.png',
-    route: '/incubatees/ascribo-ai',
+/* Testing Slug */
+// ── Incubatees data (derived from shared module) ─────────────────────────────
+const incubatees = ref(
+  Object.entries(incubateesData).map(([slug, data]) => ({
+    name: data.name,
+    slug,
+    photo: data.logo,
     hovered: false,
-  },
-  {
-    name: 'BizNest',
-    photo: '/images/incubatees/BizNest.jpg',
-    route: '/incubatees/biznest',
-    hovered: false,
-  },
-  {
-    name: 'Care Guardian',
-    photo: '/images/incubatees/CareGuardian.png',
-    route: '/incubatees/care-guardian',
-    hovered: false,
-  },
-  {
-    name: 'Vision Drive',
-    photo: '/images/incubatees/VisionDrive.png',
-    route: '/incubatees/vision-drive',
-    hovered: false,
-  },
-  {
-    name: 'Sinawali Showdown',
-    photo: '/images/incubatees/Sinawali.png',
-    route: '/incubatees/sinawali-showdown',
-    hovered: false,
-  },
-  {
-    name: 'AtongAni',
-    photo: '/images/incubatees/AtongAni.png',
-    route: '/incubatees/atongani',
-    hovered: false,
-  },
-  {
-    name: 'Farm2Home',
-    photo: '/images/incubatees/Farm2Home.png',
-    route: '/incubatees/farm2home',
-    hovered: false,
-  },
-  {
-    name: 'NaviPort',
-    photo: '/images/incubatees/NaviPort.png',
-    route: '/incubatees/naviport',
-    hovered: false,
-  },
-])
+  })),
+)
 
 // ── Leadership data ───────────────────────────────────────────────────────────
 const leaders = ref([
