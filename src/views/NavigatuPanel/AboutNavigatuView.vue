@@ -785,12 +785,13 @@ const leaders = ref([
 .leader-card {
   overflow: hidden;
   transition: transform 0.2s ease;
+  /*height: 320px;*/
 }
 .leader-card:hover {
   transform: translateY(-4px);
 }
 .leader-photo {
-  padding: 24px 0 16px;
+  /*padding: 24px 0 16px; */
   background: #eef2fa;
 }
 .leader-name {
