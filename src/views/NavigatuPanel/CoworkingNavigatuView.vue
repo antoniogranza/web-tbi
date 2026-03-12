@@ -314,10 +314,10 @@ const testimonials = ref([
 
 /* ── Shared ──────────────────────────────────────────────────────────────────── */
 .section-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.6rem, 3vw, 2.1rem);
-  font-weight: 700;
-  color: #1a1a1a;
+  font-weight: 900;
+  color: #5f5f5f;
   margin-bottom: 6px;
 }
 .section-subtitle {
@@ -504,10 +504,10 @@ const testimonials = ref([
 }
 
 .testimonial-title-bold {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 800;
-  color: #1a1a1a;
+  font-weight: 900;
+  color: #5f5f5f;
   letter-spacing: 1px;
 }
 .testimonial-title-italic {
