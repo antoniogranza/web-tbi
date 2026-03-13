@@ -4,7 +4,7 @@ export const incubatees = {
     name: 'Ascribo AI',
     tagline: 'Context-aware AI language translation for every critical field.',
     category: 'Artificial Intelligence',
-    logo: '/images/incubatees/AscriboAi.png',
+    logo: '/images/incubatees/logo/AscriboAi.png',
     heroBg: '/images/incubatees/AscriboHero.jpg', // wide hero background — replace with real photo
     yearFounded: '2022',
     location: 'Bukidnon, Philippines',
@@ -198,7 +198,7 @@ export const incubatees = {
     // ── Gallery ──────────────────────────────────────────────────────────────────
     // Replace these with real image paths — must be 5 images
     gallery: [
-      '/images/incubatees/gallery/ascribo-gallery-1.jpg',
+      '/images/incubatees/gallery/AscriboAi/GalleryA.JPG',
       '/images/incubatees/gallery/ascribo-gallery-2.jpg',
       '/images/incubatees/gallery/ascribo-gallery-3.jpg',
       '/images/incubatees/gallery/ascribo-gallery-4.jpg',
