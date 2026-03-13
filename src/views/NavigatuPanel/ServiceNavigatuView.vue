@@ -383,7 +383,7 @@ const successStories = ref([
     industry: 'Artificial Intelligence',
     funding: '₱4.2M',
     year: '2025',
-    photo: '/images/incubatees/AscriboAi.png',
+    photo: '/images/incubatees/logo/AscriboAi.png',
   },
   {
     name: 'BizNest',
@@ -391,7 +391,7 @@ const successStories = ref([
     industry: 'Artificial Intelligence',
     funding: '₱4.2M',
     year: '2025',
-    photo: '/images/incubatees/BizNest.jpg',
+    photo: '/images/incubatees/logo/BizNest.jpg',
   },
 ])
 </script>
