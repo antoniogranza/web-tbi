@@ -93,47 +93,57 @@
                 </div>
               </div>
 
-              <!-- Status chip -->
-              <div class="mt-4">
+              <!-- Status chip + Website button row -->
+              <div class="mt-4 d-flex align-center flex-wrap gap-3">
                 <span class="status-chip" :class="`status-chip--${startup.status}`">
                   <v-icon :icon="startup.statusIcon" size="13" class="mr-1" />
                   {{ startup.statusLabel }}
                 </span>
+
+                <!-- Visit Website button -->
+                <v-btn
+                  :href="startup.website"
+                  target="_blank"
+                  variant="outlined"
+                  color="white"
+                  rounded="lg"
+                  size="small"
+                  prepend-icon="mdi-web"
+                  class="website-btn"
+                >
+                  Visit Website
+                </v-btn>
               </div>
             </v-col>
           </v-row>
         </v-container>
       </div>
 
-      <!-- ===== QUICK STATS STRIP ===== -->
-      <div class="stats-strip">
+      <!-- ===== ANCHOR NAV STRIP ===== -->
+      <!--
+        4 clickable tabs — each scrolls smoothly to the matching section below.
+        Active tab is highlighted when the section is in view (tracked via activeSection).
+      -->
+      <div class="anchor-strip" ref="anchorStripRef">
         <v-container>
-          <v-row justify="center">
-            <v-col
-              v-for="stat in startup.quickStats"
-              :key="stat.label"
-              cols="6"
-              sm="3"
-              class="stat-col"
+          <div class="anchor-tabs-row">
+            <button
+              v-for="tab in anchorTabs"
+              :key="tab.id"
+              class="anchor-tab"
+              :class="{ 'anchor-tab--active': activeSection === tab.id }"
+              @click="scrollToSection(tab.id)"
             >
-              <div class="stat-item">
-                <div class="stat-icon-wrap" :style="{ background: stat.iconBg }">
-                  <v-icon :icon="stat.icon" :color="stat.color" size="20" />
-                </div>
-                <div class="stat-value">{{ stat.value }}</div>
-                <div class="stat-label">{{ stat.label }}</div>
-              </div>
-              <div
-                v-if="stat !== startup.quickStats[startup.quickStats.length - 1]"
-                class="stat-divider"
-              />
-            </v-col>
-          </v-row>
+              <v-icon :icon="tab.icon" size="18" class="anchor-tab-icon" />
+              <span class="anchor-tab-label">{{ tab.label }}</span>
+              <span class="anchor-tab-value">{{ tab.value }}</span>
+            </button>
+          </div>
         </v-container>
       </div>
 
       <!-- ===== ABOUT THE STARTUP ===== -->
-      <v-container fluid class="about-startup-section py-14">
+      <v-container fluid class="about-startup-section py-14" id="section-year-started">
         <v-container>
           <v-row align="start">
             <v-col cols="12" md="7">
@@ -201,7 +211,7 @@
       </v-container>
 
       <!-- ===== LATEST ACHIEVEMENTS ===== -->
-      <v-container fluid class="achievements-section py-14">
+      <v-container fluid class="achievements-section py-14" id="section-milestones">
         <v-container>
           <p class="section-eyebrow text-center">Milestones</p>
           <h2 class="section-heading text-center mb-2">
@@ -237,58 +247,54 @@
         </v-container>
       </v-container>
 
-      <!-- ===== FINANCIALS & PARTNERSHIPS ===== -->
-      <v-container fluid class="financials-section py-14">
+      <!-- ===== AWARDS ===== -->
+      <v-container fluid class="awards-section py-14" id="section-awards">
         <v-container>
-          <v-row>
-            <!-- Funding Timeline -->
-            <v-col cols="12" md="6" class="pr-md-8">
-              <p class="section-eyebrow">Financials</p>
-              <h2 class="section-heading mb-8">
-                Funding <span class="accent-text">Timeline</span>
-              </h2>
+          <p class="section-eyebrow text-center">Recognition</p>
+          <h2 class="section-heading text-center mb-2">
+            Awards & <span class="accent-text">Honors</span>
+          </h2>
+          <p class="section-sub text-center mb-10">
+            Recognition received for innovation and impact
+          </p>
 
-              <div class="funding-timeline">
-                <div
-                  v-for="(round, i) in startup.fundingRounds"
-                  :key="round.label"
-                  class="timeline-item"
-                  :class="{ 'timeline-item--last': i === startup.fundingRounds.length - 1 }"
-                >
-                  <div class="timeline-dot" :style="{ background: round.color }" />
-                  <div class="timeline-content">
-                    <div class="timeline-header">
-                      <span class="timeline-label">{{ round.label }}</span>
-                      <span class="timeline-year">{{ round.year }}</span>
-                    </div>
-                    <div class="timeline-amount" :style="{ color: round.color }">
-                      {{ round.amount }}
-                    </div>
-                    <p class="timeline-desc">{{ round.desc }}</p>
+          <v-row justify="center">
+            <v-col v-for="award in startup.awards" :key="award.title" cols="12" sm="6" md="4">
+              <div class="award-card">
+                <!-- Colored top accent -->
+                <div class="award-top" :style="{ background: award.color }" />
+                <div class="award-body pa-5">
+                  <div class="award-icon-wrap mb-3" :style="{ background: award.iconBg }">
+                    <v-icon :icon="award.icon" size="26" :color="award.color" />
                   </div>
-                </div>
-              </div>
-
-              <!-- Total box -->
-              <div class="funding-total-box mt-6">
-                <v-icon icon="mdi-cash-multiple" size="28" color="white" class="mr-3" />
-                <div>
-                  <div class="funding-total-label">Total Funds Generated</div>
-                  <div class="funding-total-value">{{ startup.totalFunds }}</div>
+                  <div class="award-year-tag mb-2">{{ award.year }}</div>
+                  <h4 class="award-title mb-2">{{ award.title }}</h4>
+                  <p class="award-org mb-1">
+                    <v-icon icon="mdi-office-building-outline" size="13" class="mr-1" />
+                    {{ award.org }}
+                  </p>
+                  <p class="award-desc">{{ award.desc }}</p>
                 </div>
               </div>
             </v-col>
+          </v-row>
+        </v-container>
+      </v-container>
 
-            <!-- Partnerships -->
-            <v-col cols="12" md="6" class="pl-md-8 mt-10 mt-md-0">
-              <p class="section-eyebrow">Network</p>
-              <h2 class="section-heading mb-8">
-                Partners & <span class="accent-text">Collaborations</span>
-              </h2>
+      <!-- ===== PARTNERSHIPS ===== -->
+      <v-container fluid class="financials-section py-14" id="section-partnerships">
+        <v-container>
+          <p class="section-eyebrow text-center">Network</p>
+          <h2 class="section-heading text-center mb-2">
+            Partners & <span class="accent-text">Collaborations</span>
+          </h2>
+          <p class="section-sub text-center mb-10">Organizations that power our growth</p>
 
-              <div v-for="partner in startup.partners" :key="partner.name" class="partner-row">
+          <v-row justify="center">
+            <v-col v-for="partner in startup.partners" :key="partner.name" cols="12" sm="6" md="4">
+              <div class="partner-card">
                 <div class="partner-logo-wrap" :style="{ background: partner.logoBg }">
-                  <v-icon :icon="partner.icon" size="24" :color="partner.color" />
+                  <v-icon :icon="partner.icon" size="28" :color="partner.color" />
                 </div>
                 <div class="partner-info">
                   <div class="partner-name">{{ partner.name }}</div>
@@ -502,30 +508,89 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { incubatees } from '@/data/incubatees'
+import { incubatees } from '@/data/incubatees' // ← your existing data file
 
+const drawer = ref(false)
 const route = useRoute()
 const router = useRouter()
-const slug = route.params.slug
 
-// look up the requested incubatee; if it doesn't exist we navigate back
+// ── Resolve startup from route slug ───────────────────────────────────────────
+// Route must be declared as:  { path: '/incubatees/:slug', component: NavigatuIncubateeProfile }
+// Each key in incubatees.js must match the slug used in NavigatuApp.vue route fields.
+// e.g.  incubatees['ascribo-ai'] = { name: 'Ascribo AI', logo: '...', ... }
 const startup = computed(() => {
-  const entry = incubatees[slug]
+  const entry = incubatees[route.params.slug]
   if (!entry) {
-    // invalid slug – send user back to listing, avoids rendering errors
-    router.replace({ path: '/about-navigatu' })
+    router.replace('/about-navigatu') // unknown slug → send back to listing
     return {}
   }
   return entry
 })
 
-const drawer = ref(false)
+// ── Anchor nav tabs — values driven by startup data ───────────────────────────
+// Each tab's `value` reads directly from the resolved startup object so it
+// automatically reflects the correct data for whichever incubatee is loaded.
+const anchorTabs = computed(() => [
+  {
+    id: 'section-year-started',
+    label: 'Year Started',
+    icon: 'mdi-calendar-star',
+    value: startup.value.yearFounded ?? '—',
+  },
+  {
+    id: 'section-milestones',
+    label: 'Milestones',
+    icon: 'mdi-flag-checkered',
+    value: startup.value.achievements?.length ?? 0,
+  },
+  {
+    id: 'section-awards',
+    label: 'Awards',
+    icon: 'mdi-trophy-outline',
+    value: startup.value.awards?.length ?? 0,
+  },
+  {
+    id: 'section-partnerships',
+    label: 'Partnerships',
+    icon: 'mdi-handshake-outline',
+    value: startup.value.partners?.length ?? 0,
+  },
+])
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STARTUP DATA — replace all values and image paths with real content
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Anchor nav: active section tracking ──────────────────────────────────────
+const activeSection = ref('section-year-started')
+
+function scrollToSection(id) {
+  const el = document.getElementById(id)
+  if (!el) return
+  const offset = 140 // navbar (64px) + anchor strip (~68px) + breathing room
+  const top = el.getBoundingClientRect().top + window.scrollY - offset
+  window.scrollTo({ top, behavior: 'smooth' })
+  activeSection.value = id
+}
+
+// IntersectionObserver — auto-highlights the tab whose section is in view
+let observers = []
+onMounted(() => {
+  // anchorTabs is a computed ref — access .value
+  anchorTabs.value.forEach((tab) => {
+    const el = document.getElementById(tab.id)
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) activeSection.value = tab.id
+      },
+      { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
+    )
+    obs.observe(el)
+    observers.push(obs)
+  })
+})
+onUnmounted(() => {
+  observers.forEach((o) => o.disconnect())
+})
 </script>
 
 <style scoped>
@@ -697,51 +762,108 @@ const drawer = ref(false)
   color: #ffffff;
 }
 
-/* ── STATS STRIP ─────────────────────────────────────────────────────────────── */
-.stats-strip {
+/* ── Website button in hero ──────────────────────────────────────────────────── */
+.website-btn {
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ── ANCHOR NAV STRIP ────────────────────────────────────────────────────────── */
+/*
+  Sticky strip just below the navbar. 4 clickable tab buttons that scroll
+  the page to their respective sections. Active tab shows a blue bottom border
+  and highlighted text. position:sticky + top:64px pins it under the app-bar.
+*/
+.anchor-strip {
   background: #ffffff;
-  border-bottom: 1px solid #eef0f5;
-  padding: 28px 0;
+  border-bottom: 2px solid #eef0f5;
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+  padding: 0;
 }
-.stat-col {
-  position: relative;
+.anchor-tabs-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-.stat-item {
+.anchor-tabs-row::-webkit-scrollbar {
+  display: none;
+}
+
+.anchor-tab {
+  flex: 1;
+  min-width: 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 0 12px;
-}
-.stat-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  gap: 2px;
+  padding: 14px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+  outline: none;
+  position: relative;
+  bottom: -2px; /* overlaps the strip border so active tab's border shows */
 }
-.stat-value {
+.anchor-tab:hover {
+  background: #f5f7fb;
+}
+.anchor-tab--active {
+  border-bottom-color: #1565c0;
+  background: #f0f4ff;
+}
+.anchor-tab-icon {
+  color: #aaa;
+  transition: color 0.18s ease;
+}
+.anchor-tab--active .anchor-tab-icon,
+.anchor-tab:hover .anchor-tab-icon {
+  color: #1565c0;
+}
+.anchor-tab-value {
   font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #1a1a1a;
   line-height: 1;
+  transition: color 0.18s ease;
 }
-.stat-label {
-  font-size: 0.72rem;
+.anchor-tab--active .anchor-tab-value {
+  color: #1565c0;
+}
+.anchor-tab-label {
+  font-size: 0.68rem;
+  font-weight: 600;
   color: #888;
-  margin-top: 4px;
-  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  transition: color 0.18s ease;
 }
-.stat-divider {
-  position: absolute;
-  right: 0;
-  top: 10%;
-  height: 80%;
-  width: 1px;
-  background: #eee;
+.anchor-tab--active .anchor-tab-label,
+.anchor-tab:hover .anchor-tab-label {
+  color: #1565c0;
+}
+
+@media (max-width: 599px) {
+  .anchor-tab {
+    min-width: 90px;
+    padding: 12px 8px;
+  }
+  .anchor-tab-value {
+    font-size: 1rem;
+  }
 }
 
 /* ── SHARED SECTION TYPOGRAPHY ────────────────────────────────────────────────── */
@@ -926,103 +1048,90 @@ const drawer = ref(false)
   margin: 0;
 }
 
-/* ── FINANCIALS ──────────────────────────────────────────────────────────────── */
-.financials-section {
+/* ── AWARDS SECTION ──────────────────────────────────────────────────────────── */
+.awards-section {
   background: #ffffff;
 }
 
-/* Funding timeline */
-.funding-timeline {
-  position: relative;
+.award-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #edf0f7;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+  height: 100%;
 }
-.timeline-item {
+.award-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(21, 101, 192, 0.12) !important;
+}
+.award-top {
+  height: 6px;
+  width: 100%;
+}
+.award-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   display: flex;
-  gap: 18px;
-  padding-bottom: 28px;
-  position: relative;
-}
-.timeline-item:not(.timeline-item--last)::before {
-  content: '';
-  position: absolute;
-  left: 9px;
-  top: 20px;
-  bottom: 0;
-  width: 2px;
-  background: #edf0f7;
-}
-.timeline-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 2px;
-  box-shadow: 0 0 0 4px rgba(21, 101, 192, 0.1);
-}
-.timeline-content {
-  flex: 1;
-}
-.timeline-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  justify-content: center;
 }
-.timeline-label {
-  font-size: 0.82rem;
+.award-year-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #888;
+  background: #f0f2f7;
+  padding: 2px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+.award-title {
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1a1a1a;
+  line-height: 1.3;
 }
-.timeline-year {
-  font-size: 0.72rem;
-  color: #aaa;
-  font-weight: 600;
+.award-org {
+  font-size: 0.75rem;
+  color: #888;
+  display: flex;
+  align-items: center;
 }
-.timeline-amount {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 4px;
-}
-.timeline-desc {
+.award-desc {
   font-size: 0.78rem;
   color: #777;
-  line-height: 1.65;
+  line-height: 1.7;
   margin: 0;
 }
 
-.funding-total-box {
-  background: linear-gradient(135deg, #1565c0, #0d47a1);
-  border-radius: 16px;
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-}
-.funding-total-label {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.funding-total-value {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.1;
+/* ── PARTNERSHIPS ────────────────────────────────────────────────────────────── */
+.financials-section {
+  background: #f5f7fb;
 }
 
-/* Partners */
-.partner-row {
+/*
+  Partner cards — grid layout (3 cols on md) rather than list rows.
+  Each card has the icon logo, name, type, and a chip badge.
+*/
+.partner-card {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid #f0f2f7;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #edf0f7;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
-.partner-row:last-child {
-  border-bottom: none;
+.partner-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.1);
 }
 .partner-logo-wrap {
   width: 46px;
@@ -1035,20 +1144,25 @@ const drawer = ref(false)
 }
 .partner-info {
   flex: 1;
+  min-width: 0;
 }
 .partner-name {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .partner-type {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: #aaa;
   margin-top: 1px;
 }
 .partner-chip {
   font-size: 0.65rem !important;
   font-weight: 700 !important;
+  flex-shrink: 0;
 }
 
 /* ── GALLERY ─────────────────────────────────────────────────────────────────── */

@@ -111,29 +111,15 @@ export const incubatees = {
       },
     ],
 
-    // ── Funding ──────────────────────────────────────────────────────────────────
-    totalFunds: '₱4.2M',
-    fundingRounds: [
+    awards: [
       {
-        label: 'Pre-Seed (DICT Grant)',
-        amount: '₱1.2M',
+        title: 'Best Business App — Regional ICT Awards',
+        org: 'DICT Region X',
+        desc: 'Recognized as the best business application for MSMEs in the regional ICT awards.',
         year: '2022',
-        desc: 'Initial grant from DICT PCIEERD used for prototype development and team formation.',
-        color: '#1565C0',
-      },
-      {
-        label: 'Seed Round (YCEF-EE)',
-        amount: '₱1.8M',
-        year: '2023',
-        desc: 'Secured through the YCEF-EE program, enabling pilot deployments and product refinement.',
-        color: '#2E7D32',
-      },
-      {
-        label: 'Bridge Funding',
-        amount: '₱1.2M',
-        year: '2024',
-        desc: 'Bridge financing from Navigatú TBI to support market expansion and partnerships.',
-        color: '#E65100',
+        icon: 'mdi-trophy-outline',
+        color: '#F9A825',
+        iconBg: '#FFF8E1',
       },
     ],
 
