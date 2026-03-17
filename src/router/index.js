@@ -1,6 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { auth } from '@/utils/supabase'
 
 import PublicLayout from '@/components/layout/PublicLayout.vue'
+
+//Admin Routing
+import AdminDashboard from '@/views/AdminPanel/AdminDashboard.vue'
+import AdminManagePage from '@/views/AdminPanel/AdminManagePage.vue'
 import LoginView from '@/views/LoginView.vue'
 
 //Navigatu Routing
@@ -11,6 +16,7 @@ import IncubateePageView from '@/views/NavigatuPanel/IncubateePageView.vue'
 import NewsNavigatuView from '@/views/NavigatuPanel/NewsNavigatuView.vue'
 import EventNavigatuView from '@/views/NavigatuPanel/EventNavigatuView.vue'
 
+//TBI Main Routing
 import Home from '@/views/tbi_main/HomeView.vue'
 import About from '@/views/tbi_main/AboutView.vue'
 import Program from '@/views/tbi_main/ProgramView.vue'
@@ -21,6 +27,30 @@ import Impact from '@/views/tbi_main/ImpactView.vue'
 import Events from '@/views/tbi_main/EventsView.vue'
 import News from '@/views/tbi_main/NewsView.vue'
 import Apply from '@/views/tbi_main/ApplyView.vue'
+
+// Auth guard
+const requireAuth = async (to, from, next) => {
+  const {
+    data: { user },
+  } = await auth.getCurrentUser()
+  if (user) {
+    next()
+  } else {
+    next('/login')
+  }
+}
+
+// Admin guard
+const requireAdmin = async (to, from, next) => {
+  const {
+    data: { user },
+  } = await auth.getCurrentUser()
+  if (user && user.user_metadata?.role === 'admin') {
+    next()
+  } else {
+    next('/login')
+  }
+}
 
 const routes = [
   // ✅ Standalone Login Route
@@ -46,7 +76,7 @@ const routes = [
     ],
   },
 
-  // ✅ Navigatu Pages Route
+  // ✅ Navigatu Pages Route (Protected - require authentication)
   {
     path: '/about-navigatu',
     component: AboutNavigatuView,
@@ -72,6 +102,18 @@ const routes = [
   {
     path: '/events-navigatu',
     component: EventNavigatuView,
+  },
+
+  // Admin Panel Routes (Protected - require admin role)
+  {
+    path: '/admin',
+    component: AdminDashboard,
+    beforeEnter: requireAdmin,
+  },
+  {
+    path: '/admin/manage',
+    component: AdminManagePage,
+    beforeEnter: requireAdmin,
   },
 ]
 
