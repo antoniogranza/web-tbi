@@ -8,6 +8,8 @@ import AboutNavigatuView from '@/views/NavigatuPanel/AboutNavigatuView.vue'
 import CoworkingNavigatuView from '@/views/NavigatuPanel/CoworkingNavigatuView.vue'
 import ServiceNavigatuView from '@/views/NavigatuPanel/ServiceNavigatuView.vue'
 import IncubateePageView from '@/views/NavigatuPanel/IncubateePageView.vue'
+import NewsNavigatuView from '@/views/NavigatuPanel/NewsNavigatuView.vue'
+import EventNavigatuView from '@/views/NavigatuPanel/EventNavigatuView.vue'
 
 import Home from '@/views/tbi_main/HomeView.vue'
 import About from '@/views/tbi_main/AboutView.vue'
@@ -62,6 +64,14 @@ const routes = [
     path: '/incubatees/:slug',
     name: 'IncubateePage',
     component: () => import('@/views/NavigatuPanel/IncubateePageView.vue'),
+  },
+  {
+    path: '/news-navigatu',
+    component: NewsNavigatuView,
+  },
+  {
+    path: '/events-navigatu',
+    component: EventNavigatuView,
   },
 ]
 

@@ -15,14 +15,10 @@
 
         <div class="d-none d-md-flex align-center mr-6">
           <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
-          <v-btn
-            variant="text"
-            class="nav-link"
-            to="/services-navigatu"
-            append-icon="mdi-chevron-down"
-            >Services</v-btn
-          >
+          <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
           <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
+          <v-btn variant="text" class="nav-link nav-link--active" to="/news-navigatu">News</v-btn>
+          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
           <v-btn variant="text" icon="mdi-magnify" size="small" />
         </div>
 
