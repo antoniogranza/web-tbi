@@ -1,27 +1,39 @@
-// import './assets/main.css'
-
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import App from './App.vue'
+import router from './router'
 
 // Vuetify
 import 'vuetify/styles'
+import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
-import App from './App.vue'
-import router from './router'
-
-
-const app = createApp(App)
-
 const vuetify = createVuetify({
   components,
   directives,
+  icons: { defaultSet: 'mdi' },
+  theme: {
+    themes: {
+      light: {
+        colors: {
+          primary: '#25671E',
+          secondary: '#48A111',
+          accent: '#F2B50B',
+        }
+      }
+    }
+  },
+  defaults: {
+    global: {
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      }
+    }
+  }
 })
 
-app.use(createPinia())
-app.use(router)
-app.use(vuetify)
-
-app.mount('#app')
+createApp(App)
+  .use(router)
+  .use(vuetify)
+  .mount('#app')
