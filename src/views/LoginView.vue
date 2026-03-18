@@ -44,7 +44,7 @@ const handleLogin = async () => {
   loading.value = true
 
   try {
-    const { data, error } = await auth.signIn(email.value, password.value)
+    const { error } = await auth.signIn(email.value, password.value)
 
     if (error) {
       apiError.value = error.message

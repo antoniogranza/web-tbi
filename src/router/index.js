@@ -5,7 +5,6 @@ import PublicLayout from '@/components/layout/PublicLayout.vue'
 
 //Admin Routing
 import AdminDashboard from '@/views/AdminPanel/AdminDashboard.vue'
-import AdminManagePage from '@/views/AdminPanel/AdminManagePage.vue'
 import LoginView from '@/views/LoginView.vue'
 
 //Navigatu Routing
@@ -108,12 +107,7 @@ const routes = [
   {
     path: '/admin',
     component: AdminDashboard,
-    beforeEnter: requireAdmin,
-  },
-  {
-    path: '/admin/manage',
-    component: AdminManagePage,
-    beforeEnter: requireAdmin,
+    meta: { requiresAuth: true },
   },
 ]
 

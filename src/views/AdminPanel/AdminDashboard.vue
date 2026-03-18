@@ -8,6 +8,7 @@
       class="admin-sidebar"
       width="260"
     >
+      <!-- Brand -->
       <div class="sidebar-brand" :class="{ 'sidebar-brand--rail': sidebarRail }">
         <div class="sb-logo">
           <v-icon icon="mdi-shield-crown-outline" size="22" color="white" />
@@ -22,8 +23,9 @@
 
       <v-divider color="rgba(255,255,255,0.1)" />
 
+      <!-- User -->
       <div class="sidebar-user" :class="{ 'sidebar-user--rail': sidebarRail }">
-        <v-avatar size="34" color="rgba(255,255,255,0.15)" class="sb-avatar">
+        <v-avatar size="34" color="rgba(255,255,255,0.15)">
           <v-icon icon="mdi-account" size="20" color="white" />
         </v-avatar>
         <transition name="fade-label">
@@ -36,33 +38,34 @@
 
       <v-divider color="rgba(255,255,255,0.1)" />
 
+      <!-- Nav -->
       <v-list nav density="compact" class="sidebar-nav mt-2">
         <v-list-item
           prepend-icon="mdi-view-dashboard-outline"
           title="Dashboard"
-          value="dashboard"
-          :active="activePage === 'dashboard' && !activeTBI"
+          value="home"
+          :active="activeSection === 'home'"
           active-color="white"
           class="nav-item"
           rounded="lg"
-          @click="goToDashboard"
+          @click="setSection('home')"
         />
 
-        <v-list-subheader v-if="!sidebarRail" class="nav-subheader mt-2"
-          >TBI Portals</v-list-subheader
-        >
+        <v-list-subheader v-if="!sidebarRail" class="nav-subheader mt-3">
+          Content Management
+        </v-list-subheader>
 
         <v-list-item
-          v-for="tbi in tbiList"
-          :key="tbi.id"
-          :prepend-icon="tbi.icon"
-          :title="tbi.name"
-          :value="tbi.id"
-          :active="activeTBI?.id === tbi.id"
+          v-for="cat in categories"
+          :key="cat.id"
+          :prepend-icon="cat.icon"
+          :title="cat.name"
+          :value="cat.id"
+          :active="activeSection === cat.id"
           active-color="white"
           class="nav-item"
           rounded="lg"
-          @click="selectTBI(tbi)"
+          @click="setSection(cat.id)"
         />
 
         <v-divider color="rgba(255,255,255,0.1)" class="my-3" />
@@ -74,7 +77,7 @@
           active-color="white"
           class="nav-item nav-item--logout"
           rounded="lg"
-          @click="handleLogout"
+          @click="logoutDialog = true"
         />
       </v-list>
 
@@ -91,26 +94,22 @@
       </template>
     </v-navigation-drawer>
 
-    <!-- ===== TOP APP BAR ===== -->
+    <!-- ===== APP BAR ===== -->
     <v-app-bar flat color="white" border="b" height="60" class="admin-appbar">
       <v-app-bar-title>
-        <div class="appbar-title-block">
-          <span class="appbar-page-label">{{ activeTBI ? activeTBI.name : 'Dashboard' }}</span>
-          <v-chip
-            v-if="activeTBI"
-            size="x-small"
-            :color="activeTBI.color"
-            variant="tonal"
-            class="ml-2"
-          >
-            {{ activeTBI.shortName }}
-          </v-chip>
+        <div class="d-flex align-center" style="gap: 8px">
+          <div
+            v-if="activeSection !== 'home'"
+            class="appbar-dot"
+            :style="{ background: activeCategoryColor }"
+          />
+          <span class="appbar-page-label">{{ appBarTitle }}</span>
         </div>
       </v-app-bar-title>
       <template #append>
         <div class="d-flex align-center mr-3" style="gap: 8px">
           <v-btn icon="mdi-bell-outline" variant="text" size="small" color="#555" />
-          <v-avatar size="32" color="#EEF4FF" style="cursor: pointer" @click="handleLogout">
+          <v-avatar size="32" color="#EEF4FF" style="cursor: pointer" @click="logoutDialog = true">
             <v-icon icon="mdi-account" size="18" color="#1565C0" />
           </v-avatar>
         </div>
@@ -120,19 +119,22 @@
     <!-- ===== MAIN CONTENT ===== -->
     <v-main class="admin-main">
       <div class="content-area">
-        <!-- DASHBOARD HOME -->
-        <div v-if="!activeTBI">
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- HOME SECTION                                   -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div v-if="activeSection === 'home'">
           <div class="welcome-strip mb-8">
             <div>
               <div class="welcome-greeting">Good day, Administrator 👋</div>
-              <div class="welcome-sub">Select a TBI portal below to manage its content.</div>
+              <div class="welcome-sub">Manage all content across TBI portals from here.</div>
             </div>
             <div class="welcome-date">{{ todayLabel }}</div>
           </div>
 
-          <v-row class="mb-6">
+          <!-- Stats -->
+          <v-row class="mb-8">
             <v-col v-for="stat in dashStats" :key="stat.label" cols="6" md="3">
-              <div class="stat-card">
+              <div class="stat-card" @click="stat.section && setSection(stat.section)">
                 <div class="stat-icon-wrap" :style="{ background: stat.iconBg }">
                   <v-icon :icon="stat.icon" :color="stat.color" size="22" />
                 </div>
@@ -142,107 +144,939 @@
             </v-col>
           </v-row>
 
+          <!-- Category cards -->
           <div class="section-eyebrow mb-5">
-            <v-icon icon="mdi-office-building-outline" size="14" class="mr-1" />
-            TBI Portals — Select to Manage
+            <v-icon icon="mdi-lightning-bolt" size="13" class="mr-1" />
+            Content Categories — Click to Manage
           </div>
 
           <v-row>
-            <v-col v-for="tbi in tbiList" :key="tbi.id" cols="12" md="4">
-              <div class="tbi-card" :class="`tbi-card--${tbi.id}`" @click="selectTBI(tbi)">
-                <div class="tbi-card-pattern" />
-                <div class="tbi-card-body">
-                  <div class="tbi-card-icon-wrap mb-4">
-                    <v-icon :icon="tbi.icon" size="30" color="white" />
+            <v-col v-for="cat in categories" :key="cat.id" cols="12" md="4">
+              <div class="cat-card" :class="`cat-card--${cat.id}`" @click="setSection(cat.id)">
+                <div class="cat-card-pattern" />
+                <div class="cat-card-body">
+                  <div class="cat-card-icon-wrap mb-5">
+                    <v-icon :icon="cat.icon" size="32" color="white" />
                   </div>
-                  <div class="tbi-card-eyebrow">TBI Portal</div>
-                  <h3 class="tbi-card-name">{{ tbi.name }}</h3>
-                  <p class="tbi-card-desc">{{ tbi.desc }}</p>
-                  <div class="tbi-card-chips mt-4">
+                  <div class="cat-card-eyebrow">Content Type</div>
+                  <h3 class="cat-card-name">{{ cat.name }}</h3>
+                  <p class="cat-card-desc">{{ cat.desc }}</p>
+                  <div class="cat-chips mt-5">
                     <v-chip
-                      v-for="a in tbi.actions"
-                      :key="a"
+                      v-for="tbi in tbiOptions"
+                      :key="tbi.id"
                       size="x-small"
                       variant="tonal"
                       color="white"
-                      class="tbi-chip mr-1 mb-1"
-                      >{{ a }}</v-chip
+                      class="cat-chip mr-1 mb-1"
+                      >{{ tbi.shortName }}</v-chip
                     >
                   </div>
-                  <div class="tbi-card-cta mt-5">
-                    Open Portal <v-icon icon="mdi-arrow-right" size="14" class="ml-1" />
+                  <div class="cat-card-cta mt-5">
+                    Manage {{ cat.name }}
+                    <v-icon icon="mdi-arrow-right" size="14" class="ml-1" />
                   </div>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+
+          <!-- TBI glance -->
+          <div class="section-eyebrow mb-4 mt-10">
+            <v-icon icon="mdi-office-building-outline" size="13" class="mr-1" />
+            TBI Portals at a Glance
+          </div>
+          <v-row>
+            <v-col v-for="tbi in tbiOptions" :key="tbi.id" cols="12" md="4">
+              <div class="tbi-glance-card">
+                <div class="tbi-glance-dot" :style="{ background: tbi.color }" />
+                <div class="tbi-glance-info">
+                  <div class="tbi-glance-name">{{ tbi.name }}</div>
+                  <div class="tbi-glance-sub">{{ tbi.sub }}</div>
+                </div>
+                <div class="tbi-glance-actions">
+                  <v-btn
+                    v-for="cat in categories"
+                    :key="cat.id"
+                    size="x-small"
+                    variant="tonal"
+                    :color="cat.btnColor"
+                    class="tbi-glance-btn"
+                    :prepend-icon="cat.icon"
+                    @click="setSection(cat.id, tbi.id)"
+                    >{{ cat.name }}</v-btn
+                  >
                 </div>
               </div>
             </v-col>
           </v-row>
         </div>
 
-        <!-- TBI PORTAL VIEW -->
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- CONTENT SECTION (Incubatees / News / Events)  -->
+        <!-- ══════════════════════════════════════════════ -->
         <div v-else>
-          <div class="portal-header mb-8">
-            <v-btn
-              variant="text"
-              prepend-icon="mdi-arrow-left"
-              size="small"
-              color="#555"
-              class="back-btn mb-4"
-              @click="goToDashboard"
-              >Back to Dashboard</v-btn
-            >
-            <div class="portal-title-row">
-              <div class="portal-icon-wrap" :style="{ background: activeTBI.color }">
-                <v-icon :icon="activeTBI.icon" size="24" color="white" />
+          <!-- Section header -->
+          <div class="page-header mb-6">
+            <div>
+              <div class="page-eyebrow" :style="{ color: activeCategoryColor }">
+                <v-icon :icon="activeCategoryIcon" size="13" class="mr-1" />
+                All TBI Portals
               </div>
-              <div>
-                <h2 class="portal-title">{{ activeTBI.name }}</h2>
-                <p class="portal-subtitle">{{ activeTBI.desc }}</p>
-              </div>
+              <h2 class="page-title">{{ activeCategoryName }}</h2>
             </div>
+            <v-btn
+              :color="activeCategoryBtnColor"
+              rounded="lg"
+              prepend-icon="mdi-plus"
+              elevation="0"
+              class="add-btn"
+              @click="openAddDialog"
+            >
+              Add {{ activeSingular }}
+            </v-btn>
           </div>
 
-          <div class="section-eyebrow mb-5">
-            <v-icon icon="mdi-lightning-bolt" size="13" class="mr-1" />
-            Management Actions
+          <!-- API error -->
+          <v-alert
+            v-if="activeTable.apiError.value"
+            type="error"
+            variant="tonal"
+            rounded="lg"
+            density="compact"
+            closable
+            class="mb-5"
+            @click:close="activeTable.apiError.value = ''"
+            >{{ activeTable.apiError.value }}</v-alert
+          >
+
+          <!-- Filters -->
+          <div class="filters-row mb-5">
+            <v-text-field
+              v-model="searchQuery"
+              placeholder="Search..."
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              density="compact"
+              rounded="lg"
+              hide-details
+              bg-color="white"
+              style="max-width: 260px"
+            />
+            <v-select
+              v-model="tbiFilter"
+              :items="[{ id: '', name: 'All TBIs' }, ...tbiOptions]"
+              item-title="name"
+              item-value="id"
+              variant="outlined"
+              density="compact"
+              rounded="lg"
+              hide-details
+              bg-color="white"
+              style="max-width: 170px"
+              @update:model-value="onTbiFilterChange"
+            />
+            <v-select
+              v-model="statusFilter"
+              :items="activeStatusItems"
+              variant="outlined"
+              density="compact"
+              rounded="lg"
+              hide-details
+              bg-color="white"
+              style="max-width: 150px"
+            />
           </div>
 
-          <v-row>
-            <v-col v-for="action in activeTBI.menuActions" :key="action.id" cols="12" sm="6" md="4">
-              <div class="action-card" @click="router.push(action.route)">
-                <div class="action-icon-wrap" :style="{ background: action.iconBg }">
-                  <v-icon :icon="action.icon" :color="action.color" size="26" />
+          <!-- Data table -->
+          <v-card rounded="xl" elevation="0" border>
+            <v-data-table
+              :headers="activeHeaders"
+              :items="filteredRecords"
+              :loading="activeTable.loading.value"
+              :search="searchQuery"
+              hover
+              class="records-table"
+            >
+              <!-- TBI chip -->
+              <template #[`item.tbi_id`]="{ item }">
+                <v-chip
+                  :color="tbiChipColor(item.tbi_id)"
+                  size="x-small"
+                  variant="tonal"
+                  class="font-weight-bold"
+                  >{{ tbiShortName(item.tbi_id) }}</v-chip
+                >
+              </template>
+
+              <!-- Status chip -->
+              <template #[`item.status`]="{ item }">
+                <v-chip
+                  :color="statusChipColor(item.status)"
+                  size="x-small"
+                  variant="tonal"
+                  class="font-weight-bold"
+                  >{{ item.status }}</v-chip
+                >
+              </template>
+
+              <!-- Thumbnail -->
+              <template #[`item.thumb`]="{ item }">
+                <v-avatar size="34" rounded="lg" color="#f5f7fb">
+                  <v-img v-if="item.logo || item.image" :src="item.logo || item.image" cover />
+                  <v-icon v-else icon="mdi-image-outline" size="16" color="#ccc" />
+                </v-avatar>
+              </template>
+
+              <!-- Event date -->
+              <template #[`item.event_date`]="{ item }">
+                {{ item.day }} {{ item.month }} {{ item.year }}
+              </template>
+
+              <!-- Row actions -->
+              <template #[`item.actions`]="{ item }">
+                <div class="d-flex align-center" style="gap: 4px">
+                  <v-btn
+                    icon="mdi-pencil-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#1565C0"
+                    @click="openEditDialog(item)"
+                  />
+                  <v-btn
+                    icon="mdi-trash-can-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#C62828"
+                    @click="openDeleteDialog(item)"
+                  />
                 </div>
-                <div class="mt-4">
-                  <h4 class="action-title">{{ action.title }}</h4>
-                  <p class="action-desc">{{ action.desc }}</p>
+              </template>
+
+              <template #no-data>
+                <div class="empty-state">
+                  <v-icon :icon="activeCategoryIcon" size="52" color="#ddd" />
+                  <p class="empty-title mt-3">No {{ activeCategoryName.toLowerCase() }} yet</p>
+                  <p class="empty-sub">Click "Add {{ activeSingular }}" to get started.</p>
+                  <v-btn
+                    :color="activeCategoryBtnColor"
+                    rounded="lg"
+                    prepend-icon="mdi-plus"
+                    elevation="0"
+                    class="mt-4 add-btn"
+                    @click="openAddDialog"
+                    >Add {{ activeSingular }}</v-btn
+                  >
                 </div>
-                <div class="action-arrow">
-                  <v-icon icon="mdi-arrow-right" size="16" color="#1565C0" />
-                </div>
-              </div>
-            </v-col>
-          </v-row>
+              </template>
+            </v-data-table>
+          </v-card>
         </div>
       </div>
     </v-main>
 
-    <!-- LOGOUT DIALOG -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- ADD / EDIT DIALOG                                                     -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <v-dialog v-model="formDialog" max-width="720" scrollable>
+      <v-card rounded="xl" elevation="0" class="form-card">
+        <!-- Colored header -->
+        <div class="form-dialog-header" :style="{ background: activeCategoryColor }">
+          <div>
+            <div class="fh-eyebrow">{{ isEditing ? 'Edit' : 'Add New' }}</div>
+            <h3 class="fh-title">{{ activeSingular }}</h3>
+          </div>
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            color="white"
+            size="small"
+            @click="formDialog = false"
+          />
+        </div>
+
+        <v-card-text class="pa-7">
+          <!-- Form error -->
+          <v-alert
+            v-if="formError"
+            type="error"
+            variant="tonal"
+            rounded="lg"
+            density="compact"
+            class="mb-5"
+            >{{ formError }}</v-alert
+          >
+
+          <v-form ref="formRef" @submit.prevent="handleSubmit">
+            <!-- ── TBI SELECTOR (shared by all sections) ── -->
+            <div class="form-section-label mb-3">
+              <v-icon
+                icon="mdi-office-building-outline"
+                size="15"
+                class="mr-1"
+                :color="activeCategoryColor"
+              />
+              Where should this {{ activeSingular.toLowerCase() }} appear? *
+            </div>
+            <div class="tbi-selector-row mb-2">
+              <div
+                v-for="tbi in tbiOptions"
+                :key="tbi.id"
+                class="tbi-selector-item"
+                :class="{ 'tbi-selector-item--active': form.tbi_id === tbi.id }"
+                :style="
+                  form.tbi_id === tbi.id
+                    ? { borderColor: tbi.color, background: tbi.color + '12' }
+                    : {}
+                "
+                @click="form.tbi_id = tbi.id"
+              >
+                <div class="tsi-dot" :style="{ background: tbi.color }" />
+                <div class="tsi-text">
+                  <div class="tsi-name">{{ tbi.name }}</div>
+                  <div class="tsi-sub">{{ tbi.sub }}</div>
+                </div>
+                <v-icon
+                  v-if="form.tbi_id === tbi.id"
+                  icon="mdi-check-circle"
+                  size="18"
+                  :color="tbi.color"
+                  class="ml-auto"
+                />
+              </div>
+            </div>
+            <p v-if="tbiRequired" class="field-error mb-4">Please select a TBI portal above.</p>
+
+            <v-divider class="mb-5" />
+
+            <!-- ── INCUBATEE FIELDS ── -->
+            <template v-if="activeSection === 'incubatees'">
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Startup Name *</div>
+                  <v-text-field
+                    v-model="form.name"
+                    placeholder="e.g. Ascribo AI"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Category / Industry *</div>
+                  <v-select
+                    v-model="form.category"
+                    :items="[
+                      'Artificial Intelligence',
+                      'ICT & Software',
+                      'Internet of Things',
+                      'Engineering Tech',
+                      'AgriTech',
+                      'HealthTech',
+                      'FinTech',
+                      'Other',
+                    ]"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Tagline</div>
+                  <v-text-field
+                    v-model="form.tagline"
+                    placeholder="One-sentence description"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Description *</div>
+                  <v-textarea
+                    v-model="form.description"
+                    placeholder="Detailed description..."
+                    variant="outlined"
+                    rounded="lg"
+                    rows="3"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Problem Statement</div>
+                  <v-textarea
+                    v-model="form.problem"
+                    placeholder="What problem does this startup solve?"
+                    variant="outlined"
+                    rounded="lg"
+                    rows="2"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Solution</div>
+                  <v-textarea
+                    v-model="form.solution"
+                    placeholder="How does it solve the problem?"
+                    variant="outlined"
+                    rounded="lg"
+                    rows="2"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Year Founded</div>
+                  <v-text-field
+                    v-model="form.year_founded"
+                    placeholder="e.g. 2022"
+                    type="number"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Location</div>
+                  <v-text-field
+                    v-model="form.location"
+                    placeholder="e.g. Bukidnon, Philippines"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Website URL</div>
+                  <v-text-field
+                    v-model="form.website"
+                    placeholder="https://"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Contact Email</div>
+                  <v-text-field
+                    v-model="form.contact_email"
+                    placeholder="hello@startup.com"
+                    type="email"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Total Funding</div>
+                  <v-text-field
+                    v-model="form.funding"
+                    placeholder="e.g. ₱1.2M"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Team Size</div>
+                  <v-text-field
+                    v-model="form.team_size"
+                    placeholder="e.g. 8"
+                    type="number"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Logo Path <span class="hint-text">(relative to /public)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.logo"
+                    placeholder="/images/incubatees/logo.png"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Route Slug</div>
+                  <v-text-field
+                    v-model="form.slug"
+                    placeholder="e.g. ascribo-ai"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                    hint="URL: /incubatees/[slug]"
+                    persistent-hint
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Tags <span class="hint-text">(comma-separated)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.tags_raw"
+                    placeholder="e.g. AI, SaaS, B2B"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['active', 'draft', 'graduated']"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+              </v-row>
+            </template>
+
+            <!-- ── NEWS FIELDS ── -->
+            <template v-else-if="activeSection === 'news'">
+              <v-row>
+                <v-col cols="12">
+                  <div class="form-label">News Title *</div>
+                  <v-text-field
+                    v-model="form.title"
+                    placeholder="Enter news headline"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Category *</div>
+                  <v-select
+                    v-model="form.category"
+                    :items="[
+                      'Announcement',
+                      'Achievement',
+                      'Partnership',
+                      'Program',
+                      'Research',
+                      'Other',
+                    ]"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Date *</div>
+                  <v-text-field
+                    v-model="form.date"
+                    placeholder="e.g. March 5, 2025"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Location</div>
+                  <v-text-field
+                    v-model="form.location"
+                    placeholder="e.g. Bukidnon, Philippines"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Author</div>
+                  <v-text-field
+                    v-model="form.author"
+                    placeholder="e.g. Navigatú Communications"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">
+                    Short Description * <span class="hint-text">(shown on card)</span>
+                  </div>
+                  <v-textarea
+                    v-model="form.description"
+                    placeholder="Brief summary..."
+                    variant="outlined"
+                    rounded="lg"
+                    rows="2"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">
+                    Full Article Body <span class="hint-text">(shown in detail view)</span>
+                  </div>
+                  <v-textarea
+                    v-model="form.full_description"
+                    placeholder="Full article content..."
+                    variant="outlined"
+                    rounded="lg"
+                    rows="5"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Cover Image Path <span class="hint-text">(relative to /public)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.image"
+                    placeholder="/images/news/news1.jpg"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Tags <span class="hint-text">(comma-separated)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.tags_raw"
+                    placeholder="e.g. Funding, DICT"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['active', 'draft']"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6" class="d-flex align-center">
+                  <v-switch
+                    v-model="form.featured"
+                    label="Mark as Featured Story"
+                    color="success"
+                    hide-details
+                    density="compact"
+                  />
+                </v-col>
+              </v-row>
+            </template>
+
+            <!-- ── EVENTS FIELDS ── -->
+            <template v-else-if="activeSection === 'events'">
+              <v-row>
+                <v-col cols="12">
+                  <div class="form-label">Event Title *</div>
+                  <v-text-field
+                    v-model="form.title"
+                    placeholder="Enter event name"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Event Type *</div>
+                  <v-select
+                    v-model="form.type"
+                    :items="[
+                      'Workshop',
+                      'Pitch Night',
+                      'Demo Day',
+                      'Networking',
+                      'Training',
+                      'Summit',
+                      'Conference',
+                      'Other',
+                    ]"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['upcoming', 'past', 'draft']"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Day *</div>
+                  <v-text-field
+                    v-model="form.day"
+                    placeholder="e.g. 18"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Month *</div>
+                  <v-select
+                    v-model="form.month"
+                    :items="[
+                      'JAN',
+                      'FEB',
+                      'MAR',
+                      'APR',
+                      'MAY',
+                      'JUN',
+                      'JUL',
+                      'AUG',
+                      'SEP',
+                      'OCT',
+                      'NOV',
+                      'DEC',
+                    ]"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Year *</div>
+                  <v-text-field
+                    v-model="form.year"
+                    placeholder="e.g. 2025"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Time *</div>
+                  <v-text-field
+                    v-model="form.time"
+                    placeholder="e.g. 2:00 PM – 6:00 PM"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Venue / Location *</div>
+                  <v-text-field
+                    v-model="form.location"
+                    placeholder="e.g. Navigatú TBI Main Hall"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Total Capacity</div>
+                  <v-text-field
+                    v-model="form.capacity"
+                    placeholder="e.g. 100"
+                    type="number"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Slots Available</div>
+                  <v-text-field
+                    v-model="form.slots"
+                    placeholder="e.g. 40"
+                    type="number"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Registered Count</div>
+                  <v-text-field
+                    v-model="form.registered"
+                    placeholder="e.g. 60"
+                    type="number"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">
+                    Short Description * <span class="hint-text">(shown on card)</span>
+                  </div>
+                  <v-textarea
+                    v-model="form.description"
+                    placeholder="Brief summary..."
+                    variant="outlined"
+                    rounded="lg"
+                    rows="2"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">
+                    Full Event Details <span class="hint-text">(shown in detail dialog)</span>
+                  </div>
+                  <v-textarea
+                    v-model="form.full_description"
+                    placeholder="Complete event information..."
+                    variant="outlined"
+                    rounded="lg"
+                    rows="4"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Banner Image Path <span class="hint-text">(relative to /public)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.image"
+                    placeholder="/images/events/event1.jpg"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Tags <span class="hint-text">(comma-separated)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.tags_raw"
+                    placeholder="e.g. Workshop, DOST"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+              </v-row>
+            </template>
+
+            <!-- Submit -->
+            <v-divider class="my-5" />
+            <div class="d-flex justify-end" style="gap: 10px">
+              <v-btn variant="outlined" rounded="lg" @click="formDialog = false">Cancel</v-btn>
+              <v-btn
+                type="submit"
+                :color="activeCategoryBtnColor"
+                rounded="lg"
+                :loading="activeTable.saving.value"
+                elevation="0"
+                class="save-btn"
+              >
+                <v-icon icon="mdi-content-save-outline" size="16" class="mr-2" />
+                {{ isEditing ? 'Save Changes' : `Add ${activeSingular}` }}
+              </v-btn>
+            </div>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- DELETE CONFIRM -->
+    <v-dialog v-model="deleteDialog" max-width="380">
+      <v-card rounded="xl" class="pa-6" elevation="0" border>
+        <div class="text-center mb-5">
+          <v-icon icon="mdi-trash-can-outline" size="40" color="#C62828" />
+          <h3 class="dialog-title mt-3">Delete {{ activeSingular }}?</h3>
+          <p class="dialog-sub mt-2">
+            <strong>{{ deleteTarget?.name || deleteTarget?.title }}</strong> will be permanently
+            removed.
+          </p>
+        </div>
+        <v-row dense>
+          <v-col cols="6">
+            <v-btn block variant="outlined" rounded="lg" @click="deleteDialog = false"
+              >Cancel</v-btn
+            >
+          </v-col>
+          <v-col cols="6">
+            <v-btn
+              block
+              color="error"
+              rounded="lg"
+              :loading="activeTable.deleting.value"
+              @click="confirmDelete"
+              >Delete</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
+
+    <!-- LOGOUT CONFIRM -->
     <v-dialog v-model="logoutDialog" max-width="360">
       <v-card rounded="xl" class="pa-6" elevation="0" border>
         <div class="text-center mb-5">
           <v-icon icon="mdi-logout" size="40" color="#C62828" />
-          <h3 class="logout-dialog-title mt-3">Sign Out?</h3>
-          <p class="logout-dialog-sub mt-2">You will be returned to the login page.</p>
+          <h3 class="dialog-title mt-3">Sign Out?</h3>
+          <p class="dialog-sub mt-2">You will be returned to the login page.</p>
         </div>
         <v-row dense>
-          <v-col cols="6"
-            ><v-btn block variant="outlined" rounded="lg" @click="logoutDialog = false"
+          <v-col cols="6">
+            <v-btn block variant="outlined" rounded="lg" @click="logoutDialog = false"
               >Cancel</v-btn
-            ></v-col
-          >
-          <v-col cols="6"
-            ><v-btn block color="error" rounded="lg" @click="confirmLogout">Sign Out</v-btn></v-col
-          >
+            >
+          </v-col>
+          <v-col cols="6">
+            <v-btn block color="error" rounded="lg" @click="confirmLogout">Sign Out</v-btn>
+          </v-col>
         </v-row>
       </v-card>
     </v-dialog>
@@ -250,247 +1084,138 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth } from '@/utils/supabase'
+import { useAdminTable } from '@/composables/useAdminTable'
 
 const router = useRouter()
-const currentUser = ref(null)
-const activePage = ref('dashboard')
-const activeTBI = ref(null)
+
+// ── UI state ──────────────────────────────────────────────────────────────────
 const sidebarOpen = ref(true)
 const sidebarRail = ref(false)
+const activeSection = ref('home') // 'home' | 'incubatees' | 'news' | 'events'
+const currentUser = ref(null)
 const logoutDialog = ref(false)
 
-const tbiList = [
+// ── Supabase tables — each section gets its own independent instance ───────────
+const incubateesTable = useAdminTable('incubatees')
+const newsTable = useAdminTable('news')
+const eventsTable = useAdminTable('events')
+
+// Map section id → its table instance
+const tableMap = {
+  incubatees: incubateesTable,
+  news: newsTable,
+  events: eventsTable,
+}
+const activeTable = computed(() => tableMap[activeSection.value] || incubateesTable)
+
+// ── Static config ─────────────────────────────────────────────────────────────
+const tbiOptions = [
   {
     id: 'navigatu',
     name: 'Navigatú TBI',
     shortName: 'NAV',
-    icon: 'mdi-compass-outline',
     color: '#1565C0',
-    desc: 'Manage incubatees, news, events, and partnerships for Navigatú TBI.',
-    actions: ['Incubatees', 'News', 'Events', 'Partners'],
-    menuActions: [
-      {
-        id: 'incubatees',
-        title: 'Incubatees',
-        desc: 'Add, edit, or remove incubatee startup profiles.',
-        icon: 'mdi-rocket-launch-outline',
-        color: '#1565C0',
-        iconBg: '#E3F2FD',
-        route: '/admin/navigatu/incubatees',
-      },
-      {
-        id: 'news',
-        title: 'News',
-        desc: 'Publish news articles, announcements, and press releases.',
-        icon: 'mdi-newspaper-variant-outline',
-        color: '#2E7D32',
-        iconBg: '#E8F5E9',
-        route: '/admin/navigatu/news',
-      },
-      {
-        id: 'events',
-        title: 'Events',
-        desc: 'Create and manage workshops, pitch nights, and demo days.',
-        icon: 'mdi-calendar-star-outline',
-        color: '#E65100',
-        iconBg: '#FFF3E0',
-        route: '/admin/navigatu/events',
-      },
-      {
-        id: 'achievements',
-        title: 'Achievements',
-        desc: 'Record awards, milestones, and funding received.',
-        icon: 'mdi-trophy-outline',
-        color: '#F9A825',
-        iconBg: '#FFF8E1',
-        route: '/admin/navigatu/achievements',
-      },
-      {
-        id: 'partners',
-        title: 'Partners',
-        desc: 'Manage institutional and industry partnerships.',
-        icon: 'mdi-handshake-outline',
-        color: '#6A1B9A',
-        iconBg: '#EDE7F6',
-        route: '/admin/navigatu/partners',
-      },
-      {
-        id: 'team',
-        title: 'Leadership Team',
-        desc: 'Update team members, roles, and contact information.',
-        icon: 'mdi-account-group-outline',
-        color: '#00695C',
-        iconBg: '#E0F2F1',
-        route: '/admin/navigatu/team',
-      },
-    ],
+    sub: 'Technology Business Incubator',
   },
   {
     id: 'tara',
     name: 'TARA ATBI',
     shortName: 'TARA',
-    icon: 'mdi-leaf-circle-outline',
     color: '#2E7D32',
-    desc: 'Manage incubatees, news, events, and programs for TARA ATBI.',
-    actions: ['Incubatees', 'News', 'Events', 'Programs'],
-    menuActions: [
-      {
-        id: 'incubatees',
-        title: 'Incubatees',
-        desc: 'Add, edit, or remove incubatee startup profiles.',
-        icon: 'mdi-rocket-launch-outline',
-        color: '#2E7D32',
-        iconBg: '#E8F5E9',
-        route: '/admin/tara/incubatees',
-      },
-      {
-        id: 'news',
-        title: 'News',
-        desc: 'Publish news articles, announcements, and press releases.',
-        icon: 'mdi-newspaper-variant-outline',
-        color: '#1565C0',
-        iconBg: '#E3F2FD',
-        route: '/admin/tara/news',
-      },
-      {
-        id: 'events',
-        title: 'Events',
-        desc: 'Create and manage workshops, training sessions, and expos.',
-        icon: 'mdi-calendar-star-outline',
-        color: '#E65100',
-        iconBg: '#FFF3E0',
-        route: '/admin/tara/events',
-      },
-      {
-        id: 'programs',
-        title: 'Programs',
-        desc: 'Manage incubation batches and training programs.',
-        icon: 'mdi-school-outline',
-        color: '#6A1B9A',
-        iconBg: '#EDE7F6',
-        route: '/admin/tara/programs',
-      },
-      {
-        id: 'partners',
-        title: 'Partners',
-        desc: 'Manage institutional and industry partnerships.',
-        icon: 'mdi-handshake-outline',
-        color: '#00695C',
-        iconBg: '#E0F2F1',
-        route: '/admin/tara/partners',
-      },
-      {
-        id: 'team',
-        title: 'Leadership Team',
-        desc: 'Update team members, roles, and contact information.',
-        icon: 'mdi-account-group-outline',
-        color: '#F57F17',
-        iconBg: '#FFFDE7',
-        route: '/admin/tara/team',
-      },
-    ],
+    sub: 'Agri Technology Business Incubator',
   },
   {
     id: 'csutbi',
     name: 'CSU TBI',
     shortName: 'CSU',
-    icon: 'mdi-domain',
     color: '#B71C1C',
-    desc: 'Manage programs, reports, users, and content for CSU TBI.',
-    actions: ['Programs', 'Reports', 'Users', 'Content'],
-    menuActions: [
-      {
-        id: 'programs',
-        title: 'Programs',
-        desc: 'Manage incubation batches, cohorts, and training schedules.',
-        icon: 'mdi-school-outline',
-        color: '#B71C1C',
-        iconBg: '#FFEBEE',
-        route: '/admin/csutbi/programs',
-      },
-      {
-        id: 'reports',
-        title: 'Reports & Analytics',
-        desc: 'Generate and download system performance reports.',
-        icon: 'mdi-chart-bar-stacked',
-        color: '#1565C0',
-        iconBg: '#E3F2FD',
-        route: '/admin/csutbi/reports',
-      },
-      {
-        id: 'users',
-        title: 'User Management',
-        desc: 'Manage admin accounts, roles, and access permissions.',
-        icon: 'mdi-account-cog-outline',
-        color: '#E65100',
-        iconBg: '#FFF3E0',
-        route: '/admin/csutbi/users',
-      },
-      {
-        id: 'content',
-        title: 'Content',
-        desc: 'Manage announcements, publications, and static content.',
-        icon: 'mdi-file-document-edit-outline',
-        color: '#2E7D32',
-        iconBg: '#E8F5E9',
-        route: '/admin/csutbi/content',
-      },
-      {
-        id: 'partners',
-        title: 'Partners',
-        desc: 'Manage funding agencies and industry partnerships.',
-        icon: 'mdi-handshake-outline',
-        color: '#6A1B9A',
-        iconBg: '#EDE7F6',
-        route: '/admin/csutbi/partners',
-      },
-      {
-        id: 'settings',
-        title: 'System Settings',
-        desc: 'Configure system preferences and integrations.',
-        icon: 'mdi-tune-vertical',
-        color: '#546E7A',
-        iconBg: '#ECEFF1',
-        route: '/admin/csutbi/settings',
-      },
-    ],
+    sub: 'Caraga State University TBI',
   },
 ]
 
-const dashStats = [
+const categories = [
+  {
+    id: 'incubatees',
+    name: 'Incubatees',
+    singular: 'Incubatee',
+    icon: 'mdi-rocket-launch-outline',
+    color: '#1565C0',
+    btnColor: 'primary',
+    desc: 'Add, edit, and manage startup incubatees. Assign each to the TBI where it belongs.',
+  },
+  {
+    id: 'news',
+    name: 'News',
+    singular: 'News Article',
+    icon: 'mdi-newspaper-variant-outline',
+    color: '#2E7D32',
+    btnColor: 'success',
+    desc: 'Publish news and announcements. Choose which TBI portal shows the article.',
+  },
+  {
+    id: 'events',
+    name: 'Events',
+    singular: 'Event',
+    icon: 'mdi-calendar-star-outline',
+    color: '#E65100',
+    btnColor: 'warning',
+    desc: 'Create events and assign them to the correct TBI portal for display.',
+  },
+]
+
+// ── Computed active category meta ─────────────────────────────────────────────
+const activeCategory = computed(() => categories.find((c) => c.id === activeSection.value))
+const activeCategoryName = computed(() => activeCategory.value?.name || 'Dashboard')
+const activeSingular = computed(() => activeCategory.value?.singular || '')
+const activeCategoryIcon = computed(
+  () => activeCategory.value?.icon || 'mdi-view-dashboard-outline',
+)
+const activeCategoryColor = computed(() => activeCategory.value?.color || '#1565C0')
+const activeCategoryBtnColor = computed(() => activeCategory.value?.btnColor || 'primary')
+const appBarTitle = computed(() =>
+  activeSection.value === 'home' ? 'Dashboard' : activeCategoryName.value,
+)
+
+// ── Dashboard stats (counts from live data) ───────────────────────────────────
+const dashStats = computed(() => [
   {
     label: 'Total Incubatees',
-    value: '142',
+    value: incubateesTable.records.value.length || '—',
     icon: 'mdi-rocket-launch-outline',
     color: '#1565C0',
     iconBg: '#E3F2FD',
+    section: 'incubatees',
   },
   {
-    label: 'Active News',
-    value: '28',
+    label: 'Published News',
+    value: newsTable.records.value.filter((n) => n.status === 'active').length || '—',
     icon: 'mdi-newspaper-variant-outline',
     color: '#2E7D32',
     iconBg: '#E8F5E9',
+    section: 'news',
   },
   {
     label: 'Upcoming Events',
-    value: '6',
+    value: eventsTable.records.value.filter((e) => e.status === 'upcoming').length || '—',
     icon: 'mdi-calendar-star-outline',
     color: '#E65100',
     iconBg: '#FFF3E0',
+    section: 'events',
   },
   {
     label: 'TBI Portals',
-    value: '3',
+    value: tbiOptions.length,
     icon: 'mdi-office-building-outline',
     color: '#6A1B9A',
     iconBg: '#EDE7F6',
+    section: null,
   },
-]
+])
 
+// ── Today's label ─────────────────────────────────────────────────────────────
 const todayLabel = computed(() =>
   new Date().toLocaleDateString('en-PH', {
     weekday: 'long',
@@ -500,40 +1225,307 @@ const todayLabel = computed(() =>
   }),
 )
 
-function goToDashboard() {
-  activeTBI.value = null
-  activePage.value = 'dashboard'
+// ── Filters ───────────────────────────────────────────────────────────────────
+const searchQuery = ref('')
+const tbiFilter = ref('')
+const statusFilter = ref('All')
+
+const activeStatusItems = computed(() => {
+  if (activeSection.value === 'events') return ['All', 'upcoming', 'past', 'draft']
+  if (activeSection.value === 'incubatees') return ['All', 'active', 'draft', 'graduated']
+  return ['All', 'active', 'draft']
+})
+
+const filteredRecords = computed(() => {
+  let list = activeTable.value.records.value
+  if (statusFilter.value !== 'All') list = list.filter((r) => r.status === statusFilter.value)
+  return list
+})
+
+// ── Table headers per section ─────────────────────────────────────────────────
+const activeHeaders = computed(() => {
+  if (activeSection.value === 'incubatees')
+    return [
+      { title: '', key: 'thumb', sortable: false, width: '52px' },
+      { title: 'Startup Name', key: 'name', sortable: true },
+      { title: 'TBI', key: 'tbi_id', sortable: true },
+      { title: 'Category', key: 'category', sortable: true },
+      { title: 'Location', key: 'location', sortable: false },
+      { title: 'Year', key: 'year_founded', sortable: true },
+      { title: 'Funding', key: 'funding', sortable: false },
+      { title: 'Status', key: 'status', sortable: true },
+      { title: 'Actions', key: 'actions', sortable: false },
+    ]
+  if (activeSection.value === 'news')
+    return [
+      { title: '', key: 'thumb', sortable: false, width: '52px' },
+      { title: 'Title', key: 'title', sortable: true },
+      { title: 'TBI', key: 'tbi_id', sortable: true },
+      { title: 'Category', key: 'category', sortable: true },
+      { title: 'Date', key: 'date', sortable: true },
+      { title: 'Author', key: 'author', sortable: false },
+      { title: 'Status', key: 'status', sortable: true },
+      { title: 'Actions', key: 'actions', sortable: false },
+    ]
+  // events
+  return [
+    { title: '', key: 'thumb', sortable: false, width: '52px' },
+    { title: 'Title', key: 'title', sortable: true },
+    { title: 'TBI', key: 'tbi_id', sortable: true },
+    { title: 'Type', key: 'type', sortable: true },
+    { title: 'Date', key: 'event_date', sortable: false },
+    { title: 'Location', key: 'location', sortable: false },
+    { title: 'Status', key: 'status', sortable: true },
+    { title: 'Actions', key: 'actions', sortable: false },
+  ]
+})
+
+// ── Helper functions ──────────────────────────────────────────────────────────
+const tbiShortName = (id) => tbiOptions.find((t) => t.id === id)?.shortName || id
+const tbiChipColor = (id) =>
+  ({ navigatu: 'primary', tara: 'success', csutbi: 'error' })[id] || 'default'
+const statusChipColor = (s) =>
+  ({
+    active: 'success',
+    draft: 'warning',
+    graduated: 'info',
+    upcoming: 'success',
+    past: 'secondary',
+  })[s] || 'default'
+
+// ── Section switching ─────────────────────────────────────────────────────────
+function setSection(sectionId, preselectedTbi = '') {
+  activeSection.value = sectionId
+  searchQuery.value = ''
+  statusFilter.value = 'All'
+  tbiFilter.value = preselectedTbi
+
+  // Fetch data for the section if it hasn't been loaded yet
+  if (sectionId !== 'home') {
+    const table = tableMap[sectionId]
+    if (table && table.records.value.length === 0) {
+      table.fetchAll(preselectedTbi || null)
+    } else if (preselectedTbi) {
+      // If switching with a TBI filter, re-fetch filtered
+      table?.fetchAll(preselectedTbi)
+    }
+  }
 }
-function selectTBI(tbi) {
-  activeTBI.value = tbi
-  activePage.value = tbi.id
+
+function onTbiFilterChange(val) {
+  activeTable.value.fetchAll(val || null)
 }
-function handleLogout() {
-  logoutDialog.value = true
+
+// ── Form state ────────────────────────────────────────────────────────────────
+const formDialog = ref(false)
+const deleteDialog = ref(false)
+const formRef = ref(null)
+const isEditing = ref(false)
+const editId = ref(null)
+const deleteTarget = ref(null)
+const tbiRequired = ref(false)
+const formError = ref('')
+
+const blankForm = () => ({
+  // shared
+  tbi_id: '',
+  status: 'active',
+  tags_raw: '',
+  description: '',
+  full_description: '',
+  image: '',
+  location: '',
+  // incubatees
+  name: '',
+  category: '',
+  tagline: '',
+  problem: '',
+  solution: '',
+  year_founded: '',
+  website: '',
+  contact_email: '',
+  funding: '',
+  team_size: '',
+  logo: '',
+  slug: '',
+  // news
+  title: '',
+  date: '',
+  author: '',
+  featured: false,
+  // events
+  type: '',
+  day: '',
+  month: '',
+  year: '',
+  time: '',
+  capacity: '',
+  slots: '',
+  registered: '',
+})
+const form = reactive(blankForm())
+
+function openAddDialog() {
+  isEditing.value = false
+  editId.value = null
+  tbiRequired.value = false
+  formError.value = ''
+  Object.assign(form, blankForm())
+  // Pre-select TBI if filter is active
+  if (tbiFilter.value) form.tbi_id = tbiFilter.value
+  // Set default status per section
+  if (activeSection.value === 'events') form.status = 'upcoming'
+  formDialog.value = true
 }
+
+function openEditDialog(item) {
+  isEditing.value = true
+  editId.value = item.id
+  tbiRequired.value = false
+  formError.value = ''
+  Object.assign(form, {
+    ...blankForm(),
+    ...item,
+    tags_raw: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags_raw || '',
+  })
+  formDialog.value = true
+}
+
+function openDeleteDialog(item) {
+  deleteTarget.value = item
+  deleteDialog.value = true
+}
+
+// ── Build Supabase payload per section ────────────────────────────────────────
+function buildPayload() {
+  const tags = form.tags_raw
+    ? form.tags_raw
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+    : []
+
+  if (activeSection.value === 'incubatees') {
+    return {
+      tbi_id: form.tbi_id,
+      name: form.name,
+      category: form.category,
+      tagline: form.tagline || null,
+      description: form.description,
+      problem: form.problem || null,
+      solution: form.solution || null,
+      year_founded: form.year_founded ? parseInt(form.year_founded) : null,
+      location: form.location || null,
+      website: form.website || null,
+      contact_email: form.contact_email || null,
+      funding: form.funding || null,
+      team_size: form.team_size ? parseInt(form.team_size) : null,
+      logo: form.logo || null,
+      slug: form.slug || null,
+      tags,
+      status: form.status,
+    }
+  }
+
+  if (activeSection.value === 'news') {
+    return {
+      tbi_id: form.tbi_id,
+      title: form.title,
+      category: form.category,
+      date: form.date,
+      location: form.location || null,
+      author: form.author || null,
+      description: form.description,
+      full_description: form.full_description || null,
+      image: form.image || null,
+      tags,
+      status: form.status,
+      featured: form.featured,
+    }
+  }
+
+  // events
+  return {
+    tbi_id: form.tbi_id,
+    title: form.title,
+    type: form.type,
+    status: form.status,
+    day: form.day,
+    month: form.month,
+    year: form.year,
+    time: form.time,
+    location: form.location,
+    capacity: form.capacity ? parseInt(form.capacity) : null,
+    slots: form.slots ? parseInt(form.slots) : null,
+    registered: form.registered ? parseInt(form.registered) : null,
+    description: form.description,
+    full_description: form.full_description || null,
+    image: form.image || null,
+    tags,
+  }
+}
+
+async function handleSubmit() {
+  // Validate TBI selection
+  if (!form.tbi_id) {
+    tbiRequired.value = true
+    return
+  }
+  tbiRequired.value = false
+
+  const { valid } = await formRef.value.validate()
+  if (!valid) return
+
+  formError.value = ''
+  const payload = buildPayload()
+  const table = activeTable.value
+
+  const result = isEditing.value
+    ? await table.updateRecord(editId.value, payload)
+    : await table.insertRecord(payload)
+
+  if (result.success) {
+    formDialog.value = false
+  } else {
+    formError.value = result.error?.message || 'Failed to save. Please try again.'
+  }
+}
+
+async function confirmDelete() {
+  const result = await activeTable.value.deleteRecord(deleteTarget.value.id)
+  if (result.success) deleteDialog.value = false
+}
+
+// ── Logout ────────────────────────────────────────────────────────────────────
 async function confirmLogout() {
   try {
     await auth.signOut()
-  } catch (e) {
-    /* silence */
+  } catch {
+    /* silent */
   }
   logoutDialog.value = false
   router.push('/login')
 }
 
+// ── Init — fetch all three tables on mount so stats are live ──────────────────
 onMounted(async () => {
   const {
     data: { user },
   } = await auth.getCurrentUser()
   currentUser.value = user
+  // Fetch all tables in parallel for accurate dashboard stats
+  await Promise.all([incubateesTable.fetchAll(), newsTable.fetchAll(), eventsTable.fetchAll()])
 })
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
 .admin-app {
   font-family: 'DM Sans', sans-serif !important;
 }
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────────── */
 .admin-sidebar {
   background: linear-gradient(180deg, #0d47a1 0%, #1565c0 60%, #1976d2 100%) !important;
 }
@@ -573,7 +1565,6 @@ onMounted(async () => {
   font-size: 0.6rem;
   color: rgba(255, 255, 255, 0.5);
   letter-spacing: 0.5px;
-  margin-top: 1px;
 }
 .sidebar-user {
   display: flex;
@@ -640,12 +1631,16 @@ onMounted(async () => {
   justify-content: flex-end;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* ── App bar ─────────────────────────────────────────────────────────────────── */
 .admin-appbar :deep(.v-toolbar__content) {
   padding: 0 20px;
 }
-.appbar-title-block {
-  display: flex;
-  align-items: center;
+.appbar-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 .appbar-page-label {
   font-family: 'Playfair Display', serif;
@@ -653,6 +1648,8 @@ onMounted(async () => {
   font-weight: 700;
   color: #1a1a1a;
 }
+
+/* ── Main ────────────────────────────────────────────────────────────────────── */
 .admin-main {
   background: #f5f7fb;
 }
@@ -665,6 +1662,8 @@ onMounted(async () => {
     padding: 20px 16px;
   }
 }
+
+/* ── Welcome ─────────────────────────────────────────────────────────────────── */
 .welcome-strip {
   display: flex;
   align-items: flex-start;
@@ -689,6 +1688,8 @@ onMounted(async () => {
   font-weight: 500;
   padding-top: 6px;
 }
+
+/* ── Stat cards ──────────────────────────────────────────────────────────────── */
 .stat-card {
   background: #fff;
   border-radius: 16px;
@@ -697,9 +1698,10 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  cursor: pointer;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 .stat-card:hover {
   transform: translateY(-3px);
@@ -727,6 +1729,8 @@ onMounted(async () => {
   font-weight: 600;
   margin-top: 4px;
 }
+
+/* ── Section eyebrow ─────────────────────────────────────────────────────────── */
 .section-eyebrow {
   display: flex;
   align-items: center;
@@ -736,30 +1740,32 @@ onMounted(async () => {
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-.tbi-card {
+
+/* ── Category cards ──────────────────────────────────────────────────────────── */
+.cat-card {
   border-radius: 20px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
+  min-height: 300px;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
-  min-height: 290px;
 }
-.tbi-card:hover {
+.cat-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18) !important;
 }
-.tbi-card--navigatu {
+.cat-card--incubatees {
   background: linear-gradient(145deg, #1565c0, #0d47a1);
 }
-.tbi-card--tara {
+.cat-card--news {
   background: linear-gradient(145deg, #2e7d32, #1b5e20);
 }
-.tbi-card--csutbi {
-  background: linear-gradient(145deg, #c62828, #b71c1c);
+.cat-card--events {
+  background: linear-gradient(145deg, #e65100, #bf360c);
 }
-.tbi-card-pattern {
+.cat-card-pattern {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -772,49 +1778,49 @@ onMounted(async () => {
     32px 32px,
     32px 32px;
 }
-.tbi-card-body {
+.cat-card-body {
   position: relative;
   z-index: 1;
   padding: 28px;
 }
-.tbi-card-icon-wrap {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
+.cat-card-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.tbi-card-eyebrow {
+.cat-card-eyebrow {
   font-size: 0.62rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
-.tbi-card-name {
+.cat-card-name {
   font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #fff;
   margin: 4px 0 10px;
-  line-height: 1.15;
+  line-height: 1.1;
 }
-.tbi-card-desc {
+.cat-card-desc {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.65);
-  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.7;
   margin: 0;
 }
-.tbi-chip {
+.cat-chip {
   background: rgba(255, 255, 255, 0.12) !important;
   color: rgba(255, 255, 255, 0.8) !important;
   font-size: 0.62rem !important;
   font-weight: 600 !important;
 }
-.tbi-card-cta {
+.cat-card-cta {
   display: inline-flex;
   align-items: center;
   font-size: 0.8rem;
@@ -826,117 +1832,238 @@ onMounted(async () => {
   padding: 6px 16px;
   transition: background 0.18s ease;
 }
-.tbi-card:hover .tbi-card-cta {
+.cat-card:hover .cat-card-cta {
   background: rgba(255, 255, 255, 0.25);
 }
-/* tempo
-.portal-header {
+
+/* ── TBI Glance cards ────────────────────────────────────────────────────────── */
+.tbi-glance-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  border: 1px solid #edf0f7;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.2s;
 }
-*/
-.back-btn {
+.tbi-glance-card:hover {
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.09);
+}
+.tbi-glance-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-bottom: 2px;
+}
+.tbi-glance-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.tbi-glance-sub {
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-top: 1px;
+}
+.tbi-glance-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tbi-glance-btn {
   text-transform: none !important;
-  font-size: 0.82rem !important;
+  font-size: 0.72rem !important;
   font-weight: 600 !important;
   letter-spacing: 0 !important;
 }
-.portal-title-row {
+
+/* ── Content section header ──────────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.page-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 16px;
+  margin-bottom: 4px;
 }
-.portal-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-}
-.portal-title {
+.page-title {
   font-family: 'Playfair Display', serif;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
 }
-.portal-subtitle {
-  font-size: 0.82rem;
-  color: #888;
+.add-btn {
+  text-transform: none !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+.filters-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────────── */
+.records-table :deep(thead th) {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #888 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  background: #f8f9fc !important;
+}
+.records-table :deep(tbody td) {
+  font-size: 0.82rem !important;
+  color: #333 !important;
+}
+.records-table :deep(tr:hover td) {
+  background: #f5f8ff !important;
+}
+.empty-state {
+  text-align: center;
+  padding: 56px 0;
+}
+.empty-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #bbb;
+  margin: 0;
+}
+.empty-sub {
+  font-size: 0.8rem;
+  color: #ccc;
   margin: 4px 0 0;
 }
-.action-card {
-  background: #fff;
-  border-radius: 18px;
-  padding: 24px;
-  border: 1px solid #edf0f7;
-  cursor: pointer;
-  position: relative;
+
+/* ── Form dialog ─────────────────────────────────────────────────────────────── */
+.form-card {
   overflow: hidden;
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease;
+}
+.form-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+}
+.fh-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.fh-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 4px 0 0;
+}
+
+/* TBI selector */
+.form-section-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #444;
+  display: flex;
+  align-items: center;
+}
+.tbi-selector-row {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
-.action-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(21, 101, 192, 0.12) !important;
-  border-color: #c5d8ff;
-}
-.action-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+.tbi-selector-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #e0e4ef;
+  cursor: pointer;
+  transition: all 0.18s ease;
 }
-.action-title {
-  font-size: 0.98rem;
-  font-weight: 700;
+.tbi-selector-item:hover {
+  border-color: #b0c4ef;
+  background: #f8f9fc;
+}
+.tsi-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tsi-name {
+  font-size: 0.88rem;
+  font-weight: 600;
   color: #1a1a1a;
+}
+.tsi-sub {
+  font-size: 0.68rem;
+  color: #aaa;
+  margin-top: 1px;
+}
+.field-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+}
+
+/* Form fields */
+.form-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #444;
   margin-bottom: 6px;
 }
-.action-desc {
-  font-size: 0.78rem;
-  color: #888;
-  line-height: 1.6;
-  margin: 0;
+.hint-text {
+  font-size: 0.68rem;
+  color: #aaa;
+  font-weight: 400;
+  margin-left: 4px;
 }
-.action-arrow {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #f0f4ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.18s ease;
+.form-field :deep(.v-field) {
+  border-radius: 10px !important;
+  font-size: 0.88rem;
 }
-.action-card:hover .action-arrow {
-  background: #1565c0;
+.form-field :deep(.v-field__outline) {
+  border-color: #dde3f0 !important;
 }
-.action-card:hover .action-arrow :deep(.v-icon) {
-  color: white !important;
+.form-field :deep(.v-field--focused .v-field__outline) {
+  border-width: 2px !important;
 }
-.logout-dialog-title {
+.save-btn {
+  text-transform: none !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Dialogs */
+.dialog-title {
   font-family: 'Playfair Display', serif;
   font-size: 1.2rem;
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
 }
-.logout-dialog-sub {
+.dialog-sub {
   font-size: 0.82rem;
   color: #888;
   margin: 0;
 }
+
+/* Transitions */
 .fade-label-enter-active,
 .fade-label-leave-active {
   transition: opacity 0.18s ease;

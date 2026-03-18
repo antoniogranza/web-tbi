@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 import { readFileSync } from 'fs'
 
 // Load environment variables from .env file

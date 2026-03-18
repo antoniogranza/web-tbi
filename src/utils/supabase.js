@@ -15,8 +15,8 @@ const getEnvVar = (key) => {
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(
-  getEnvVar('VITE_SUPABASE_URL'),
-  getEnvVar('VITE_SUPABASE_ANON_KEY'),
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
 )
 
 // Authentication helper functions
