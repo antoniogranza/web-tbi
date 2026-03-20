@@ -376,12 +376,49 @@
     </v-main>
 
     <!-- ══════════════════════════════════════════════════════════════════════ -->
-    <!-- ADD / EDIT DIALOG                                                     -->
+    <!-- FORM DIALOG — wizard for incubatees, flat for news / events          -->
     <!-- ══════════════════════════════════════════════════════════════════════ -->
-    <v-dialog v-model="formDialog" max-width="720" scrollable>
+    <v-dialog
+      v-model="formDialog"
+      :max-width="activeSection === 'incubatees' ? 780 : 720"
+      :persistent="activeSection === 'incubatees'"
+      scrollable
+    >
       <v-card rounded="xl" elevation="0" class="form-card">
-        <!-- Colored header -->
-        <div class="form-dialog-header" :style="{ background: activeCategoryColor }">
+        <!-- ════════════ INCUBATEE WIZARD HEADER ════════════ -->
+        <div v-if="activeSection === 'incubatees'" class="wizard-header">
+          <div class="wizard-header-top">
+            <div>
+              <div class="fh-eyebrow">{{ isEditing ? 'Edit Incubatee' : 'Add New Incubatee' }}</div>
+              <h3 class="fh-title">{{ wizardSteps[wizardStep].label }}</h3>
+            </div>
+            <v-btn
+              icon="mdi-close"
+              variant="text"
+              color="white"
+              size="small"
+              @click="formDialog = false"
+            />
+          </div>
+          <div class="wizard-progress mt-3">
+            <div
+              v-for="(step, i) in wizardSteps"
+              :key="i"
+              class="wizard-pip"
+              :class="{
+                'wizard-pip--done': i < wizardStep,
+                'wizard-pip--active': i === wizardStep,
+              }"
+            />
+          </div>
+          <div class="wizard-step-label">
+            Step {{ wizardStep + 1 }} of {{ wizardSteps.length }} —
+            {{ wizardSteps[wizardStep].label }}
+          </div>
+        </div>
+
+        <!-- ════════════ NEWS / EVENTS HEADER ════════════ -->
+        <div v-else class="form-dialog-header" :style="{ background: activeCategoryColor }">
           <div>
             <div class="fh-eyebrow">{{ isEditing ? 'Edit' : 'Add New' }}</div>
             <h3 class="fh-title">{{ activeSingular }}</h3>
@@ -395,20 +432,1003 @@
           />
         </div>
 
-        <v-card-text class="pa-7">
-          <!-- Form error -->
-          <v-alert
-            v-if="formError"
-            type="error"
-            variant="tonal"
-            rounded="lg"
-            density="compact"
-            class="mb-5"
-            >{{ formError }}</v-alert
-          >
+        <!-- Form error (shared) -->
+        <div v-if="formError" class="px-7 pt-4">
+          <v-alert type="error" variant="tonal" rounded="lg" density="compact">{{
+            formError
+          }}</v-alert>
+        </div>
 
+        <!-- ════════════ INCUBATEE WIZARD BODY ════════════ -->
+        <v-card-text v-if="activeSection === 'incubatees'" class="px-7 pt-5 pb-2">
+          <v-form ref="formRef" @submit.prevent>
+            <template v-if="wizardStep === 0">
+              <div class="form-section-label mb-4">
+                <v-icon icon="mdi-office-building-outline" size="16" class="mr-2" color="#1565C0" />
+                Where should this incubatee appear? *
+              </div>
+              <div class="tbi-selector-row">
+                <div
+                  v-for="tbi in tbiOptions"
+                  :key="tbi.id"
+                  class="tbi-selector-item tbi-selector-item--lg"
+                  :class="{ 'tbi-selector-item--active': form.tbi_id === tbi.id }"
+                  :style="
+                    form.tbi_id === tbi.id
+                      ? { borderColor: tbi.color, background: tbi.color + '10' }
+                      : {}
+                  "
+                  @click="form.tbi_id = tbi.id"
+                >
+                  <div class="tsi-color-bar" :style="{ background: tbi.color }" />
+                  <div class="tsi-dot" :style="{ background: tbi.color }" />
+                  <div class="tsi-text">
+                    <div class="tsi-name">{{ tbi.name }}</div>
+                    <div class="tsi-sub">{{ tbi.sub }}</div>
+                  </div>
+                  <v-icon
+                    v-if="form.tbi_id === tbi.id"
+                    icon="mdi-check-circle"
+                    size="22"
+                    :color="tbi.color"
+                    class="ml-auto"
+                  />
+                </div>
+              </div>
+              <p v-if="tbiRequired" class="field-error mt-2">
+                Please select a TBI portal to continue.
+              </p>
+            </template>
+
+            <template v-else-if="wizardStep === 1">
+              <v-row>
+                <v-col cols="12" sm="8">
+                  <div class="form-label">Startup Name *</div>
+                  <v-text-field
+                    v-model="form.name"
+                    placeholder="e.g. Ascribo AI"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['active', 'draft', 'graduated', 'scaling']"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Tagline</div>
+                  <v-text-field
+                    v-model="form.tagline"
+                    placeholder="e.g. Context-aware AI translation for every critical field."
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Category / Industry *</div>
+                  <v-select
+                    v-model="form.category"
+                    :items="[
+                      'Artificial Intelligence',
+                      'ICT & Software',
+                      'Internet of Things',
+                      'Engineering Tech',
+                      'AgriTech',
+                      'HealthTech',
+                      'FinTech',
+                      'Business Services',
+                      'Other',
+                    ]"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Route Slug <span class="hint-text">(/incubatees/[slug])</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.slug"
+                    placeholder="e.g. ascribo-ai"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Year Founded</div>
+                  <v-text-field
+                    v-model="form.yearFounded"
+                    placeholder="e.g. 2022"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Location</div>
+                  <v-text-field
+                    v-model="form.location"
+                    placeholder="e.g. Bukidnon, Philippines"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <div class="form-label">Team Size</div>
+                  <v-text-field
+                    v-model="form.teamSize"
+                    placeholder="e.g. 8"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Contact Email</div>
+                  <v-text-field
+                    v-model="form.contactEmail"
+                    placeholder="hello@startup.com"
+                    type="email"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Website URL</div>
+                  <v-text-field
+                    v-model="form.website"
+                    placeholder="https://startup.com"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Status Label <span class="hint-text">(shown as badge)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.statusLabel"
+                    placeholder="e.g. Active Incubatee"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Tags <span class="hint-text">(comma-separated)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.tags_raw"
+                    placeholder="e.g. NLP, SaaS, B2B"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="tab-section-header">
+                    <v-icon icon="mdi-chart-bar" size="14" color="#1565C0" class="mr-1" />Quick
+                    Stats (4 cards shown on the hero)
+                  </div>
+                </v-col>
+                <v-col v-for="(stat, i) in form.quickStats" :key="i" cols="12" sm="6">
+                  <div class="sub-card">
+                    <div class="sub-card-header">
+                      <span class="sub-card-label">Stat {{ i + 1 }}</span>
+                    </div>
+                    <v-row dense>
+                      <v-col cols="7">
+                        <div class="form-label">Label</div>
+                        <v-text-field
+                          v-model="stat.label"
+                          :placeholder="
+                            ['Funds Generated', 'Partnerships', 'Year Started', 'Awards Won'][i]
+                          "
+                          variant="outlined"
+                          density="compact"
+                          rounded="lg"
+                          class="form-field"
+                        />
+                      </v-col>
+                      <v-col cols="5">
+                        <div class="form-label">Value</div>
+                        <v-text-field
+                          v-model="stat.value"
+                          :placeholder="['₱4.2M', '6', '2022', '3'][i]"
+                          variant="outlined"
+                          density="compact"
+                          rounded="lg"
+                          class="form-field"
+                        />
+                      </v-col>
+                    </v-row>
+                  </div>
+                </v-col>
+              </v-row>
+            </template>
+
+            <template v-else-if="wizardStep === 2">
+              <v-row>
+                <v-col cols="12">
+                  <div class="form-label">
+                    Long Description *
+                    <span class="hint-text">(first paragraph on About section)</span>
+                  </div>
+                  <v-textarea
+                    v-model="form.descriptionLong"
+                    placeholder="Detailed description of the startup..."
+                    variant="outlined"
+                    rounded="lg"
+                    rows="4"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">
+                    Extra Description <span class="hint-text">(second paragraph)</span>
+                  </div>
+                  <v-textarea
+                    v-model="form.descriptionExtra"
+                    placeholder="Additional context..."
+                    variant="outlined"
+                    rounded="lg"
+                    rows="3"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">The Problem</div>
+                  <v-textarea
+                    v-model="form.problem"
+                    placeholder="What problem does this startup solve?"
+                    variant="outlined"
+                    rounded="lg"
+                    rows="3"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Our Solution</div>
+                  <v-textarea
+                    v-model="form.solution"
+                    placeholder="How does the startup solve it?"
+                    variant="outlined"
+                    rounded="lg"
+                    rows="3"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="tab-section-header">
+                    <v-icon
+                      icon="mdi-card-text-outline"
+                      size="14"
+                      color="#1565C0"
+                      class="mr-1"
+                    />Sidebar Detail Rows
+                  </div>
+                  <div v-for="(detail, i) in form.details" :key="i" class="sub-card mb-3">
+                    <div class="sub-card-header">
+                      <span class="sub-card-label">Row {{ i + 1 }}</span>
+                      <v-btn
+                        icon="mdi-trash-can-outline"
+                        size="x-small"
+                        variant="text"
+                        color="#C62828"
+                        @click="form.details.splice(i, 1)"
+                      />
+                    </div>
+                    <v-row dense>
+                      <v-col cols="5"
+                        ><v-text-field
+                          v-model="detail.label"
+                          label="Label"
+                          placeholder="e.g. Industry"
+                          variant="outlined"
+                          density="compact"
+                          rounded="lg"
+                          class="form-field"
+                      /></v-col>
+                      <v-col cols="7"
+                        ><v-text-field
+                          v-model="detail.value"
+                          label="Value"
+                          placeholder="e.g. Artificial Intelligence"
+                          variant="outlined"
+                          density="compact"
+                          rounded="lg"
+                          class="form-field"
+                      /></v-col>
+                    </v-row>
+                  </div>
+                  <v-btn
+                    prepend-icon="mdi-plus"
+                    size="small"
+                    variant="tonal"
+                    color="primary"
+                    class="mt-1"
+                    @click="
+                      form.details.push({
+                        label: '',
+                        value: '',
+                        icon: 'mdi-information-outline',
+                        color: '#1565C0',
+                      })
+                    "
+                  >
+                    Add Detail Row
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </template>
+
+            <template v-else-if="wizardStep === 3">
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Logo Path <span class="hint-text">(relative to /public)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.logo"
+                    placeholder="/images/incubatees/logo/Logo.png"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                  <div v-if="form.logo" class="img-preview mt-2">
+                    <v-img
+                      :src="form.logo"
+                      height="64"
+                      contain
+                      class="rounded-lg"
+                      style="background: #f5f7fb"
+                    />
+                  </div>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">
+                    Hero Background <span class="hint-text">(wide banner)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.heroBg"
+                    placeholder="/images/incubatees/Hero.jpg"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                  <div v-if="form.heroBg" class="img-preview mt-2">
+                    <v-img
+                      :src="form.heroBg"
+                      height="64"
+                      cover
+                      class="rounded-lg"
+                      style="background: #f5f7fb"
+                    />
+                  </div>
+                </v-col>
+                <v-col cols="12">
+                  <div class="tab-section-header mt-2">
+                    <v-icon
+                      icon="mdi-image-multiple-outline"
+                      size="14"
+                      color="#1565C0"
+                      class="mr-1"
+                    />Gallery — 5 images with captions
+                  </div>
+                </v-col>
+                <v-col v-for="gi in 5" :key="gi" cols="12" sm="6">
+                  <div class="sub-card">
+                    <div class="sub-card-header">
+                      <span class="sub-card-label">Gallery Image {{ gi }}</span>
+                    </div>
+                    <div class="form-label">Image Path</div>
+                    <v-text-field
+                      v-model="form.gallery[gi - 1]"
+                      :placeholder="`/images/incubatees/gallery/Image${gi}.jpg`"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field mb-2"
+                    />
+                    <div class="form-label">Caption</div>
+                    <v-text-field
+                      v-model="form.galleryCaptions[gi - 1]"
+                      :placeholder="`Caption for image ${gi}`"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                    />
+                  </div>
+                </v-col>
+              </v-row>
+            </template>
+
+            <template v-else-if="wizardStep === 4">
+              <div v-if="form.achievements.length === 0" class="empty-tab-state">
+                <v-icon icon="mdi-flag-checkered" size="44" color="#ddd" />
+                <p class="empty-tab-text">No achievements yet.</p>
+              </div>
+              <div v-for="(ach, i) in form.achievements" :key="i" class="sub-card mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-label">Achievement {{ i + 1 }}</span
+                  ><v-btn
+                    icon="mdi-trash-can-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#C62828"
+                    @click="form.achievements.splice(i, 1)"
+                  />
+                </div>
+                <v-row dense>
+                  <v-col cols="12" sm="8"
+                    ><div class="form-label">Title *</div>
+                    <v-text-field
+                      v-model="ach.title"
+                      placeholder="e.g. DICT Startup Grant Recipient"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="4"
+                    ><div class="form-label">Year</div>
+                    <v-text-field
+                      v-model="ach.year"
+                      placeholder="e.g. 2023"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Category</div>
+                    <v-select
+                      v-model="ach.category"
+                      :items="[
+                        'Funding',
+                        'Award',
+                        'Milestone',
+                        'Partnership',
+                        'Deployment',
+                        'Other',
+                      ]"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Photo Path</div>
+                    <v-text-field
+                      v-model="ach.photo"
+                      placeholder="/images/incubatees/achievements/ach.jpg"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12"
+                    ><div class="form-label">Description</div>
+                    <v-textarea
+                      v-model="ach.desc"
+                      placeholder="Brief description..."
+                      variant="outlined"
+                      rounded="lg"
+                      rows="2"
+                      class="form-field"
+                  /></v-col>
+                </v-row>
+              </div>
+              <v-btn
+                prepend-icon="mdi-plus"
+                size="small"
+                variant="tonal"
+                color="primary"
+                @click="
+                  form.achievements.push({
+                    title: '',
+                    desc: '',
+                    photo: '',
+                    year: '',
+                    category: 'Milestone',
+                    icon: 'mdi-flag-checkered',
+                    color: '#2E7D32',
+                  })
+                "
+                >Add Achievement</v-btn
+              >
+            </template>
+
+            <template v-else-if="wizardStep === 5">
+              <div v-if="form.awards.length === 0" class="empty-tab-state">
+                <v-icon icon="mdi-trophy-outline" size="44" color="#ddd" />
+                <p class="empty-tab-text">No awards yet.</p>
+              </div>
+              <div v-for="(award, i) in form.awards" :key="i" class="sub-card mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-label">Award {{ i + 1 }}</span
+                  ><v-btn
+                    icon="mdi-trash-can-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#C62828"
+                    @click="form.awards.splice(i, 1)"
+                  />
+                </div>
+                <v-row dense>
+                  <v-col cols="12" sm="8"
+                    ><div class="form-label">Award Title *</div>
+                    <v-text-field
+                      v-model="award.title"
+                      placeholder="e.g. Best Business App"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="4"
+                    ><div class="form-label">Year</div>
+                    <v-text-field
+                      v-model="award.year"
+                      placeholder="e.g. 2022"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Awarding Organization</div>
+                    <v-text-field
+                      v-model="award.org"
+                      placeholder="e.g. DICT Region X"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12"
+                    ><div class="form-label">Description</div>
+                    <v-textarea
+                      v-model="award.desc"
+                      placeholder="Brief description..."
+                      variant="outlined"
+                      rounded="lg"
+                      rows="2"
+                      class="form-field"
+                  /></v-col>
+                </v-row>
+              </div>
+              <v-btn
+                prepend-icon="mdi-plus"
+                size="small"
+                variant="tonal"
+                color="warning"
+                @click="
+                  form.awards.push({
+                    title: '',
+                    org: '',
+                    desc: '',
+                    year: '',
+                    icon: 'mdi-trophy-outline',
+                    color: '#F9A825',
+                    iconBg: '#FFF8E1',
+                  })
+                "
+                >Add Award</v-btn
+              >
+            </template>
+
+            <template v-else-if="wizardStep === 6">
+              <v-row>
+                <v-col cols="12" sm="5">
+                  <div class="form-label">Total Funds Raised</div>
+                  <v-text-field
+                    v-model="form.totalFunds"
+                    placeholder="e.g. ₱4.2M"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+              </v-row>
+              <div class="tab-section-header mt-4 mb-3">
+                <v-icon icon="mdi-timeline-outline" size="14" color="#1565C0" class="mr-1" />Funding
+                Rounds (timeline)
+              </div>
+              <div v-if="form.fundingRounds.length === 0" class="empty-tab-state">
+                <v-icon icon="mdi-cash-multiple" size="44" color="#ddd" />
+                <p class="empty-tab-text">No funding rounds yet.</p>
+              </div>
+              <div v-for="(round, i) in form.fundingRounds" :key="i" class="sub-card mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-label">Round {{ i + 1 }}</span
+                  ><v-btn
+                    icon="mdi-trash-can-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#C62828"
+                    @click="form.fundingRounds.splice(i, 1)"
+                  />
+                </div>
+                <v-row dense>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Round Label *</div>
+                    <v-text-field
+                      v-model="round.label"
+                      placeholder="e.g. Pre-Seed (DICT Grant)"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="3"
+                    ><div class="form-label">Amount</div>
+                    <v-text-field
+                      v-model="round.amount"
+                      placeholder="e.g. ₱1.2M"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="3"
+                    ><div class="form-label">Year</div>
+                    <v-text-field
+                      v-model="round.year"
+                      placeholder="e.g. 2022"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12"
+                    ><div class="form-label">Description</div>
+                    <v-textarea
+                      v-model="round.desc"
+                      placeholder="What this funding was used for..."
+                      variant="outlined"
+                      rounded="lg"
+                      rows="2"
+                      class="form-field"
+                  /></v-col>
+                </v-row>
+              </div>
+              <v-btn
+                prepend-icon="mdi-plus"
+                size="small"
+                variant="tonal"
+                color="success"
+                @click="
+                  form.fundingRounds.push({
+                    label: '',
+                    amount: '',
+                    year: '',
+                    desc: '',
+                    color: '#1565C0',
+                  })
+                "
+                >Add Funding Round</v-btn
+              >
+            </template>
+
+            <template v-else-if="wizardStep === 7">
+              <div v-if="form.partners.length === 0" class="empty-tab-state">
+                <v-icon icon="mdi-handshake-outline" size="44" color="#ddd" />
+                <p class="empty-tab-text">No partners yet.</p>
+              </div>
+              <div v-for="(partner, i) in form.partners" :key="i" class="sub-card mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-label">Partner {{ i + 1 }}</span
+                  ><v-btn
+                    icon="mdi-trash-can-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#C62828"
+                    @click="form.partners.splice(i, 1)"
+                  />
+                </div>
+                <v-row dense>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Partner Name *</div>
+                    <v-text-field
+                      v-model="partner.name"
+                      placeholder="e.g. DICT Philippines"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Partner Type</div>
+                    <v-select
+                      v-model="partner.type"
+                      :items="[
+                        'Government Agency',
+                        'Academic Institution',
+                        'Industry Partner',
+                        'Research & Technology',
+                        'Local Government Unit',
+                        'Startup Ecosystem',
+                        'NGO',
+                        'Other',
+                      ]"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Chip Label</div>
+                    <v-text-field
+                      v-model="partner.chipLabel"
+                      placeholder="e.g. Funder"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Chip Color</div>
+                    <v-select
+                      v-model="partner.chipColor"
+                      :items="['primary', 'success', 'warning', 'error', 'secondary', 'teal']"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                </v-row>
+              </div>
+              <v-btn
+                prepend-icon="mdi-plus"
+                size="small"
+                variant="tonal"
+                color="primary"
+                @click="
+                  form.partners.push({
+                    name: '',
+                    type: 'Government Agency',
+                    icon: 'mdi-handshake-outline',
+                    color: '#1565C0',
+                    logoBg: '#E3F2FD',
+                    chipLabel: '',
+                    chipColor: 'primary',
+                  })
+                "
+                >Add Partner</v-btn
+              >
+            </template>
+
+            <template v-else-if="wizardStep === 8">
+              <div v-if="form.team.length === 0" class="empty-tab-state">
+                <v-icon icon="mdi-account-group-outline" size="44" color="#ddd" />
+                <p class="empty-tab-text">No team members yet.</p>
+              </div>
+              <div v-for="(member, i) in form.team" :key="i" class="sub-card mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-label">Member {{ i + 1 }}</span
+                  ><v-btn
+                    icon="mdi-trash-can-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#C62828"
+                    @click="form.team.splice(i, 1)"
+                  />
+                </div>
+                <v-row dense>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Full Name *</div>
+                    <v-text-field
+                      v-model="member.name"
+                      placeholder="e.g. Juan dela Cruz"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Role / Title</div>
+                    <v-text-field
+                      v-model="member.role"
+                      placeholder="e.g. CEO & Co-Founder"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="4"
+                    ><div class="form-label">Photo Path</div>
+                    <v-text-field
+                      v-model="member.photo"
+                      placeholder="/images/incubatees/team/ceo.jpg"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="4"
+                    ><div class="form-label">LinkedIn URL</div>
+                    <v-text-field
+                      v-model="member.linkedin"
+                      placeholder="https://linkedin.com/in/..."
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="4"
+                    ><div class="form-label">Email</div>
+                    <v-text-field
+                      v-model="member.email"
+                      placeholder="member@startup.com"
+                      type="email"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                </v-row>
+              </div>
+              <v-btn
+                prepend-icon="mdi-plus"
+                size="small"
+                variant="tonal"
+                color="teal"
+                @click="
+                  form.team.push({ name: '', role: '', photo: null, linkedin: '#', email: null })
+                "
+                >Add Team Member</v-btn
+              >
+            </template>
+
+            <template v-else-if="wizardStep === 9">
+              <div v-if="form.testimonials.length === 0" class="empty-tab-state">
+                <v-icon icon="mdi-comment-quote-outline" size="44" color="#ddd" />
+                <p class="empty-tab-text">No testimonials yet.</p>
+              </div>
+              <div v-for="(t, i) in form.testimonials" :key="i" class="sub-card mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-label">Testimonial {{ i + 1 }}</span
+                  ><v-btn
+                    icon="mdi-trash-can-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#C62828"
+                    @click="form.testimonials.splice(i, 1)"
+                  />
+                </div>
+                <v-row dense>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Name *</div>
+                    <v-text-field
+                      v-model="t.name"
+                      placeholder="e.g. Juan dela Cruz"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Role</div>
+                    <v-text-field
+                      v-model="t.role"
+                      placeholder="e.g. CEO, Ascribo AI"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12" sm="6"
+                    ><div class="form-label">Photo Path</div>
+                    <v-text-field
+                      v-model="t.photo"
+                      placeholder="/images/incubatees/team/photo.jpg"
+                      variant="outlined"
+                      density="compact"
+                      rounded="lg"
+                      class="form-field"
+                  /></v-col>
+                  <v-col cols="12"
+                    ><div class="form-label">Quote *</div>
+                    <v-textarea
+                      v-model="t.quote"
+                      placeholder="Their success statement about the TBI..."
+                      variant="outlined"
+                      rounded="lg"
+                      rows="3"
+                      class="form-field"
+                  /></v-col>
+                </v-row>
+              </div>
+              <v-btn
+                prepend-icon="mdi-plus"
+                size="small"
+                variant="tonal"
+                color="secondary"
+                @click="form.testimonials.push({ name: '', role: '', photo: null, quote: '' })"
+                >Add Testimonial</v-btn
+              >
+            </template>
+          </v-form>
+        </v-card-text>
+
+        <!-- Wizard footer -->
+        <template v-if="activeSection === 'incubatees'">
+          <v-divider />
+          <div class="wizard-footer">
+            <v-btn
+              v-if="wizardStep > 0"
+              variant="outlined"
+              rounded="lg"
+              prepend-icon="mdi-arrow-left"
+              @click="wizardStep--"
+              >Back</v-btn
+            >
+            <v-btn v-else variant="outlined" rounded="lg" @click="formDialog = false">Cancel</v-btn>
+            <div class="d-flex align-center" style="gap: 8px">
+              <span class="wizard-count">{{ wizardStep + 1 }} / {{ wizardSteps.length }}</span>
+              <v-btn
+                v-if="wizardStep < wizardSteps.length - 1"
+                color="primary"
+                rounded="lg"
+                append-icon="mdi-arrow-right"
+                elevation="0"
+                @click="wizardNext"
+                >Next</v-btn
+              >
+              <v-btn
+                v-else
+                color="primary"
+                rounded="lg"
+                :loading="activeTable.saving.value"
+                elevation="0"
+                class="save-btn"
+                @click="handleSubmit"
+              >
+                <v-icon icon="mdi-content-save-outline" size="16" class="mr-2" />
+                {{ isEditing ? 'Save Changes' : 'Add Incubatee' }}
+              </v-btn>
+            </div>
+          </div>
+        </template>
+
+        <!-- ════════════ NEWS / EVENTS FLAT BODY ════════════ -->
+        <v-card-text v-else class="pa-7">
           <v-form ref="formRef" @submit.prevent="handleSubmit">
-            <!-- ── TBI SELECTOR (shared by all sections) ── -->
+            <!-- TBI SELECTOR -->
             <div class="form-section-label mb-3">
               <v-icon
                 icon="mdi-office-building-outline"
@@ -446,214 +1466,10 @@
               </div>
             </div>
             <p v-if="tbiRequired" class="field-error mb-4">Please select a TBI portal above.</p>
-
             <v-divider class="mb-5" />
 
-            <!-- ── INCUBATEE FIELDS ── -->
-            <template v-if="activeSection === 'incubatees'">
-              <v-row>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Startup Name *</div>
-                  <v-text-field
-                    v-model="form.name"
-                    placeholder="e.g. Ascribo AI"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Category / Industry *</div>
-                  <v-select
-                    v-model="form.category"
-                    :items="[
-                      'Artificial Intelligence',
-                      'ICT & Software',
-                      'Internet of Things',
-                      'Engineering Tech',
-                      'AgriTech',
-                      'HealthTech',
-                      'FinTech',
-                      'Other',
-                    ]"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <div class="form-label">Tagline</div>
-                  <v-text-field
-                    v-model="form.tagline"
-                    placeholder="One-sentence description"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <div class="form-label">Description *</div>
-                  <v-textarea
-                    v-model="form.description"
-                    placeholder="Detailed description..."
-                    variant="outlined"
-                    rounded="lg"
-                    rows="3"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <div class="form-label">Problem Statement</div>
-                  <v-textarea
-                    v-model="form.problem"
-                    placeholder="What problem does this startup solve?"
-                    variant="outlined"
-                    rounded="lg"
-                    rows="2"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <div class="form-label">Solution</div>
-                  <v-textarea
-                    v-model="form.solution"
-                    placeholder="How does it solve the problem?"
-                    variant="outlined"
-                    rounded="lg"
-                    rows="2"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Year Founded</div>
-                  <v-text-field
-                    v-model="form.year_founded"
-                    placeholder="e.g. 2022"
-                    type="number"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Location</div>
-                  <v-text-field
-                    v-model="form.location"
-                    placeholder="e.g. Bukidnon, Philippines"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Website URL</div>
-                  <v-text-field
-                    v-model="form.website"
-                    placeholder="https://"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Contact Email</div>
-                  <v-text-field
-                    v-model="form.contact_email"
-                    placeholder="hello@startup.com"
-                    type="email"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Total Funding</div>
-                  <v-text-field
-                    v-model="form.funding"
-                    placeholder="e.g. ₱1.2M"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Team Size</div>
-                  <v-text-field
-                    v-model="form.team_size"
-                    placeholder="e.g. 8"
-                    type="number"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Logo Path <span class="hint-text">(relative to /public)</span>
-                  </div>
-                  <v-text-field
-                    v-model="form.logo"
-                    placeholder="/images/incubatees/logo.png"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Route Slug</div>
-                  <v-text-field
-                    v-model="form.slug"
-                    placeholder="e.g. ascribo-ai"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                    hint="URL: /incubatees/[slug]"
-                    persistent-hint
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Tags <span class="hint-text">(comma-separated)</span>
-                  </div>
-                  <v-text-field
-                    v-model="form.tags_raw"
-                    placeholder="e.g. AI, SaaS, B2B"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Status</div>
-                  <v-select
-                    v-model="form.status"
-                    :items="['active', 'draft', 'graduated']"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-              </v-row>
-            </template>
-
-            <!-- ── NEWS FIELDS ── -->
-            <template v-else-if="activeSection === 'news'">
+            <!-- NEWS FIELDS -->
+            <template v-if="activeSection === 'news'">
               <v-row>
                 <v-col cols="12">
                   <div class="form-label">News Title *</div>
@@ -765,7 +1581,7 @@
                     Tags <span class="hint-text">(comma-separated)</span>
                   </div>
                   <v-text-field
-                    v-model="form.tags_raw"
+                    v-model="form.tags_raw_news"
                     placeholder="e.g. Funding, DICT"
                     variant="outlined"
                     density="comfortable"
@@ -796,7 +1612,7 @@
               </v-row>
             </template>
 
-            <!-- ── EVENTS FIELDS ── -->
+            <!-- EVENTS FIELDS -->
             <template v-else-if="activeSection === 'events'">
               <v-row>
                 <v-col cols="12">
@@ -957,7 +1773,7 @@
                     Short Description * <span class="hint-text">(shown on card)</span>
                   </div>
                   <v-textarea
-                    v-model="form.description"
+                    v-model="form.description_event"
                     placeholder="Brief summary..."
                     variant="outlined"
                     rounded="lg"
@@ -971,7 +1787,7 @@
                     Full Event Details <span class="hint-text">(shown in detail dialog)</span>
                   </div>
                   <v-textarea
-                    v-model="form.full_description"
+                    v-model="form.full_description_event"
                     placeholder="Complete event information..."
                     variant="outlined"
                     rounded="lg"
@@ -984,7 +1800,7 @@
                     Banner Image Path <span class="hint-text">(relative to /public)</span>
                   </div>
                   <v-text-field
-                    v-model="form.image"
+                    v-model="form.image_event"
                     placeholder="/images/events/event1.jpg"
                     variant="outlined"
                     density="comfortable"
@@ -997,7 +1813,7 @@
                     Tags <span class="hint-text">(comma-separated)</span>
                   </div>
                   <v-text-field
-                    v-model="form.tags_raw"
+                    v-model="form.tags_raw_event"
                     placeholder="e.g. Workshop, DOST"
                     variant="outlined"
                     density="comfortable"
@@ -1008,7 +1824,7 @@
               </v-row>
             </template>
 
-            <!-- Submit -->
+            <!-- Submit (news/events) -->
             <v-divider class="my-5" />
             <div class="d-flex justify-end" style="gap: 10px">
               <v-btn variant="outlined" rounded="lg" @click="formDialog = false">Cancel</v-btn>
@@ -1326,34 +2142,142 @@ const deleteTarget = ref(null)
 const tbiRequired = ref(false)
 const formError = ref('')
 
+const incubateeTab = ref('identity')
+
+// ── Wizard state (incubatees only) ───────────────────────────────────────────
+const wizardStep = ref(0)
+const wizardSteps = [
+  { label: 'TBI Portal', icon: 'mdi-office-building-outline' },
+  { label: 'Identity', icon: 'mdi-card-account-details-outline' },
+  { label: 'About', icon: 'mdi-text-box-outline' },
+  { label: 'Media', icon: 'mdi-image-multiple-outline' },
+  { label: 'Achievements', icon: 'mdi-flag-checkered' },
+  { label: 'Awards', icon: 'mdi-trophy-outline' },
+  { label: 'Funding', icon: 'mdi-cash-multiple' },
+  { label: 'Partners', icon: 'mdi-handshake-outline' },
+  { label: 'Team', icon: 'mdi-account-group-outline' },
+  { label: 'Testimonials', icon: 'mdi-comment-quote-outline' },
+]
+
+async function wizardNext() {
+  // Step 0 — must pick a TBI
+  if (wizardStep.value === 0) {
+    if (!form.tbi_id) {
+      tbiRequired.value = true
+      return
+    }
+    tbiRequired.value = false
+    wizardStep.value++
+    return
+  }
+  // Steps with required fields — validate before advancing
+  if (formRef.value) {
+    const { valid } = await formRef.value.validate()
+    if (!valid) return
+  }
+  wizardStep.value++
+}
+
 const blankForm = () => ({
-  // shared
+  // ── shared ────────────────────────────────────────────────────────────────
   tbi_id: '',
   status: 'active',
+  location: '',
+
+  // ── incubatee: identity ───────────────────────────────────────────────────
+  name: '',
+  tagline: '',
+  category: '',
+  slug: '',
+  yearFounded: '',
+  teamSize: '',
+  contactEmail: '',
+  website: '',
+  statusLabel: 'Active Incubatee',
+  statusIcon: 'mdi-check-circle-outline',
   tags_raw: '',
+  quickStats: [
+    {
+      label: 'Funds Generated',
+      value: '',
+      icon: 'mdi-cash-multiple',
+      color: '#1565C0',
+      iconBg: '#E3F2FD',
+    },
+    {
+      label: 'Partnerships',
+      value: '',
+      icon: 'mdi-handshake-outline',
+      color: '#2E7D32',
+      iconBg: '#E8F5E9',
+    },
+    {
+      label: 'Year Started',
+      value: '',
+      icon: 'mdi-calendar-star',
+      color: '#E65100',
+      iconBg: '#FFF3E0',
+    },
+    {
+      label: 'Awards Won',
+      value: '',
+      icon: 'mdi-trophy-outline',
+      color: '#6A1B9A',
+      iconBg: '#EDE7F6',
+    },
+  ],
+
+  // ── incubatee: about ──────────────────────────────────────────────────────
+  descriptionLong: '',
+  descriptionExtra: '',
+  problem: '',
+  solution: '',
+  details: [
+    { label: 'Industry', value: '', icon: 'mdi-brain', color: '#1565C0' },
+    { label: 'Stage', value: '', icon: 'mdi-sprout-outline', color: '#2E7D32' },
+    { label: 'Year Founded', value: '', icon: 'mdi-calendar-outline', color: '#E65100' },
+    { label: 'Headquarters', value: '', icon: 'mdi-map-marker-outline', color: '#6A1B9A' },
+    { label: 'Team Size', value: '', icon: 'mdi-account-group-outline', color: '#00695C' },
+    { label: 'Total Funding', value: '', icon: 'mdi-cash-multiple', color: '#C62828' },
+  ],
+
+  // ── incubatee: media ──────────────────────────────────────────────────────
+  logo: '',
+  heroBg: '',
+  gallery: ['', '', '', '', ''],
+  galleryCaptions: ['', '', '', '', ''],
+
+  // ── incubatee: achievements ───────────────────────────────────────────────
+  achievements: [],
+
+  // ── incubatee: awards ─────────────────────────────────────────────────────
+  awards: [],
+
+  // ── incubatee: funding ────────────────────────────────────────────────────
+  totalFunds: '',
+  fundingRounds: [],
+
+  // ── incubatee: partners ───────────────────────────────────────────────────
+  partners: [],
+
+  // ── incubatee: team ───────────────────────────────────────────────────────
+  team: [],
+
+  // ── incubatee: testimonials ───────────────────────────────────────────────
+  testimonials: [],
+
+  // ── news ──────────────────────────────────────────────────────────────────
+  title: '',
+  category: '',
+  date: '',
+  author: '',
   description: '',
   full_description: '',
   image: '',
-  location: '',
-  // incubatees
-  name: '',
-  category: '',
-  tagline: '',
-  problem: '',
-  solution: '',
-  year_founded: '',
-  website: '',
-  contact_email: '',
-  funding: '',
-  team_size: '',
-  logo: '',
-  slug: '',
-  // news
-  title: '',
-  date: '',
-  author: '',
+  tags_raw_news: '',
   featured: false,
-  // events
+
+  // ── events ───────────────────────────────────────────────────────────────
   type: '',
   day: '',
   month: '',
@@ -1362,6 +2286,10 @@ const blankForm = () => ({
   capacity: '',
   slots: '',
   registered: '',
+  description_event: '',
+  full_description_event: '',
+  image_event: '',
+  tags_raw_event: '',
 })
 const form = reactive(blankForm())
 
@@ -1370,10 +2298,9 @@ function openAddDialog() {
   editId.value = null
   tbiRequired.value = false
   formError.value = ''
+  wizardStep.value = 0
   Object.assign(form, blankForm())
-  // Pre-select TBI if filter is active
   if (tbiFilter.value) form.tbi_id = tbiFilter.value
-  // Set default status per section
   if (activeSection.value === 'events') form.status = 'upcoming'
   formDialog.value = true
 }
@@ -1383,10 +2310,30 @@ function openEditDialog(item) {
   editId.value = item.id
   tbiRequired.value = false
   formError.value = ''
+  incubateeTab.value = 'identity'
+  wizardStep.value = activeSection.value === 'incubatees' ? 1 : 0 // skip TBI step when editing
+  const base = blankForm()
+  // Spread scalar fields
   Object.assign(form, {
-    ...blankForm(),
+    ...base,
     ...item,
+    // tags are stored as array in DB — convert back to raw string for news/events
     tags_raw: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags_raw || '',
+    tags_raw_news: Array.isArray(item.tags) ? item.tags.join(', ') : '',
+    tags_raw_event: Array.isArray(item.tags) ? item.tags.join(', ') : '',
+    // Array fields — merge with blanks so reactive arrays work correctly
+    quickStats: item.quickStats || base.quickStats,
+    details: item.details || base.details,
+    gallery: item.gallery ? [...item.gallery, ...['', '', '', '', '']].slice(0, 5) : base.gallery,
+    galleryCaptions: item.galleryCaptions
+      ? [...item.galleryCaptions, ...['', '', '', '', '']].slice(0, 5)
+      : base.galleryCaptions,
+    achievements: item.achievements || [],
+    awards: item.awards || [],
+    fundingRounds: item.fundingRounds || [],
+    partners: item.partners || [],
+    team: item.team || [],
+    testimonials: item.testimonials || [],
   })
   formDialog.value = true
 }
@@ -1398,36 +2345,59 @@ function openDeleteDialog(item) {
 
 // ── Build Supabase payload per section ────────────────────────────────────────
 function buildPayload() {
-  const tags = form.tags_raw
-    ? form.tags_raw
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean)
-    : []
-
   if (activeSection.value === 'incubatees') {
+    const tags = form.tags_raw
+      ? form.tags_raw
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : []
     return {
+      // identity
       tbi_id: form.tbi_id,
       name: form.name,
-      category: form.category,
       tagline: form.tagline || null,
-      description: form.description,
+      category: form.category,
+      slug: form.slug || null,
+      year_founded: form.yearFounded || null,
+      location: form.location || null,
+      team_size: form.teamSize || null,
+      contact_email: form.contactEmail || null,
+      website: form.website || null,
+      status: form.status,
+      status_label: form.statusLabel || null,
+      status_icon: form.statusIcon || null,
+      tags,
+      quick_stats: form.quickStats,
+      // about
+      description_long: form.descriptionLong || null,
+      description_extra: form.descriptionExtra || null,
       problem: form.problem || null,
       solution: form.solution || null,
-      year_founded: form.year_founded ? parseInt(form.year_founded) : null,
-      location: form.location || null,
-      website: form.website || null,
-      contact_email: form.contact_email || null,
-      funding: form.funding || null,
-      team_size: form.team_size ? parseInt(form.team_size) : null,
+      details: form.details,
+      // media
       logo: form.logo || null,
-      slug: form.slug || null,
-      tags,
-      status: form.status,
+      hero_bg: form.heroBg || null,
+      gallery: form.gallery.filter(Boolean),
+      gallery_captions: form.galleryCaptions.filter(Boolean),
+      // arrays
+      achievements: form.achievements,
+      awards: form.awards,
+      total_funds: form.totalFunds || null,
+      funding_rounds: form.fundingRounds,
+      partners: form.partners,
+      team: form.team,
+      testimonials: form.testimonials,
     }
   }
 
   if (activeSection.value === 'news') {
+    const tags = form.tags_raw_news
+      ? form.tags_raw_news
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : []
     return {
       tbi_id: form.tbi_id,
       title: form.title,
@@ -1445,6 +2415,12 @@ function buildPayload() {
   }
 
   // events
+  const eventTags = form.tags_raw_event
+    ? form.tags_raw_event
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+    : []
   return {
     tbi_id: form.tbi_id,
     title: form.title,
@@ -1458,10 +2434,10 @@ function buildPayload() {
     capacity: form.capacity ? parseInt(form.capacity) : null,
     slots: form.slots ? parseInt(form.slots) : null,
     registered: form.registered ? parseInt(form.registered) : null,
-    description: form.description,
-    full_description: form.full_description || null,
-    image: form.image || null,
-    tags,
+    description: form.description_event,
+    full_description: form.full_description_event || null,
+    image: form.image_event || null,
+    tags: eventTags,
   }
 }
 
@@ -2047,6 +3023,118 @@ onMounted(async () => {
   text-transform: none !important;
   font-weight: 700 !important;
   letter-spacing: 0 !important;
+}
+
+/* ── Wizard ───────────────────────────────────────────────────────────────── */
+.wizard-header {
+  background: #1565c0;
+  padding: 22px 28px 14px;
+}
+.wizard-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.wizard-progress {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+.wizard-pip {
+  height: 4px;
+  flex: 1;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.2s;
+}
+.wizard-pip--done {
+  background: rgba(255, 255, 255, 0.65);
+}
+.wizard-pip--active {
+  background: #ffffff;
+}
+.wizard-step-label {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.3px;
+}
+.wizard-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  gap: 10px;
+  background: #fafbff;
+}
+.wizard-count {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-weight: 600;
+}
+
+/* Large TBI selector cards for wizard step 0 */
+.tbi-selector-item--lg {
+  padding: 16px 18px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.tsi-color-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  border-radius: 14px 0 0 14px;
+}
+
+/* Sub-cards (achievements, awards, team, etc.) */
+.sub-card {
+  background: #f8f9fc;
+  border: 1px solid #e8ecf4;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.sub-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.sub-card-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+/* Tab section divider labels */
+.tab-section-header {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #444;
+  letter-spacing: 0.3px;
+  padding: 8px 0 4px;
+  border-bottom: 1px solid #edf0f7;
+  margin-bottom: 12px;
+}
+/* Empty tab placeholder */
+.empty-tab-state {
+  text-align: center;
+  padding: 40px 0 20px;
+}
+.empty-tab-text {
+  font-size: 0.82rem;
+  color: #bbb;
+  margin-top: 8px;
+}
+/* Image preview box */
+.img-preview {
+  border: 1px solid #dde3f0;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 /* Dialogs */

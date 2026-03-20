@@ -246,72 +246,6 @@
         </v-container>
       </v-container>
 
-      <!-- ===== AWARDS ===== -->
-      <v-container fluid class="awards-section py-14" id="section-awards">
-        <v-container>
-          <p class="section-eyebrow text-center">Recognition</p>
-          <h2 class="section-heading text-center mb-2">
-            Awards & <span class="accent-text">Honors</span>
-          </h2>
-          <p class="section-sub text-center mb-10">
-            Recognition received for innovation and impact
-          </p>
-
-          <v-row justify="center">
-            <v-col v-for="award in startup.awards" :key="award.title" cols="12" sm="6" md="4">
-              <div class="award-card">
-                <!-- Colored top accent -->
-                <div class="award-top" :style="{ background: award.color }" />
-                <div class="award-body pa-5">
-                  <div class="award-icon-wrap mb-3" :style="{ background: award.iconBg }">
-                    <v-icon :icon="award.icon" size="26" :color="award.color" />
-                  </div>
-                  <div class="award-year-tag mb-2">{{ award.year }}</div>
-                  <h4 class="award-title mb-2">{{ award.title }}</h4>
-                  <p class="award-org mb-1">
-                    <v-icon icon="mdi-office-building-outline" size="13" class="mr-1" />
-                    {{ award.org }}
-                  </p>
-                  <p class="award-desc">{{ award.desc }}</p>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-container>
-
-      <!-- ===== PARTNERSHIPS ===== -->
-      <v-container fluid class="financials-section py-14" id="section-partnerships">
-        <v-container>
-          <p class="section-eyebrow text-center">Network</p>
-          <h2 class="section-heading text-center mb-2">
-            Partners & <span class="accent-text">Collaborations</span>
-          </h2>
-          <p class="section-sub text-center mb-10">Organizations that power our growth</p>
-
-          <v-row justify="center">
-            <v-col v-for="partner in startup.partners" :key="partner.name" cols="12" sm="6" md="4">
-              <div class="partner-card">
-                <div class="partner-logo-wrap" :style="{ background: partner.logoBg }">
-                  <v-icon :icon="partner.icon" size="28" :color="partner.color" />
-                </div>
-                <div class="partner-info">
-                  <div class="partner-name">{{ partner.name }}</div>
-                  <div class="partner-type">{{ partner.type }}</div>
-                </div>
-                <v-chip
-                  size="x-small"
-                  :color="partner.chipColor"
-                  variant="tonal"
-                  class="partner-chip"
-                  >{{ partner.chipLabel }}</v-chip
-                >
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-container>
-
       <!-- ===== GALLERY ===== -->
       <v-container fluid class="gallery-section py-14">
         <v-container>
@@ -352,8 +286,40 @@
         </v-container>
       </v-container>
 
+      <!-- ===== PARTNERSHIPS ===== -->
+      <v-container fluid class="financials-section py-14" id="section-partnerships">
+        <v-container>
+          <p class="section-eyebrow text-center">Network</p>
+          <h2 class="section-heading text-center mb-2">
+            Partners & <span class="accent-text">Collaborations</span>
+          </h2>
+          <p class="section-sub text-center mb-10">Organizations that power our growth</p>
+
+          <v-row justify="center">
+            <v-col v-for="partner in startup.partners" :key="partner.name" cols="12" sm="6" md="4">
+              <div class="partner-card">
+                <div class="partner-logo-wrap" :style="{ background: partner.logoBg }">
+                  <v-icon :icon="partner.icon" size="28" :color="partner.color" />
+                </div>
+                <div class="partner-info">
+                  <div class="partner-name">{{ partner.name }}</div>
+                  <div class="partner-type">{{ partner.type }}</div>
+                </div>
+                <v-chip
+                  size="x-small"
+                  :color="partner.chipColor"
+                  variant="tonal"
+                  class="partner-chip"
+                  >{{ partner.chipLabel }}</v-chip
+                >
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-container>
+
       <!-- ===== TEAM ===== -->
-      <v-container fluid class="team-section py-14">
+      <v-container fluid class="team-section py-14" id="section-team">
         <v-container>
           <p class="section-eyebrow text-center">People</p>
           <h2 class="section-heading text-center mb-2">
@@ -410,7 +376,7 @@
       </v-container>
 
       <!-- ===== TESTIMONIALS ===== -->
-      <v-container fluid class="testimonials-section py-14">
+      <v-container fluid class="testimonials-section py-14" id="section-testimonials">
         <v-container>
           <p class="section-eyebrow text-center">Voices</p>
           <h2 class="section-heading text-center mb-2">
@@ -533,28 +499,28 @@ const startup = computed(() => {
 // automatically reflects the correct data for whichever incubatee is loaded.
 const anchorTabs = computed(() => [
   {
-    id: 'section-year-started',
-    label: 'Year Started',
-    icon: 'mdi-calendar-star',
-    value: startup.value.yearFounded ?? '—',
-  },
-  {
     id: 'section-milestones',
     label: 'Milestones',
     icon: 'mdi-flag-checkered',
     value: startup.value.achievements?.length ?? 0,
   },
   {
-    id: 'section-awards',
-    label: 'Awards',
-    icon: 'mdi-trophy-outline',
-    value: startup.value.awards?.length ?? 0,
-  },
-  {
     id: 'section-partnerships',
     label: 'Partnerships',
     icon: 'mdi-handshake-outline',
     value: startup.value.partners?.length ?? 0,
+  },
+  {
+    id: 'section-team',
+    label: 'Team',
+    icon: 'mdi-account-group-outline',
+    value: startup.value.team?.length ?? 0,
+  },
+  {
+    id: 'section-testimonials',
+    label: 'Testimonials',
+    icon: 'mdi-message-star-outline',
+    value: startup.value.testimonials?.length ?? 0,
   },
 ])
 
