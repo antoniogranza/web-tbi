@@ -119,9 +119,7 @@
     <!-- ===== MAIN CONTENT ===== -->
     <v-main class="admin-main">
       <div class="content-area">
-        <!-- ══════════════════════════════════════════════ -->
-        <!-- HOME SECTION                                   -->
-        <!-- ══════════════════════════════════════════════ -->
+        <!-- HOME SECTION -->
         <div v-if="activeSection === 'home'">
           <div class="welcome-strip mb-8">
             <div>
@@ -212,11 +210,8 @@
           </v-row>
         </div>
 
-        <!-- ══════════════════════════════════════════════ -->
-        <!-- CONTENT SECTION (Incubatees / News / Events)  -->
-        <!-- ══════════════════════════════════════════════ -->
+        <!-- CONTENT SECTION -->
         <div v-else>
-          <!-- Section header -->
           <div class="page-header mb-6">
             <div>
               <div class="page-eyebrow" :style="{ color: activeCategoryColor }">
@@ -237,7 +232,6 @@
             </v-btn>
           </div>
 
-          <!-- API error -->
           <v-alert
             v-if="activeTable.apiError.value"
             type="error"
@@ -298,7 +292,6 @@
               hover
               class="records-table"
             >
-              <!-- TBI chip -->
               <template #[`item.tbi_id`]="{ item }">
                 <v-chip
                   :color="tbiChipColor(item.tbi_id)"
@@ -309,7 +302,6 @@
                 >
               </template>
 
-              <!-- Status chip -->
               <template #[`item.status`]="{ item }">
                 <v-chip
                   :color="statusChipColor(item.status)"
@@ -320,7 +312,6 @@
                 >
               </template>
 
-              <!-- Thumbnail -->
               <template #[`item.thumb`]="{ item }">
                 <v-avatar size="34" rounded="lg" color="#f5f7fb">
                   <v-img v-if="item.logo || item.image" :src="item.logo || item.image" cover />
@@ -328,12 +319,10 @@
                 </v-avatar>
               </template>
 
-              <!-- Event date -->
               <template #[`item.event_date`]="{ item }">
                 {{ item.day }} {{ item.month }} {{ item.year }}
               </template>
 
-              <!-- Row actions -->
               <template #[`item.actions`]="{ item }">
                 <div class="d-flex align-center" style="gap: 4px">
                   <v-btn
@@ -376,7 +365,7 @@
     </v-main>
 
     <!-- ══════════════════════════════════════════════════════════════════════ -->
-    <!-- FORM DIALOG — wizard for incubatees, flat for news / events          -->
+    <!-- FORM DIALOG                                                           -->
     <!-- ══════════════════════════════════════════════════════════════════════ -->
     <v-dialog
       v-model="formDialog"
@@ -432,7 +421,6 @@
           />
         </div>
 
-        <!-- Form error (shared) -->
         <div v-if="formError" class="px-7 pt-4">
           <v-alert type="error" variant="tonal" rounded="lg" density="compact">{{
             formError
@@ -442,6 +430,7 @@
         <!-- ════════════ INCUBATEE WIZARD BODY ════════════ -->
         <v-card-text v-if="activeSection === 'incubatees'" class="px-7 pt-5 pb-2">
           <v-form ref="formRef" @submit.prevent>
+            <!-- STEP 0: TBI Portal -->
             <template v-if="wizardStep === 0">
               <div class="form-section-label mb-4">
                 <v-icon icon="mdi-office-building-outline" size="16" class="mr-2" color="#1565C0" />
@@ -480,6 +469,7 @@
               </p>
             </template>
 
+            <!-- STEP 1: Identity -->
             <template v-else-if="wizardStep === 1">
               <v-row>
                 <v-col cols="12" sm="8">
@@ -495,28 +485,6 @@
                   />
                 </v-col>
                 <v-col cols="12" sm="4">
-                  <div class="form-label">Status</div>
-                  <v-select
-                    v-model="form.status"
-                    :items="['active', 'draft', 'graduated', 'scaling']"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <div class="form-label">Tagline</div>
-                  <v-text-field
-                    v-model="form.tagline"
-                    placeholder="e.g. Context-aware AI translation for every critical field."
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
                   <div class="form-label">Category / Industry *</div>
                   <v-select
                     v-model="form.category"
@@ -538,19 +506,18 @@
                     class="form-field"
                   />
                 </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Route Slug <span class="hint-text">(/incubatees/[slug])</span>
-                  </div>
+                <v-col cols="12">
+                  <div class="form-label">Tagline</div>
                   <v-text-field
-                    v-model="form.slug"
-                    placeholder="e.g. ascribo-ai"
+                    v-model="form.tagline"
+                    placeholder="e.g. Context-aware AI translation for every critical field."
                     variant="outlined"
                     density="comfortable"
                     rounded="lg"
                     class="form-field"
                   />
                 </v-col>
+
                 <v-col cols="12" sm="4">
                   <div class="form-label">Year Founded</div>
                   <v-text-field
@@ -574,65 +541,17 @@
                   />
                 </v-col>
                 <v-col cols="12" sm="4">
-                  <div class="form-label">Team Size</div>
-                  <v-text-field
-                    v-model="form.teamSize"
-                    placeholder="e.g. 8"
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['active', 'draft', 'graduated', 'scaling']"
                     variant="outlined"
                     density="comfortable"
                     rounded="lg"
                     class="form-field"
                   />
                 </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Contact Email</div>
-                  <v-text-field
-                    v-model="form.contactEmail"
-                    placeholder="hello@startup.com"
-                    type="email"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Website URL</div>
-                  <v-text-field
-                    v-model="form.website"
-                    placeholder="https://startup.com"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Status Label <span class="hint-text">(shown as badge)</span>
-                  </div>
-                  <v-text-field
-                    v-model="form.statusLabel"
-                    placeholder="e.g. Active Incubatee"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Tags <span class="hint-text">(comma-separated)</span>
-                  </div>
-                  <v-text-field
-                    v-model="form.tags_raw"
-                    placeholder="e.g. NLP, SaaS, B2B"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
+
                 <v-col cols="12">
                   <div class="tab-section-header">
                     <v-icon icon="mdi-chart-bar" size="14" color="#1565C0" class="mr-1" />Quick
@@ -649,9 +568,7 @@
                         <div class="form-label">Label</div>
                         <v-text-field
                           v-model="stat.label"
-                          :placeholder="
-                            ['Funds Generated', 'Partnerships', 'Year Started', 'Awards Won'][i]
-                          "
+                          :placeholder="['Milestones', 'Partnerships', 'Team', 'Testimonials'][i]"
                           variant="outlined"
                           density="compact"
                           rounded="lg"
@@ -662,7 +579,7 @@
                         <div class="form-label">Value</div>
                         <v-text-field
                           v-model="stat.value"
-                          :placeholder="['₱4.2M', '6', '2022', '3'][i]"
+                          :placeholder="['3', '6', '8', '3'][i]"
                           variant="outlined"
                           density="compact"
                           rounded="lg"
@@ -675,6 +592,7 @@
               </v-row>
             </template>
 
+            <!-- STEP 2: About -->
             <template v-else-if="wizardStep === 2">
               <v-row>
                 <v-col cols="12">
@@ -791,52 +709,58 @@
               </v-row>
             </template>
 
+            <!-- STEP 3: Media — Logo + Gallery with upload buttons -->
             <template v-else-if="wizardStep === 3">
+              <!-- Hidden file inputs -->
+              <input
+                ref="logoFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="(e) => handleFileUpload(e, 'logo')"
+              />
+              <input
+                ref="galleryFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="(e) => handleGalleryUpload(e, pendingGalleryIndex)"
+              />
+
               <v-row>
+                <!-- Logo upload -->
                 <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Logo Path <span class="hint-text">(relative to /public)</span>
+                  <div class="form-label">Logo Image</div>
+                  <div class="upload-box" @click="$refs.logoFileInput.click()">
+                    <template v-if="form.logoPreview || form.logo">
+                      <v-img
+                        :src="form.logoPreview || form.logo"
+                        height="100"
+                        contain
+                        class="rounded-lg"
+                      />
+                      <div class="upload-box-overlay">
+                        <v-icon icon="mdi-camera" size="20" color="white" />
+                        <span>Change Photo</span>
+                      </div>
+                    </template>
+                    <template v-else>
+                      <v-icon icon="mdi-image-plus-outline" size="36" color="#1565C0" />
+                      <div class="upload-box-label">Click to upload logo</div>
+                      <div class="upload-box-hint">PNG, JPG, WEBP — max 5MB</div>
+                    </template>
                   </div>
-                  <v-text-field
-                    v-model="form.logo"
-                    placeholder="/images/incubatees/logo/Logo.png"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
+                  <v-progress-linear
+                    v-if="uploadProgress.logo"
+                    :model-value="uploadProgress.logo"
+                    color="primary"
+                    rounded
+                    height="4"
+                    class="mt-2"
                   />
-                  <div v-if="form.logo" class="img-preview mt-2">
-                    <v-img
-                      :src="form.logo"
-                      height="64"
-                      contain
-                      class="rounded-lg"
-                      style="background: #f5f7fb"
-                    />
-                  </div>
                 </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Hero Background <span class="hint-text">(wide banner)</span>
-                  </div>
-                  <v-text-field
-                    v-model="form.heroBg"
-                    placeholder="/images/incubatees/Hero.jpg"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                  <div v-if="form.heroBg" class="img-preview mt-2">
-                    <v-img
-                      :src="form.heroBg"
-                      height="64"
-                      cover
-                      class="rounded-lg"
-                      style="background: #f5f7fb"
-                    />
-                  </div>
-                </v-col>
+
+                <!-- Gallery uploads -->
                 <v-col cols="12">
                   <div class="tab-section-header mt-2">
                     <v-icon
@@ -844,24 +768,46 @@
                       size="14"
                       color="#1565C0"
                       class="mr-1"
-                    />Gallery — 5 images with captions
+                    />Gallery — up to 5 images with captions
                   </div>
                 </v-col>
+
                 <v-col v-for="gi in 5" :key="gi" cols="12" sm="6">
                   <div class="sub-card">
                     <div class="sub-card-header">
                       <span class="sub-card-label">Gallery Image {{ gi }}</span>
                     </div>
-                    <div class="form-label">Image Path</div>
-                    <v-text-field
-                      v-model="form.gallery[gi - 1]"
-                      :placeholder="`/images/incubatees/gallery/Image${gi}.jpg`"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field mb-2"
+
+                    <!-- Gallery upload box -->
+                    <div class="upload-box upload-box--sm" @click="openGalleryUpload(gi - 1)">
+                      <template v-if="form.galleryPreviews[gi - 1] || form.gallery[gi - 1]">
+                        <v-img
+                          :src="form.galleryPreviews[gi - 1] || form.gallery[gi - 1]"
+                          height="80"
+                          cover
+                          class="rounded-lg"
+                        />
+                        <div class="upload-box-overlay">
+                          <v-icon icon="mdi-camera" size="16" color="white" />
+                          <span>Change</span>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <v-icon icon="mdi-image-plus-outline" size="28" color="#aaa" />
+                        <div class="upload-box-label upload-box-label--sm">Upload image</div>
+                      </template>
+                    </div>
+
+                    <v-progress-linear
+                      v-if="uploadProgress[`gallery_${gi - 1}`]"
+                      :model-value="uploadProgress[`gallery_${gi - 1}`]"
+                      color="primary"
+                      rounded
+                      height="3"
+                      class="my-1"
                     />
-                    <div class="form-label">Caption</div>
+
+                    <div class="form-label mt-2">Caption</div>
                     <v-text-field
                       v-model="form.galleryCaptions[gi - 1]"
                       :placeholder="`Caption for image ${gi}`"
@@ -875,15 +821,25 @@
               </v-row>
             </template>
 
+            <!-- STEP 4: Achievements — with upload button for photo -->
             <template v-else-if="wizardStep === 4">
+              <!-- Hidden file input for achievement photos -->
+              <input
+                ref="achievementFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="(e) => handleAchievementPhotoUpload(e, pendingAchievementIndex)"
+              />
+
               <div v-if="form.achievements.length === 0" class="empty-tab-state">
                 <v-icon icon="mdi-flag-checkered" size="44" color="#ddd" />
                 <p class="empty-tab-text">No achievements yet.</p>
               </div>
               <div v-for="(ach, i) in form.achievements" :key="i" class="sub-card mb-4">
                 <div class="sub-card-header">
-                  <span class="sub-card-label">Achievement {{ i + 1 }}</span
-                  ><v-btn
+                  <span class="sub-card-label">Achievement {{ i + 1 }}</span>
+                  <v-btn
                     icon="mdi-trash-can-outline"
                     size="x-small"
                     variant="text"
@@ -892,8 +848,8 @@
                   />
                 </div>
                 <v-row dense>
-                  <v-col cols="12" sm="8"
-                    ><div class="form-label">Title *</div>
+                  <v-col cols="12" sm="8">
+                    <div class="form-label">Title *</div>
                     <v-text-field
                       v-model="ach.title"
                       placeholder="e.g. DICT Startup Grant Recipient"
@@ -901,9 +857,10 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="4"
-                    ><div class="form-label">Year</div>
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="4">
+                    <div class="form-label">Year</div>
                     <v-text-field
                       v-model="ach.year"
                       placeholder="e.g. 2023"
@@ -911,36 +868,51 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Category</div>
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Category</div>
                     <v-select
                       v-model="ach.category"
-                      :items="[
-                        'Funding',
-                        'Award',
-                        'Milestone',
-                        'Partnership',
-                        'Deployment',
-                        'Other',
-                      ]"
+                      :items="['Funding', 'Award', 'Partnership', 'Deployment', 'Other']"
                       variant="outlined"
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Photo Path</div>
-                    <v-text-field
-                      v-model="ach.photo"
-                      placeholder="/images/incubatees/achievements/ach.jpg"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12"
-                    ><div class="form-label">Description</div>
+                    />
+                  </v-col>
+                  <!-- Achievement Photo Upload -->
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Photo</div>
+                    <div class="upload-box upload-box--xs" @click="openAchievementUpload(i)">
+                      <template v-if="ach.photoPreview || ach.photo">
+                        <v-img
+                          :src="ach.photoPreview || ach.photo"
+                          height="60"
+                          cover
+                          class="rounded-lg"
+                        />
+                        <div class="upload-box-overlay">
+                          <v-icon icon="mdi-camera" size="14" color="white" />
+                          <span>Change</span>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <v-icon icon="mdi-image-plus-outline" size="22" color="#aaa" />
+                        <div class="upload-box-label upload-box-label--sm">Upload photo</div>
+                      </template>
+                    </div>
+                    <v-progress-linear
+                      v-if="uploadProgress[`achievement_${i}`]"
+                      :model-value="uploadProgress[`achievement_${i}`]"
+                      color="primary"
+                      rounded
+                      height="3"
+                      class="mt-1"
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <div class="form-label">Description</div>
                     <v-textarea
                       v-model="ach.desc"
                       placeholder="Brief description..."
@@ -948,7 +920,8 @@
                       rounded="lg"
                       rows="2"
                       class="form-field"
-                  /></v-col>
+                    />
+                  </v-col>
                 </v-row>
               </div>
               <v-btn
@@ -961,6 +934,7 @@
                     title: '',
                     desc: '',
                     photo: '',
+                    photoPreview: null,
                     year: '',
                     category: 'Milestone',
                     icon: 'mdi-flag-checkered',
@@ -971,188 +945,16 @@
               >
             </template>
 
+            <!-- STEP 5: Partners (was step 7, now step 5 after removing Awards + Funding) -->
             <template v-else-if="wizardStep === 5">
-              <div v-if="form.awards.length === 0" class="empty-tab-state">
-                <v-icon icon="mdi-trophy-outline" size="44" color="#ddd" />
-                <p class="empty-tab-text">No awards yet.</p>
-              </div>
-              <div v-for="(award, i) in form.awards" :key="i" class="sub-card mb-4">
-                <div class="sub-card-header">
-                  <span class="sub-card-label">Award {{ i + 1 }}</span
-                  ><v-btn
-                    icon="mdi-trash-can-outline"
-                    size="x-small"
-                    variant="text"
-                    color="#C62828"
-                    @click="form.awards.splice(i, 1)"
-                  />
-                </div>
-                <v-row dense>
-                  <v-col cols="12" sm="8"
-                    ><div class="form-label">Award Title *</div>
-                    <v-text-field
-                      v-model="award.title"
-                      placeholder="e.g. Best Business App"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="4"
-                    ><div class="form-label">Year</div>
-                    <v-text-field
-                      v-model="award.year"
-                      placeholder="e.g. 2022"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Awarding Organization</div>
-                    <v-text-field
-                      v-model="award.org"
-                      placeholder="e.g. DICT Region X"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12"
-                    ><div class="form-label">Description</div>
-                    <v-textarea
-                      v-model="award.desc"
-                      placeholder="Brief description..."
-                      variant="outlined"
-                      rounded="lg"
-                      rows="2"
-                      class="form-field"
-                  /></v-col>
-                </v-row>
-              </div>
-              <v-btn
-                prepend-icon="mdi-plus"
-                size="small"
-                variant="tonal"
-                color="warning"
-                @click="
-                  form.awards.push({
-                    title: '',
-                    org: '',
-                    desc: '',
-                    year: '',
-                    icon: 'mdi-trophy-outline',
-                    color: '#F9A825',
-                    iconBg: '#FFF8E1',
-                  })
-                "
-                >Add Award</v-btn
-              >
-            </template>
-
-            <template v-else-if="wizardStep === 6">
-              <v-row>
-                <v-col cols="12" sm="5">
-                  <div class="form-label">Total Funds Raised</div>
-                  <v-text-field
-                    v-model="form.totalFunds"
-                    placeholder="e.g. ₱4.2M"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-              </v-row>
-              <div class="tab-section-header mt-4 mb-3">
-                <v-icon icon="mdi-timeline-outline" size="14" color="#1565C0" class="mr-1" />Funding
-                Rounds (timeline)
-              </div>
-              <div v-if="form.fundingRounds.length === 0" class="empty-tab-state">
-                <v-icon icon="mdi-cash-multiple" size="44" color="#ddd" />
-                <p class="empty-tab-text">No funding rounds yet.</p>
-              </div>
-              <div v-for="(round, i) in form.fundingRounds" :key="i" class="sub-card mb-4">
-                <div class="sub-card-header">
-                  <span class="sub-card-label">Round {{ i + 1 }}</span
-                  ><v-btn
-                    icon="mdi-trash-can-outline"
-                    size="x-small"
-                    variant="text"
-                    color="#C62828"
-                    @click="form.fundingRounds.splice(i, 1)"
-                  />
-                </div>
-                <v-row dense>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Round Label *</div>
-                    <v-text-field
-                      v-model="round.label"
-                      placeholder="e.g. Pre-Seed (DICT Grant)"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="3"
-                    ><div class="form-label">Amount</div>
-                    <v-text-field
-                      v-model="round.amount"
-                      placeholder="e.g. ₱1.2M"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="3"
-                    ><div class="form-label">Year</div>
-                    <v-text-field
-                      v-model="round.year"
-                      placeholder="e.g. 2022"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12"
-                    ><div class="form-label">Description</div>
-                    <v-textarea
-                      v-model="round.desc"
-                      placeholder="What this funding was used for..."
-                      variant="outlined"
-                      rounded="lg"
-                      rows="2"
-                      class="form-field"
-                  /></v-col>
-                </v-row>
-              </div>
-              <v-btn
-                prepend-icon="mdi-plus"
-                size="small"
-                variant="tonal"
-                color="success"
-                @click="
-                  form.fundingRounds.push({
-                    label: '',
-                    amount: '',
-                    year: '',
-                    desc: '',
-                    color: '#1565C0',
-                  })
-                "
-                >Add Funding Round</v-btn
-              >
-            </template>
-
-            <template v-else-if="wizardStep === 7">
               <div v-if="form.partners.length === 0" class="empty-tab-state">
                 <v-icon icon="mdi-handshake-outline" size="44" color="#ddd" />
                 <p class="empty-tab-text">No partners yet.</p>
               </div>
               <div v-for="(partner, i) in form.partners" :key="i" class="sub-card mb-4">
                 <div class="sub-card-header">
-                  <span class="sub-card-label">Partner {{ i + 1 }}</span
-                  ><v-btn
+                  <span class="sub-card-label">Partner {{ i + 1 }}</span>
+                  <v-btn
                     icon="mdi-trash-can-outline"
                     size="x-small"
                     variant="text"
@@ -1161,8 +963,8 @@
                   />
                 </div>
                 <v-row dense>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Partner Name *</div>
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Partner Name *</div>
                     <v-text-field
                       v-model="partner.name"
                       placeholder="e.g. DICT Philippines"
@@ -1170,9 +972,10 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Partner Type</div>
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Partner Type</div>
                     <v-select
                       v-model="partner.type"
                       :items="[
@@ -1189,27 +992,8 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Chip Label</div>
-                    <v-text-field
-                      v-model="partner.chipLabel"
-                      placeholder="e.g. Funder"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Chip Color</div>
-                    <v-select
-                      v-model="partner.chipColor"
-                      :items="['primary', 'success', 'warning', 'error', 'secondary', 'teal']"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
+                    />
+                  </v-col>
                 </v-row>
               </div>
               <v-btn
@@ -1232,15 +1016,25 @@
               >
             </template>
 
-            <template v-else-if="wizardStep === 8">
+            <!-- STEP 6: Team — with photo upload button -->
+            <template v-else-if="wizardStep === 6">
+              <!-- Hidden file input for team member photos -->
+              <input
+                ref="teamFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="(e) => handleTeamPhotoUpload(e, pendingTeamIndex)"
+              />
+
               <div v-if="form.team.length === 0" class="empty-tab-state">
                 <v-icon icon="mdi-account-group-outline" size="44" color="#ddd" />
                 <p class="empty-tab-text">No team members yet.</p>
               </div>
               <div v-for="(member, i) in form.team" :key="i" class="sub-card mb-4">
                 <div class="sub-card-header">
-                  <span class="sub-card-label">Member {{ i + 1 }}</span
-                  ><v-btn
+                  <span class="sub-card-label">Member {{ i + 1 }}</span>
+                  <v-btn
                     icon="mdi-trash-can-outline"
                     size="x-small"
                     variant="text"
@@ -1249,8 +1043,8 @@
                   />
                 </div>
                 <v-row dense>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Full Name *</div>
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Full Name *</div>
                     <v-text-field
                       v-model="member.name"
                       placeholder="e.g. Juan dela Cruz"
@@ -1258,9 +1052,10 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Role / Title</div>
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Role / Title</div>
                     <v-text-field
                       v-model="member.role"
                       placeholder="e.g. CEO & Co-Founder"
@@ -1268,19 +1063,41 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="4"
-                    ><div class="form-label">Photo Path</div>
-                    <v-text-field
-                      v-model="member.photo"
-                      placeholder="/images/incubatees/team/ceo.jpg"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="4"
-                    ><div class="form-label">LinkedIn URL</div>
+                    />
+                  </v-col>
+                  <!-- Team Photo Upload -->
+                  <v-col cols="12" sm="4">
+                    <div class="form-label">Photo</div>
+                    <div class="upload-box upload-box--avatar" @click="openTeamUpload(i)">
+                      <template v-if="member.photoPreview || member.photo">
+                        <v-img
+                          :src="member.photoPreview || member.photo"
+                          height="80"
+                          width="80"
+                          cover
+                          class="rounded-circle"
+                          style="border-radius: 50% !important"
+                        />
+                        <div class="upload-box-overlay upload-box-overlay--circle">
+                          <v-icon icon="mdi-camera" size="16" color="white" />
+                        </div>
+                      </template>
+                      <template v-else>
+                        <v-icon icon="mdi-account-plus-outline" size="28" color="#aaa" />
+                        <div class="upload-box-label upload-box-label--sm">Upload photo</div>
+                      </template>
+                    </div>
+                    <v-progress-linear
+                      v-if="uploadProgress[`team_${i}`]"
+                      :model-value="uploadProgress[`team_${i}`]"
+                      color="primary"
+                      rounded
+                      height="3"
+                      class="mt-1"
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="4">
+                    <div class="form-label">LinkedIn URL</div>
                     <v-text-field
                       v-model="member.linkedin"
                       placeholder="https://linkedin.com/in/..."
@@ -1288,9 +1105,10 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="4"
-                    ><div class="form-label">Email</div>
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="4">
+                    <div class="form-label">Email</div>
                     <v-text-field
                       v-model="member.email"
                       placeholder="member@startup.com"
@@ -1299,7 +1117,8 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
+                    />
+                  </v-col>
                 </v-row>
               </div>
               <v-btn
@@ -1308,21 +1127,38 @@
                 variant="tonal"
                 color="teal"
                 @click="
-                  form.team.push({ name: '', role: '', photo: null, linkedin: '#', email: null })
+                  form.team.push({
+                    name: '',
+                    role: '',
+                    photo: null,
+                    photoPreview: null,
+                    linkedin: '#',
+                    email: null,
+                  })
                 "
                 >Add Team Member</v-btn
               >
             </template>
 
-            <template v-else-if="wizardStep === 9">
+            <!-- STEP 7: Testimonials — with photo upload button -->
+            <template v-else-if="wizardStep === 7">
+              <!-- Hidden file input for testimonial photos -->
+              <input
+                ref="testimonialFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="(e) => handleTestimonialPhotoUpload(e, pendingTestimonialIndex)"
+              />
+
               <div v-if="form.testimonials.length === 0" class="empty-tab-state">
                 <v-icon icon="mdi-comment-quote-outline" size="44" color="#ddd" />
                 <p class="empty-tab-text">No testimonials yet.</p>
               </div>
               <div v-for="(t, i) in form.testimonials" :key="i" class="sub-card mb-4">
                 <div class="sub-card-header">
-                  <span class="sub-card-label">Testimonial {{ i + 1 }}</span
-                  ><v-btn
+                  <span class="sub-card-label">Testimonial {{ i + 1 }}</span>
+                  <v-btn
                     icon="mdi-trash-can-outline"
                     size="x-small"
                     variant="text"
@@ -1331,8 +1167,8 @@
                   />
                 </div>
                 <v-row dense>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Name *</div>
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Name *</div>
                     <v-text-field
                       v-model="t.name"
                       placeholder="e.g. Juan dela Cruz"
@@ -1340,9 +1176,10 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Role</div>
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <div class="form-label">Role</div>
                     <v-text-field
                       v-model="t.role"
                       placeholder="e.g. CEO, Ascribo AI"
@@ -1350,19 +1187,40 @@
                       density="compact"
                       rounded="lg"
                       class="form-field"
-                  /></v-col>
-                  <v-col cols="12" sm="6"
-                    ><div class="form-label">Photo Path</div>
-                    <v-text-field
-                      v-model="t.photo"
-                      placeholder="/images/incubatees/team/photo.jpg"
-                      variant="outlined"
-                      density="compact"
-                      rounded="lg"
-                      class="form-field"
-                  /></v-col>
-                  <v-col cols="12"
-                    ><div class="form-label">Quote *</div>
+                    />
+                  </v-col>
+                  <!-- Testimonial Photo Upload -->
+                  <v-col cols="12" sm="4">
+                    <div class="form-label">Photo</div>
+                    <div class="upload-box upload-box--avatar" @click="openTestimonialUpload(i)">
+                      <template v-if="t.photoPreview || t.photo">
+                        <v-img
+                          :src="t.photoPreview || t.photo"
+                          height="80"
+                          width="80"
+                          cover
+                          style="border-radius: 50% !important"
+                        />
+                        <div class="upload-box-overlay upload-box-overlay--circle">
+                          <v-icon icon="mdi-camera" size="16" color="white" />
+                        </div>
+                      </template>
+                      <template v-else>
+                        <v-icon icon="mdi-account-plus-outline" size="28" color="#aaa" />
+                        <div class="upload-box-label upload-box-label--sm">Upload photo</div>
+                      </template>
+                    </div>
+                    <v-progress-linear
+                      v-if="uploadProgress[`testimonial_${i}`]"
+                      :model-value="uploadProgress[`testimonial_${i}`]"
+                      color="secondary"
+                      rounded
+                      height="3"
+                      class="mt-1"
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <div class="form-label">Quote *</div>
                     <v-textarea
                       v-model="t.quote"
                       placeholder="Their success statement about the TBI..."
@@ -1370,7 +1228,8 @@
                       rounded="lg"
                       rows="3"
                       class="form-field"
-                  /></v-col>
+                    />
+                  </v-col>
                 </v-row>
               </div>
               <v-btn
@@ -1378,7 +1237,15 @@
                 size="small"
                 variant="tonal"
                 color="secondary"
-                @click="form.testimonials.push({ name: '', role: '', photo: null, quote: '' })"
+                @click="
+                  form.testimonials.push({
+                    name: '',
+                    role: '',
+                    photo: null,
+                    photoPreview: null,
+                    quote: '',
+                  })
+                "
                 >Add Testimonial</v-btn
               >
             </template>
@@ -1560,19 +1427,6 @@
                     variant="outlined"
                     rounded="lg"
                     rows="5"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
-                    Cover Image Path <span class="hint-text">(relative to /public)</span>
-                  </div>
-                  <v-text-field
-                    v-model="form.image"
-                    placeholder="/images/news/news1.jpg"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
                     class="form-field"
                   />
                 </v-col>
@@ -1797,19 +1651,6 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                   <div class="form-label">
-                    Banner Image Path <span class="hint-text">(relative to /public)</span>
-                  </div>
-                  <v-text-field
-                    v-model="form.image_event"
-                    placeholder="/images/events/event1.jpg"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">
                     Tags <span class="hint-text">(comma-separated)</span>
                   </div>
                   <v-text-field
@@ -1824,7 +1665,6 @@
               </v-row>
             </template>
 
-            <!-- Submit (news/events) -->
             <v-divider class="my-5" />
             <div class="d-flex justify-end" style="gap: 10px">
               <v-btn variant="outlined" rounded="lg" @click="formDialog = false">Cancel</v-btn>
@@ -1902,7 +1742,7 @@
 <script setup>
 import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth } from '@/utils/supabase'
+import { auth, supabase } from '@/utils/supabase'
 import { useAdminTable } from '@/composables/useAdminTable'
 
 const router = useRouter()
@@ -1910,16 +1750,15 @@ const router = useRouter()
 // ── UI state ──────────────────────────────────────────────────────────────────
 const sidebarOpen = ref(true)
 const sidebarRail = ref(false)
-const activeSection = ref('home') // 'home' | 'incubatees' | 'news' | 'events'
+const activeSection = ref('home')
 const currentUser = ref(null)
 const logoutDialog = ref(false)
 
-// ── Supabase tables — each section gets its own independent instance ───────────
+// ── Supabase tables ───────────────────────────────────────────────────────────
 const incubateesTable = useAdminTable('incubatees')
 const newsTable = useAdminTable('news')
 const eventsTable = useAdminTable('events')
 
-// Map section id → its table instance
 const tableMap = {
   incubatees: incubateesTable,
   news: newsTable,
@@ -1995,7 +1834,7 @@ const appBarTitle = computed(() =>
   activeSection.value === 'home' ? 'Dashboard' : activeCategoryName.value,
 )
 
-// ── Dashboard stats (counts from live data) ───────────────────────────────────
+// ── Dashboard stats ───────────────────────────────────────────────────────────
 const dashStats = computed(() => [
   {
     label: 'Total Incubatees',
@@ -2031,7 +1870,6 @@ const dashStats = computed(() => [
   },
 ])
 
-// ── Today's label ─────────────────────────────────────────────────────────────
 const todayLabel = computed(() =>
   new Date().toLocaleDateString('en-PH', {
     weekday: 'long',
@@ -2058,7 +1896,7 @@ const filteredRecords = computed(() => {
   return list
 })
 
-// ── Table headers per section ─────────────────────────────────────────────────
+// ── Table headers ─────────────────────────────────────────────────────────────
 const activeHeaders = computed(() => {
   if (activeSection.value === 'incubatees')
     return [
@@ -2068,7 +1906,6 @@ const activeHeaders = computed(() => {
       { title: 'Category', key: 'category', sortable: true },
       { title: 'Location', key: 'location', sortable: false },
       { title: 'Year', key: 'year_founded', sortable: true },
-      { title: 'Funding', key: 'funding', sortable: false },
       { title: 'Status', key: 'status', sortable: true },
       { title: 'Actions', key: 'actions', sortable: false },
     ]
@@ -2083,7 +1920,6 @@ const activeHeaders = computed(() => {
       { title: 'Status', key: 'status', sortable: true },
       { title: 'Actions', key: 'actions', sortable: false },
     ]
-  // events
   return [
     { title: '', key: 'thumb', sortable: false, width: '52px' },
     { title: 'Title', key: 'title', sortable: true },
@@ -2096,7 +1932,7 @@ const activeHeaders = computed(() => {
   ]
 })
 
-// ── Helper functions ──────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 const tbiShortName = (id) => tbiOptions.find((t) => t.id === id)?.shortName || id
 const tbiChipColor = (id) =>
   ({ navigatu: 'primary', tara: 'success', csutbi: 'error' })[id] || 'default'
@@ -2115,14 +1951,11 @@ function setSection(sectionId, preselectedTbi = '') {
   searchQuery.value = ''
   statusFilter.value = 'All'
   tbiFilter.value = preselectedTbi
-
-  // Fetch data for the section if it hasn't been loaded yet
   if (sectionId !== 'home') {
     const table = tableMap[sectionId]
     if (table && table.records.value.length === 0) {
       table.fetchAll(preselectedTbi || null)
     } else if (preselectedTbi) {
-      // If switching with a TBI filter, re-fetch filtered
       table?.fetchAll(preselectedTbi)
     }
   }
@@ -2130,6 +1963,150 @@ function setSection(sectionId, preselectedTbi = '') {
 
 function onTbiFilterChange(val) {
   activeTable.value.fetchAll(val || null)
+}
+
+// ── Upload state ──────────────────────────────────────────────────────────────
+const uploadProgress = reactive({})
+const pendingGalleryIndex = ref(0)
+const pendingAchievementIndex = ref(0)
+const pendingTeamIndex = ref(0)
+const pendingTestimonialIndex = ref(0)
+
+// File input refs
+const logoFileInput = ref(null)
+const galleryFileInput = ref(null)
+const achievementFileInput = ref(null)
+const teamFileInput = ref(null)
+const testimonialFileInput = ref(null)
+
+/**
+ * Upload a file to Supabase Storage and return its public URL.
+ * @param {File} file - The File object from the input
+ * @param {string} bucket - The Supabase storage bucket name (e.g. 'incubatees')
+ * @param {string} folder - Sub-folder path (e.g. 'logos', 'gallery', 'team')
+ * @param {string} progressKey - Key to track upload progress in uploadProgress reactive object
+ * @returns {Promise<string|null>} Public URL of uploaded file, or null on error
+ */
+async function uploadToSupabase(file, bucket, folder, progressKey) {
+  if (!file) return null
+
+  // Validate file size (max 5MB)
+  const MAX_SIZE = 5 * 1024 * 1024
+  if (file.size > MAX_SIZE) {
+    formError.value = `File "${file.name}" exceeds 5MB limit.`
+    return null
+  }
+
+  // Build a unique file path: folder/timestamp_originalname
+  const ext = file.name.split('.').pop()
+  const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+  const filePath = `${folder}/${fileName}`
+
+  // Simulate progress (Supabase JS v2 doesn't expose upload progress natively)
+  uploadProgress[progressKey] = 10
+
+  const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type,
+  })
+
+  if (error) {
+    console.error('Supabase upload error:', error)
+    formError.value = `Upload failed: ${error.message}`
+    uploadProgress[progressKey] = 0
+    return null
+  }
+
+  uploadProgress[progressKey] = 90
+
+  // Get the public URL
+  const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(filePath)
+
+  uploadProgress[progressKey] = 100
+  setTimeout(() => {
+    uploadProgress[progressKey] = 0
+  }, 1200)
+
+  return urlData?.publicUrl || null
+}
+
+// ── Logo upload handler ───────────────────────────────────────────────────────
+async function handleFileUpload(event, field) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  // Show local preview immediately
+  form.logoPreview = URL.createObjectURL(file)
+  // Upload to Supabase Storage
+  const url = await uploadToSupabase(file, 'incubatees', 'logos', 'logo')
+  if (url) form.logo = url
+  event.target.value = ''
+}
+
+// ── Gallery upload handlers ───────────────────────────────────────────────────
+function openGalleryUpload(index) {
+  pendingGalleryIndex.value = index
+  galleryFileInput.value?.click()
+}
+
+async function handleGalleryUpload(event, index) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  // Local preview
+  form.galleryPreviews[index] = URL.createObjectURL(file)
+  // Upload
+  const key = `gallery_${index}`
+  const url = await uploadToSupabase(file, 'incubatees', 'gallery', key)
+  if (url) form.gallery[index] = url
+  event.target.value = ''
+}
+
+// ── Achievement photo upload handlers ─────────────────────────────────────────
+function openAchievementUpload(index) {
+  pendingAchievementIndex.value = index
+  achievementFileInput.value?.click()
+}
+
+async function handleAchievementPhotoUpload(event, index) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  form.achievements[index].photoPreview = URL.createObjectURL(file)
+  const key = `achievement_${index}`
+  const url = await uploadToSupabase(file, 'incubatees', 'achievements', key)
+  if (url) form.achievements[index].photo = url
+  event.target.value = ''
+}
+
+// ── Team photo upload handlers ────────────────────────────────────────────────
+function openTeamUpload(index) {
+  pendingTeamIndex.value = index
+  teamFileInput.value?.click()
+}
+
+async function handleTeamPhotoUpload(event, index) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  form.team[index].photoPreview = URL.createObjectURL(file)
+  const key = `team_${index}`
+  const url = await uploadToSupabase(file, 'incubatees', 'team', key)
+  if (url) form.team[index].photo = url
+  event.target.value = ''
+}
+
+// ── Testimonial photo upload handlers ────────────────────────────────────────
+function openTestimonialUpload(index) {
+  pendingTestimonialIndex.value = index
+  testimonialFileInput.value?.click()
+}
+
+async function handleTestimonialPhotoUpload(event, index) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  form.testimonials[index].photoPreview = URL.createObjectURL(file)
+  const key = `testimonial_${index}`
+  const url = await uploadToSupabase(file, 'incubatees', 'testimonials', key)
+  if (url) form.testimonials[index].photo = url
+  event.target.value = ''
 }
 
 // ── Form state ────────────────────────────────────────────────────────────────
@@ -2142,9 +2119,7 @@ const deleteTarget = ref(null)
 const tbiRequired = ref(false)
 const formError = ref('')
 
-const incubateeTab = ref('identity')
-
-// ── Wizard state (incubatees only) ───────────────────────────────────────────
+// ── Wizard state — 8 steps now (Awards + Funding removed) ────────────────────
 const wizardStep = ref(0)
 const wizardSteps = [
   { label: 'TBI Portal', icon: 'mdi-office-building-outline' },
@@ -2152,15 +2127,12 @@ const wizardSteps = [
   { label: 'About', icon: 'mdi-text-box-outline' },
   { label: 'Media', icon: 'mdi-image-multiple-outline' },
   { label: 'Achievements', icon: 'mdi-flag-checkered' },
-  { label: 'Awards', icon: 'mdi-trophy-outline' },
-  { label: 'Funding', icon: 'mdi-cash-multiple' },
   { label: 'Partners', icon: 'mdi-handshake-outline' },
   { label: 'Team', icon: 'mdi-account-group-outline' },
   { label: 'Testimonials', icon: 'mdi-comment-quote-outline' },
 ]
 
 async function wizardNext() {
-  // Step 0 — must pick a TBI
   if (wizardStep.value === 0) {
     if (!form.tbi_id) {
       tbiRequired.value = true
@@ -2170,7 +2142,6 @@ async function wizardNext() {
     wizardStep.value++
     return
   }
-  // Steps with required fields — validate before advancing
   if (formRef.value) {
     const { valid } = await formRef.value.validate()
     if (!valid) return
@@ -2179,12 +2150,12 @@ async function wizardNext() {
 }
 
 const blankForm = () => ({
-  // ── shared ────────────────────────────────────────────────────────────────
+  // shared
   tbi_id: '',
   status: 'active',
   location: '',
 
-  // ── incubatee: identity ───────────────────────────────────────────────────
+  // incubatee: identity
   name: '',
   tagline: '',
   category: '',
@@ -2198,9 +2169,9 @@ const blankForm = () => ({
   tags_raw: '',
   quickStats: [
     {
-      label: 'Funds Generated',
+      label: 'Milestones',
       value: '',
-      icon: 'mdi-cash-multiple',
+      icon: 'mdi-flag-checkered',
       color: '#1565C0',
       iconBg: '#E3F2FD',
     },
@@ -2212,22 +2183,22 @@ const blankForm = () => ({
       iconBg: '#E8F5E9',
     },
     {
-      label: 'Year Started',
+      label: 'Team',
       value: '',
-      icon: 'mdi-calendar-star',
+      icon: 'mdi-account-group-outline',
       color: '#E65100',
       iconBg: '#FFF3E0',
     },
     {
-      label: 'Awards Won',
+      label: 'Testimonials',
       value: '',
-      icon: 'mdi-trophy-outline',
+      icon: 'mdi-message-star-outline',
       color: '#6A1B9A',
       iconBg: '#EDE7F6',
     },
   ],
 
-  // ── incubatee: about ──────────────────────────────────────────────────────
+  // incubatee: about
   descriptionLong: '',
   descriptionExtra: '',
   problem: '',
@@ -2241,34 +2212,28 @@ const blankForm = () => ({
     { label: 'Total Funding', value: '', icon: 'mdi-cash-multiple', color: '#C62828' },
   ],
 
-  // ── incubatee: media ──────────────────────────────────────────────────────
+  // incubatee: media — paths stored after upload
   logo: '',
+  logoPreview: null, // local blob preview before upload completes
   heroBg: '',
   gallery: ['', '', '', '', ''],
+  galleryPreviews: [null, null, null, null, null], // local blob previews
   galleryCaptions: ['', '', '', '', ''],
 
-  // ── incubatee: achievements ───────────────────────────────────────────────
+  // incubatee: achievements
   achievements: [],
 
-  // ── incubatee: awards ─────────────────────────────────────────────────────
-  awards: [],
-
-  // ── incubatee: funding ────────────────────────────────────────────────────
-  totalFunds: '',
-  fundingRounds: [],
-
-  // ── incubatee: partners ───────────────────────────────────────────────────
+  // incubatee: partners
   partners: [],
 
-  // ── incubatee: team ───────────────────────────────────────────────────────
+  // incubatee: team
   team: [],
 
-  // ── incubatee: testimonials ───────────────────────────────────────────────
+  // incubatee: testimonials
   testimonials: [],
 
-  // ── news ──────────────────────────────────────────────────────────────────
+  // news
   title: '',
-  category: '',
   date: '',
   author: '',
   description: '',
@@ -2277,7 +2242,7 @@ const blankForm = () => ({
   tags_raw_news: '',
   featured: false,
 
-  // ── events ───────────────────────────────────────────────────────────────
+  // events
   type: '',
   day: '',
   month: '',
@@ -2291,6 +2256,7 @@ const blankForm = () => ({
   image_event: '',
   tags_raw_event: '',
 })
+
 const form = reactive(blankForm())
 
 function openAddDialog() {
@@ -2310,30 +2276,26 @@ function openEditDialog(item) {
   editId.value = item.id
   tbiRequired.value = false
   formError.value = ''
-  incubateeTab.value = 'identity'
-  wizardStep.value = activeSection.value === 'incubatees' ? 1 : 0 // skip TBI step when editing
+  wizardStep.value = activeSection.value === 'incubatees' ? 1 : 0
   const base = blankForm()
-  // Spread scalar fields
   Object.assign(form, {
     ...base,
     ...item,
-    // tags are stored as array in DB — convert back to raw string for news/events
     tags_raw: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags_raw || '',
     tags_raw_news: Array.isArray(item.tags) ? item.tags.join(', ') : '',
     tags_raw_event: Array.isArray(item.tags) ? item.tags.join(', ') : '',
-    // Array fields — merge with blanks so reactive arrays work correctly
     quickStats: item.quickStats || base.quickStats,
     details: item.details || base.details,
     gallery: item.gallery ? [...item.gallery, ...['', '', '', '', '']].slice(0, 5) : base.gallery,
+    galleryPreviews: [null, null, null, null, null],
     galleryCaptions: item.galleryCaptions
       ? [...item.galleryCaptions, ...['', '', '', '', '']].slice(0, 5)
       : base.galleryCaptions,
-    achievements: item.achievements || [],
-    awards: item.awards || [],
-    fundingRounds: item.fundingRounds || [],
+    achievements: (item.achievements || []).map((a) => ({ ...a, photoPreview: null })),
     partners: item.partners || [],
-    team: item.team || [],
-    testimonials: item.testimonials || [],
+    team: (item.team || []).map((m) => ({ ...m, photoPreview: null })),
+    testimonials: (item.testimonials || []).map((t) => ({ ...t, photoPreview: null })),
+    logoPreview: null,
   })
   formDialog.value = true
 }
@@ -2343,7 +2305,7 @@ function openDeleteDialog(item) {
   deleteDialog.value = true
 }
 
-// ── Build Supabase payload per section ────────────────────────────────────────
+// ── Build Supabase payload ────────────────────────────────────────────────────
 function buildPayload() {
   if (activeSection.value === 'incubatees') {
     const tags = form.tags_raw
@@ -2353,7 +2315,6 @@ function buildPayload() {
           .filter(Boolean)
       : []
     return {
-      // identity
       tbi_id: form.tbi_id,
       name: form.name,
       tagline: form.tagline || null,
@@ -2369,25 +2330,20 @@ function buildPayload() {
       status_icon: form.statusIcon || null,
       tags,
       quick_stats: form.quickStats,
-      // about
       description_long: form.descriptionLong || null,
       description_extra: form.descriptionExtra || null,
       problem: form.problem || null,
       solution: form.solution || null,
       details: form.details,
-      // media
+      // URLs are already the Supabase public URLs after upload
       logo: form.logo || null,
       hero_bg: form.heroBg || null,
       gallery: form.gallery.filter(Boolean),
       gallery_captions: form.galleryCaptions.filter(Boolean),
-      // arrays
-      achievements: form.achievements,
-      awards: form.awards,
-      total_funds: form.totalFunds || null,
-      funding_rounds: form.fundingRounds,
+      achievements: form.achievements.map(({ photoPreview, ...a }) => a),
       partners: form.partners,
-      team: form.team,
-      testimonials: form.testimonials,
+      team: form.team.map(({ photoPreview, ...m }) => m),
+      testimonials: form.testimonials.map(({ photoPreview, ...t }) => t),
     }
   }
 
@@ -2442,24 +2398,19 @@ function buildPayload() {
 }
 
 async function handleSubmit() {
-  // Validate TBI selection
   if (!form.tbi_id) {
     tbiRequired.value = true
     return
   }
   tbiRequired.value = false
-
   const { valid } = await formRef.value.validate()
   if (!valid) return
-
   formError.value = ''
   const payload = buildPayload()
   const table = activeTable.value
-
   const result = isEditing.value
     ? await table.updateRecord(editId.value, payload)
     : await table.insertRecord(payload)
-
   if (result.success) {
     formDialog.value = false
   } else {
@@ -2483,13 +2434,12 @@ async function confirmLogout() {
   router.push('/login')
 }
 
-// ── Init — fetch all three tables on mount so stats are live ──────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 onMounted(async () => {
   const {
     data: { user },
   } = await auth.getCurrentUser()
   currentUser.value = user
-  // Fetch all tables in parallel for accurate dashboard stats
   await Promise.all([incubateesTable.fetchAll(), newsTable.fetchAll(), eventsTable.fetchAll()])
 })
 </script>
@@ -2501,7 +2451,7 @@ onMounted(async () => {
   font-family: 'DM Sans', sans-serif !important;
 }
 
-/* ── Sidebar ─────────────────────────────────────────────────────────────────── */
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
 .admin-sidebar {
   background: linear-gradient(180deg, #0d47a1 0%, #1565c0 60%, #1976d2 100%) !important;
 }
@@ -2608,7 +2558,7 @@ onMounted(async () => {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ── App bar ─────────────────────────────────────────────────────────────────── */
+/* ── App bar ────────────────────────────────────────────────────────────────── */
 .admin-appbar :deep(.v-toolbar__content) {
   padding: 0 20px;
 }
@@ -2625,7 +2575,7 @@ onMounted(async () => {
   color: #1a1a1a;
 }
 
-/* ── Main ────────────────────────────────────────────────────────────────────── */
+/* ── Main ───────────────────────────────────────────────────────────────────── */
 .admin-main {
   background: #f5f7fb;
 }
@@ -2639,7 +2589,7 @@ onMounted(async () => {
   }
 }
 
-/* ── Welcome ─────────────────────────────────────────────────────────────────── */
+/* ── Welcome ────────────────────────────────────────────────────────────────── */
 .welcome-strip {
   display: flex;
   align-items: flex-start;
@@ -2665,7 +2615,7 @@ onMounted(async () => {
   padding-top: 6px;
 }
 
-/* ── Stat cards ──────────────────────────────────────────────────────────────── */
+/* ── Stat cards ─────────────────────────────────────────────────────────────── */
 .stat-card {
   background: #fff;
   border-radius: 16px;
@@ -2706,7 +2656,7 @@ onMounted(async () => {
   margin-top: 4px;
 }
 
-/* ── Section eyebrow ─────────────────────────────────────────────────────────── */
+/* ── Section eyebrow ────────────────────────────────────────────────────────── */
 .section-eyebrow {
   display: flex;
   align-items: center;
@@ -2717,7 +2667,7 @@ onMounted(async () => {
   text-transform: uppercase;
 }
 
-/* ── Category cards ──────────────────────────────────────────────────────────── */
+/* ── Category cards ─────────────────────────────────────────────────────────── */
 .cat-card {
   border-radius: 20px;
   overflow: hidden;
@@ -2812,7 +2762,7 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* ── TBI Glance cards ────────────────────────────────────────────────────────── */
+/* ── TBI Glance cards ───────────────────────────────────────────────────────── */
 .tbi-glance-card {
   background: #fff;
   border-radius: 16px;
@@ -2854,7 +2804,7 @@ onMounted(async () => {
   letter-spacing: 0 !important;
 }
 
-/* ── Content section header ──────────────────────────────────────────────────── */
+/* ── Content section header ─────────────────────────────────────────────────── */
 .page-header {
   display: flex;
   align-items: flex-start;
@@ -2890,7 +2840,7 @@ onMounted(async () => {
   gap: 10px;
 }
 
-/* ── Table ───────────────────────────────────────────────────────────────────── */
+/* ── Table ──────────────────────────────────────────────────────────────────── */
 .records-table :deep(thead th) {
   font-size: 0.72rem !important;
   font-weight: 700 !important;
@@ -2923,7 +2873,7 @@ onMounted(async () => {
   margin: 4px 0 0;
 }
 
-/* ── Form dialog ─────────────────────────────────────────────────────────────── */
+/* ── Form dialog ────────────────────────────────────────────────────────────── */
 .form-card {
   overflow: hidden;
 }
@@ -3025,7 +2975,80 @@ onMounted(async () => {
   letter-spacing: 0 !important;
 }
 
-/* ── Wizard ───────────────────────────────────────────────────────────────── */
+/* ── Upload box ─────────────────────────────────────────────────────────────── */
+.upload-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 120px;
+  border: 2px dashed #c8d2e8;
+  border-radius: 12px;
+  background: #f8f9fc;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+  overflow: hidden;
+  padding: 12px;
+  text-align: center;
+}
+.upload-box:hover {
+  border-color: #1565c0;
+  background: #eef4ff;
+}
+.upload-box--sm {
+  min-height: 90px;
+}
+.upload-box--xs {
+  min-height: 70px;
+}
+.upload-box--avatar {
+  width: 90px;
+  height: 90px;
+  min-height: unset;
+  border-radius: 50%;
+  padding: 0;
+}
+.upload-box-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1565c0;
+}
+.upload-box-label--sm {
+  font-size: 0.68rem;
+  color: #aaa;
+}
+.upload-box-hint {
+  font-size: 0.65rem;
+  color: #aaa;
+}
+.upload-box-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(21, 101, 192, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  color: white;
+  font-weight: 600;
+}
+.upload-box-overlay--circle {
+  border-radius: 50%;
+}
+.upload-box:hover .upload-box-overlay {
+  opacity: 1;
+}
+
+/* ── Wizard ─────────────────────────────────────────────────────────────────── */
 .wizard-header {
   background: #1565c0;
   padding: 22px 28px 14px;
@@ -3072,7 +3095,7 @@ onMounted(async () => {
   font-weight: 600;
 }
 
-/* Large TBI selector cards for wizard step 0 */
+/* Large TBI selector cards */
 .tbi-selector-item--lg {
   padding: 16px 18px;
   border-radius: 14px;
@@ -3088,7 +3111,7 @@ onMounted(async () => {
   border-radius: 14px 0 0 14px;
 }
 
-/* Sub-cards (achievements, awards, team, etc.) */
+/* Sub-cards */
 .sub-card {
   background: #f8f9fc;
   border: 1px solid #e8ecf4;
@@ -3108,7 +3131,6 @@ onMounted(async () => {
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
-/* Tab section divider labels */
 .tab-section-header {
   display: flex;
   align-items: center;
@@ -3120,7 +3142,6 @@ onMounted(async () => {
   border-bottom: 1px solid #edf0f7;
   margin-bottom: 12px;
 }
-/* Empty tab placeholder */
 .empty-tab-state {
   text-align: center;
   padding: 40px 0 20px;
@@ -3129,12 +3150,6 @@ onMounted(async () => {
   font-size: 0.82rem;
   color: #bbb;
   margin-top: 8px;
-}
-/* Image preview box */
-.img-preview {
-  border: 1px solid #dde3f0;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 /* Dialogs */

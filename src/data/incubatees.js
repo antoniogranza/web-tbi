@@ -12,7 +12,6 @@ export const incubatees = {
     contactEmail: 'hello@ascriboai.com',
     website: 'https://ascriboai.com',
     status: 'active', // 'active' | 'graduated' | 'scaling'
-    statusLabel: 'Active Incubatee',
     statusIcon: 'mdi-check-circle-outline',
 
     // ── Quick stats strip ────────────────────────────────────────────────────────
