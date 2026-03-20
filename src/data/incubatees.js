@@ -75,7 +75,7 @@ export const incubatees = {
         icon: 'mdi-account-group-outline',
         color: '#00695C',
       },
-      { label: 'Total Funding', value: '₱4.2M', icon: 'mdi-cash-multiple', color: '#C62828' },
+      { label: 'Total Partners', value: '8', icon: 'mdi-cash-multiple', color: '#C62828' },
     ],
 
     tags: ['NLP', 'Machine Translation', 'Legal Tech', 'MedTech', 'SaaS', 'B2B'],

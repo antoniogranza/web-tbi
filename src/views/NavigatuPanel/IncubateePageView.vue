@@ -85,11 +85,6 @@
                   <v-icon icon="mdi-map-marker-outline" size="16" class="mr-1" />
                   {{ startup.location }}
                 </div>
-                <div class="hero-meta-divider" />
-                <div class="hero-meta-item">
-                  <v-icon icon="mdi-account-multiple-outline" size="16" class="mr-1" />
-                  {{ startup.teamSize }} Team Members
-                </div>
               </div>
 
               <!-- Status chip + Website button row -->
@@ -291,7 +286,7 @@
         <v-container>
           <p class="section-eyebrow text-center">Network</p>
           <h2 class="section-heading text-center mb-2">
-            Partners & <span class="accent-text">Collaborations</span>
+            {{ startup.name }} <span class="accent-text">Partners</span>
           </h2>
           <p class="section-sub text-center mb-10">Organizations that power our growth</p>
 
@@ -305,13 +300,6 @@
                   <div class="partner-name">{{ partner.name }}</div>
                   <div class="partner-type">{{ partner.type }}</div>
                 </div>
-                <v-chip
-                  size="x-small"
-                  :color="partner.chipColor"
-                  variant="tonal"
-                  class="partner-chip"
-                  >{{ partner.chipLabel }}</v-chip
-                >
               </div>
             </v-col>
           </v-row>
