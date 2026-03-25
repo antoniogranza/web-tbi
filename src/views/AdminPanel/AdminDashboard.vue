@@ -551,44 +551,6 @@
                     class="form-field"
                   />
                 </v-col>
-
-                <v-col cols="12">
-                  <div class="tab-section-header">
-                    <v-icon icon="mdi-chart-bar" size="14" color="#1565C0" class="mr-1" />Quick
-                    Stats (4 cards shown on the hero)
-                  </div>
-                </v-col>
-                <v-col v-for="(stat, i) in form.quickStats" :key="i" cols="12" sm="6">
-                  <div class="sub-card">
-                    <div class="sub-card-header">
-                      <span class="sub-card-label">Stat {{ i + 1 }}</span>
-                    </div>
-                    <v-row dense>
-                      <v-col cols="7">
-                        <div class="form-label">Label</div>
-                        <v-text-field
-                          v-model="stat.label"
-                          :placeholder="['Milestones', 'Partnerships', 'Team', 'Testimonials'][i]"
-                          variant="outlined"
-                          density="compact"
-                          rounded="lg"
-                          class="form-field"
-                        />
-                      </v-col>
-                      <v-col cols="5">
-                        <div class="form-label">Value</div>
-                        <v-text-field
-                          v-model="stat.value"
-                          :placeholder="['3', '6', '8', '3'][i]"
-                          variant="outlined"
-                          density="compact"
-                          rounded="lg"
-                          class="form-field"
-                        />
-                      </v-col>
-                    </v-row>
-                  </div>
-                </v-col>
               </v-row>
             </template>
 
@@ -727,6 +689,38 @@
                 @change="(e) => handleGalleryUpload(e, pendingGalleryIndex)"
               />
 
+              <!-- Current Uploads Summary -->
+              <div v-if="currentUploads.length > 0" class="mb-6">
+                <div class="tab-section-header">
+                  <v-icon
+                    icon="mdi-image-multiple-outline"
+                    size="14"
+                    color="#1565C0"
+                    class="mr-1"
+                  />
+                  Current Uploads
+                </div>
+                <div class="current-uploads-grid">
+                  <div
+                    v-for="upload in currentUploads"
+                    :key="upload.key"
+                    class="current-upload-item"
+                  >
+                    <v-img :src="upload.url" height="60" width="60" cover class="rounded" />
+                    <div class="current-upload-info">
+                      <div class="current-upload-label">{{ upload.label }}</div>
+                      <v-btn
+                        icon="mdi-delete-outline"
+                        size="x-small"
+                        variant="text"
+                        color="#C62828"
+                        @click="removeUpload(upload.key)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <v-row>
                 <!-- Logo upload -->
                 <v-col cols="12" sm="6">
@@ -831,6 +825,33 @@
                 style="display: none"
                 @change="(e) => handleAchievementPhotoUpload(e, pendingAchievementIndex)"
               />
+
+              <!-- Achievement Photos Summary -->
+              <div v-if="achievementPhotos.length > 0" class="mb-6">
+                <div class="tab-section-header">
+                  <v-icon icon="mdi-image-outline" size="14" color="#1565C0" class="mr-1" />
+                  Achievement Photos
+                </div>
+                <div class="current-uploads-grid">
+                  <div
+                    v-for="photo in achievementPhotos"
+                    :key="photo.key"
+                    class="current-upload-item"
+                  >
+                    <v-img :src="photo.url" height="60" width="60" cover class="rounded" />
+                    <div class="current-upload-info">
+                      <div class="current-upload-label">{{ photo.label }}</div>
+                      <v-btn
+                        icon="mdi-delete-outline"
+                        size="x-small"
+                        variant="text"
+                        color="#C62828"
+                        @click="removeAchievementPhoto(photo.index)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div v-if="form.achievements.length === 0" class="empty-tab-state">
                 <v-icon icon="mdi-flag-checkered" size="44" color="#ddd" />
@@ -1932,6 +1953,53 @@ const activeHeaders = computed(() => {
   ]
 })
 
+// ── Current uploads summary for Media step ──────────────────────────────────
+const currentUploads = computed(() => {
+  const uploads = []
+  if (form.logo) {
+    uploads.push({ key: 'logo', url: form.logo, label: 'Logo' })
+  }
+  form.gallery.forEach((url, index) => {
+    if (url) {
+      uploads.push({ key: `gallery_${index}`, url, label: `Gallery ${index + 1}` })
+    }
+  })
+  return uploads
+})
+
+function removeUpload(key) {
+  if (key === 'logo') {
+    form.logo = ''
+    form.logoPreview = null
+  } else if (key.startsWith('gallery_')) {
+    const index = parseInt(key.split('_')[1])
+    form.gallery[index] = ''
+    form.galleryPreviews[index] = null
+  }
+}
+
+// ── Achievement photos summary ───────────────────────────────────────────────
+const achievementPhotos = computed(() => {
+  return form.achievements
+    .map((ach, index) => {
+      if (ach.photo) {
+        return {
+          key: `achievement_${index}`,
+          url: ach.photo,
+          label: ach.title || `Achievement ${index + 1}`,
+          index,
+        }
+      }
+      return null
+    })
+    .filter(Boolean)
+})
+
+function removeAchievementPhoto(index) {
+  form.achievements[index].photo = ''
+  form.achievements[index].photoPreview = null
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const tbiShortName = (id) => tbiOptions.find((t) => t.id === id)?.shortName || id
 const tbiChipColor = (id) =>
@@ -2167,36 +2235,6 @@ const blankForm = () => ({
   statusLabel: 'Active Incubatee',
   statusIcon: 'mdi-check-circle-outline',
   tags_raw: '',
-  quickStats: [
-    {
-      label: 'Milestones',
-      value: '',
-      icon: 'mdi-flag-checkered',
-      color: '#1565C0',
-      iconBg: '#E3F2FD',
-    },
-    {
-      label: 'Partnerships',
-      value: '',
-      icon: 'mdi-handshake-outline',
-      color: '#2E7D32',
-      iconBg: '#E8F5E9',
-    },
-    {
-      label: 'Team',
-      value: '',
-      icon: 'mdi-account-group-outline',
-      color: '#E65100',
-      iconBg: '#FFF3E0',
-    },
-    {
-      label: 'Testimonials',
-      value: '',
-      icon: 'mdi-message-star-outline',
-      color: '#6A1B9A',
-      iconBg: '#EDE7F6',
-    },
-  ],
 
   // incubatee: about
   descriptionLong: '',
@@ -2259,6 +2297,25 @@ const blankForm = () => ({
 
 const form = reactive(blankForm())
 
+// ── Auto-generate slug from startup name ──────────────────────────────────────
+// Only fires when adding a new incubatee (isEditing = false).
+// Never overwrites the slug when editing — changing a live slug would
+// break any existing links to that startup's profile page.
+watch(
+  () => form.name,
+  (newName) => {
+    if (isEditing.value) return
+    if (activeSection.value !== 'incubatees') return
+    form.slug = newName
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '') // remove special chars except spaces/hyphens
+      .replace(/\s+/g, '-') // spaces → hyphens
+      .replace(/-+/g, '-') // collapse multiple hyphens into one
+      .replace(/^-|-$/g, '') // trim leading/trailing hyphens
+  },
+)
+
 function openAddDialog() {
   isEditing.value = false
   editId.value = null
@@ -2281,15 +2338,23 @@ function openEditDialog(item) {
   Object.assign(form, {
     ...base,
     ...item,
+    // Explicitly map database field names to form field names
+    descriptionLong: item.description_long || '',
+    descriptionExtra: item.description_extra || '',
+    yearFounded: item.year_founded || '',
+    teamSize: item.team_size || '',
+    contactEmail: item.contact_email || '',
+    statusLabel: item.status_label || '',
+    statusIcon: item.status_icon || '',
+    heroBg: item.hero_bg || '',
     tags_raw: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags_raw || '',
     tags_raw_news: Array.isArray(item.tags) ? item.tags.join(', ') : '',
     tags_raw_event: Array.isArray(item.tags) ? item.tags.join(', ') : '',
-    quickStats: item.quickStats || base.quickStats,
     details: item.details || base.details,
     gallery: item.gallery ? [...item.gallery, ...['', '', '', '', '']].slice(0, 5) : base.gallery,
     galleryPreviews: [null, null, null, null, null],
-    galleryCaptions: item.galleryCaptions
-      ? [...item.galleryCaptions, ...['', '', '', '', '']].slice(0, 5)
+    galleryCaptions: item.gallery_captions
+      ? [...item.gallery_captions, ...['', '', '', '', '']].slice(0, 5)
       : base.galleryCaptions,
     achievements: (item.achievements || []).map((a) => ({ ...a, photoPreview: null })),
     partners: item.partners || [],
@@ -2329,7 +2394,6 @@ function buildPayload() {
       status_label: form.statusLabel || null,
       status_icon: form.statusIcon || null,
       tags,
-      quick_stats: form.quickStats,
       description_long: form.descriptionLong || null,
       description_extra: form.descriptionExtra || null,
       problem: form.problem || null,
@@ -3046,6 +3110,34 @@ onMounted(async () => {
 }
 .upload-box:hover .upload-box-overlay {
   opacity: 1;
+}
+
+/* ── Current uploads summary ───────────────────────────────────────────────── */
+.current-uploads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.current-upload-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+.current-upload-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.current-upload-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
 }
 
 /* ── Wizard ─────────────────────────────────────────────────────────────────── */

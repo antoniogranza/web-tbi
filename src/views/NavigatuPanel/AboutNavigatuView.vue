@@ -271,8 +271,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { incubatees as incubateesData } from '@/data/incubatees'
+import { ref, onMounted } from 'vue'
+import { supabase } from '@/utils/supabase'
 
 // ── Mobile drawer state ──────────────────────────────────────────────────────
 const drawer = ref(false)
@@ -362,16 +362,30 @@ const achievements = ref([
   },
 ])
 
-/* Testing Slug */
-// ── Incubatees data (derived from shared module) ─────────────────────────────
-const incubatees = ref(
-  Object.entries(incubateesData).map(([slug, data]) => ({
-    name: data.name,
-    slug,
-    photo: data.logo,
+/* Incubatees data is loaded from Supabase — admin side writes to the same table. */
+const incubatees = ref([])
+
+async function fetchIncubatees() {
+  const { data, error } = await supabase
+    .from('incubatees')
+    .select('id,name,slug,logo,status')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[AboutNavigatuView] fetchIncubatees error', error)
+    return
+  }
+
+  incubatees.value = (data ?? []).map((item) => ({
+    name: item.name || 'Untitled',
+    slug: item.slug || item.id,
+    photo: item.logo || '/images/incubatees/logo/default.png',
     hovered: false,
-  })),
-)
+  }))
+}
+
+onMounted(fetchIncubatees)
 
 // ── Leadership data ───────────────────────────────────────────────────────────
 const leaders = ref([

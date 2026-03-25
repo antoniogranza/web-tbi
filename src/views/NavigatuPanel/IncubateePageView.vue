@@ -233,12 +233,12 @@
                     </div>
                   </div>
 
-                  <!-- tags column (text[]) -->
-                  <div v-if="startup.tags && startup.tags.length" class="mt-6">
+                  <!-- tags column (text[]) — filter out empty values -->
+                  <div v-if="getActiveTags.length" class="mt-6">
                     <p class="sidebar-heading mb-3">Focus Areas</p>
                     <div class="d-flex flex-wrap gap-2">
                       <v-chip
-                        v-for="tag in startup.tags"
+                        v-for="tag in getActiveTags"
                         :key="tag"
                         size="small"
                         variant="tonal"
@@ -599,21 +599,13 @@ const drawer = ref(false)
 const route = useRoute()
 const router = useRouter()
 
-// ── Data state ────────────────────────────────────────────────────────────────
-const startup = ref(null) // single row fetched from Supabase `incubatees` table
+// ── Data state ─────────────────────────────────────────────────────────────
+const startup = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
-// ── Fetch incubatee by slug ───────────────────────────────────────────────────
-// The `slug` column in the DB is set from form.slug in the admin form.
-// Route must be: { path: '/incubatees/:slug', component: NavigatuIncubateeProfile }
-//
-// Column names used here match exactly what buildPayload() sends to Supabase:
-//   name, tagline, category, slug, year_founded, location, team_size,
-//   contact_email, website, status, status_label, status_icon,
-//   tags, quick_stats, description_long, description_extra,
-//   problem, solution, details, logo, hero_bg,
-//   gallery, gallery_captions, achievements, partners, team, testimonials
+// ── Fetch by slug ──────────────────────────────────────────────────────────
+// Column names match buildPayload() exactly — all snake_case
 onMounted(async () => {
   const slug = route.params.slug
 
@@ -622,6 +614,7 @@ onMounted(async () => {
     .select(
       `
       id,
+      tbi_id,
       name,
       tagline,
       category,
@@ -649,67 +642,70 @@ onMounted(async () => {
       partners,
       team,
       testimonials,
-      tbi_id
+      created_at
     `,
     )
     .eq('slug', slug)
-    // Only show active incubatees on the public-facing site
     .eq('status', 'active')
     .single()
 
   loading.value = false
 
-  if (fetchError || !data) {
-    // Unknown slug or draft — redirect back to the listing page
-    if (fetchError?.code === 'PGRST116') {
-      // PGRST116 = "JSON object requested, multiple (or no) rows returned"
+  if (fetchError) {
+    if (fetchError.code === 'PGRST116') {
       router.replace('/about-navigatu')
       return
     }
-    error.value = fetchError?.message || 'Incubatee not found.'
+    error.value = fetchError.message
+    return
+  }
+
+  if (!data) {
+    router.replace('/about-navigatu')
     return
   }
 
   startup.value = data
-  // After data loads, set up intersection observers for anchor nav
   setupObservers()
 })
 
-// ── Anchor nav tabs ───────────────────────────────────────────────────────────
-// Values read from quick_stats (jsonb) — matches the 4-stat order the admin
-// wizard saves: [Milestones, Partnerships, Team, Testimonials]
-const anchorTabs = computed(() => {
-  const qs = startup.value?.quick_stats || []
-  return [
-    {
-      id: 'section-milestones',
-      label: qs[0]?.label || 'Milestones',
-      icon: qs[0]?.icon || 'mdi-flag-checkered',
-      value: qs[0]?.value ?? startup.value?.achievements?.length ?? 0,
-    },
-    {
-      id: 'section-partnerships',
-      label: qs[1]?.label || 'Partnerships',
-      icon: qs[1]?.icon || 'mdi-handshake-outline',
-      value: qs[1]?.value ?? startup.value?.partners?.length ?? 0,
-    },
-    {
-      id: 'section-team',
-      label: qs[2]?.label || 'Team',
-      icon: qs[2]?.icon || 'mdi-account-group-outline',
-      value: qs[2]?.value ?? startup.value?.team?.length ?? 0,
-    },
-    {
-      id: 'section-testimonials',
-      label: qs[3]?.label || 'Testimonials',
-      icon: qs[3]?.icon || 'mdi-message-star-outline',
-      value: qs[3]?.value ?? startup.value?.testimonials?.length ?? 0,
-    },
-  ]
+// ── Anchor nav — automatically computed from actual data ───────────────────
+// Values dynamically calculate from achievements, partners, team, and testimonials arrays
+const anchorTabs = computed(() => [
+  {
+    id: 'section-milestones',
+    label: 'Milestones',
+    icon: 'mdi-flag-checkered',
+    value: startup.value?.achievements?.length ?? 0,
+  },
+  {
+    id: 'section-partnerships',
+    label: 'Partnerships',
+    icon: 'mdi-handshake-outline',
+    value: startup.value?.partners?.length ?? 0,
+  },
+  {
+    id: 'section-team',
+    label: 'Team',
+    icon: 'mdi-account-group-outline',
+    value: startup.value?.team?.length ?? 0,
+  },
+  {
+    id: 'section-testimonials',
+    label: 'Testimonials',
+    icon: 'mdi-message-star-outline',
+    value: startup.value?.testimonials?.length ?? 0,
+  },
+])
+
+// ── Tags — filter out empty values from array ──────────────────────────────
+const getActiveTags = computed(() => {
+  const tags = startup.value?.tags
+  if (!Array.isArray(tags)) return []
+  return tags.filter((tag) => tag && String(tag).trim().length > 0)
 })
 
-// ── Status icon fallback ──────────────────────────────────────────────────────
-// If admin didn't set a custom status_icon, derive a sensible default.
+// ── Status icon fallback ───────────────────────────────────────────────────
 function defaultStatusIcon(status) {
   return (
     {
@@ -721,7 +717,7 @@ function defaultStatusIcon(status) {
   )
 }
 
-// ── Anchor nav: active section tracking ──────────────────────────────────────
+// ── Anchor nav scroll + intersection observer ──────────────────────────────
 const activeSection = ref('section-year-started')
 
 function scrollToSection(id) {
@@ -733,36 +729,28 @@ function scrollToSection(id) {
   activeSection.value = id
 }
 
-// IntersectionObserver — set up after data loads so the section elements exist
 let observers = []
 
 function setupObservers() {
-  // nextTick-equivalent: wait one frame for Vue to render the sections
   requestAnimationFrame(() => {
-    const sectionIds = [
-      'section-milestones',
-      'section-partnerships',
-      'section-team',
-      'section-testimonials',
-    ]
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id)
-      if (!el) return
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) activeSection.value = id
-        },
-        { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
-      )
-      obs.observe(el)
-      observers.push(obs)
-    })
+    ;['section-milestones', 'section-partnerships', 'section-team', 'section-testimonials'].forEach(
+      (id) => {
+        const el = document.getElementById(id)
+        if (!el) return
+        const obs = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) activeSection.value = id
+          },
+          { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
+        )
+        obs.observe(el)
+        observers.push(obs)
+      },
+    )
   })
 }
 
-onUnmounted(() => {
-  observers.forEach((o) => o.disconnect())
-})
+onUnmounted(() => observers.forEach((o) => o.disconnect()))
 </script>
 
 <style scoped>
