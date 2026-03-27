@@ -1402,7 +1402,7 @@
                     class="form-field"
                   />
                 </v-col>
-                <v-col cols="12" sm="6">
+                <v-col cols="12" sm="12">
                   <div class="form-label">Location</div>
                   <v-text-field
                     v-model="form.location"
@@ -1413,17 +1413,7 @@
                     class="form-field"
                   />
                 </v-col>
-                <v-col cols="12" sm="6">
-                  <div class="form-label">Author</div>
-                  <v-text-field
-                    v-model="form.author"
-                    placeholder="e.g. Navigatú Communications"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    class="form-field"
-                  />
-                </v-col>
+
                 <v-col cols="12">
                   <div class="form-label">
                     Short Description * <span class="hint-text">(shown on card)</span>
