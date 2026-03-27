@@ -77,7 +77,7 @@
             <!-- Category chips -->
             <v-col cols="12" md="7" class="d-flex flex-wrap align-center" style="gap: 8px">
               <button
-                v-for="cat in categories"
+                v-for="cat in displayCategories"
                 :key="cat"
                 class="cat-chip"
                 :class="{ 'cat-chip--active': activeCategory === cat }"
@@ -344,7 +344,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { supabase } from '@/utils/supabase'
 
 const drawer = ref(false)
 const dialog = ref(false)
@@ -354,8 +355,19 @@ const activeCategory = ref('All')
 const sortBy = ref('Newest First')
 const loadingMore = ref(false)
 const allLoaded = ref(false)
+const loadingNews = ref(false)
+const newsError = ref('')
+const news = ref([])
 
 const categories = ['All', 'Announcement', 'Achievement', 'Partnership', 'Program', 'Research']
+
+const displayCategories = computed(() => {
+  const dynamic = news.value
+    .map((n) => n.category || 'Other')
+    .filter(Boolean)
+    .map((n) => n.trim())
+  return ['All', ...new Set([...categories.slice(1), ...dynamic])]
+})
 
 function categoryColor(cat) {
   const map = {
@@ -368,96 +380,50 @@ function categoryColor(cat) {
   return map[cat] || '#546E7A'
 }
 
-// ── Sample news data — replace with real data or API call ────────────────────
-const news = ref([
-  {
-    id: 1,
-    title: 'Navigatú TBI Receives ₱10.4M DICT Grant for Startup Ecosystem Development',
-    description:
-      'Navigatú Technology Business Incubator has been awarded a major grant from DICT to expand its startup support infrastructure across Bukidnon.',
-    fullDescription:
-      "Navigatú Technology Business Incubator has been awarded a major grant of ₱10.4 Million from the Department of Information and Communications Technology (DICT). The grant, sourced from PCIEERD and YCEF-EE funds, will be used to expand the incubator's physical coworking space, strengthen mentorship programs, and onboard the next cohort of tech startups across the Bukidnon region. This milestone marks a significant step in Navigatú's mission to become the premier tech incubator in Mindanao.",
-    location: 'Bukidnon, Philippines',
-    date: 'March 5, 2025',
-    author: 'Navigatú Communications',
-    category: 'Announcement',
-    image: '/images/news/news1.jpg',
-    tags: ['Funding', 'DICT', 'Ecosystem', 'Grant'],
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Ascribo AI Wins 1st Place at DOST Regional Innovation Expo',
-    description:
-      "Ascribo AI, one of Navigatú's flagship incubatees, claimed the top spot at the DOST Region X Innovation Expo, outcompeting 32 startups.",
-    fullDescription:
-      'Ascribo AI, an AI-powered language translation platform incubated at Navigatú TBI, has won first place at the DOST Region X Innovation and Technology Expo. The team impressed judges with their context-aware translation engine designed specifically for legal, medical, and marketing documents. This win brings significant visibility to the Navigatú ecosystem and validates the quality of startup support offered by the incubator.',
-    location: 'Cagayan de Oro, Philippines',
-    date: 'February 20, 2025',
-    author: 'Navigatú Research Team',
-    category: 'Achievement',
-    image: '/images/news/news2.jpg',
-    tags: ['Ascribo AI', 'Award', 'DOST', 'AI'],
-  },
-  {
-    id: 3,
-    title: 'Navigatú Signs MOU with Central Mindanao University for Research Collaboration',
-    description:
-      'A landmark partnership was formalized between Navigatú TBI and CMU, creating a pipeline for faculty-led research commercialization.',
-    fullDescription:
-      "Navigatú TBI and Central Mindanao University (CMU) have signed a Memorandum of Understanding to formalize a research-to-market collaboration. Under this agreement, CMU faculty and graduate students will have priority access to Navigatú's incubation programs, while Navigatú gains access to CMU's research output and laboratory facilities. The partnership is expected to produce at least five new technology startups per academic year.",
-    location: 'Musuan, Bukidnon',
-    date: 'January 15, 2025',
-    author: 'Navigatú Programs Team',
-    category: 'Partnership',
-    image: '/images/news/news3.jpg',
-    tags: ['CMU', 'MOU', 'Research', 'Partnership'],
-  },
-  {
-    id: 4,
-    title: 'New Cohort Applications Now Open: Navigatú Incubation Program 2025',
-    description:
-      'Navigatú TBI opens applications for its 2025 Incubation cohort, targeting ICT, AI, IoT, and engineering technology startups.',
-    fullDescription:
-      'Navigatú TBI is now accepting applications for its 2025 Incubation Program. The program accepts ICT, Artificial Intelligence, Internet of Things, and Engineering Technology startups at the pre-seed and seed stage. Selected startups will receive up to ₱500,000 in seed funding, access to coworking facilities, dedicated mentorship, and connections to a national network of investors and partners. Applications close on April 30, 2025.',
-    location: 'Bukidnon, Philippines',
-    date: 'January 8, 2025',
-    author: 'Navigatú Admissions',
-    category: 'Program',
-    image: '/images/news/news4.jpg',
-    tags: ['Applications', 'Incubation', '2025', 'Startups'],
-  },
-  {
-    id: 5,
-    title: 'BizNest Reaches 50 Active MSME Users in Bukidnon',
-    description:
-      "BizNest, the smart business management platform from Navigatú's incubation program, celebrates a major user growth milestone.",
-    fullDescription:
-      "BizNest, the all-in-one business management platform developed at Navigatú TBI, has officially reached 50 active micro and small enterprise users in Bukidnon. The milestone comes just 8 months after the platform's public launch and demonstrates strong demand for affordable, integrated digital tools among Philippine MSMEs. BizNest now plans to expand to Cagayan de Oro and Davao in the next quarter.",
-    location: 'Bukidnon, Philippines',
-    date: 'December 10, 2024',
-    author: 'BizNest Team',
-    category: 'Achievement',
-    image: '/images/news/news5.jpg',
-    tags: ['BizNest', 'MSME', 'Growth', 'Milestone'],
-  },
-  {
-    id: 6,
-    title: 'Navigatú Launches Research Grant for Faculty Startup Projects',
-    description:
-      'A new internal grant program will fund CMU and university faculty members to develop technology startups based on their research.',
-    fullDescription:
-      "Navigatú TBI has launched a new Research-to-Startup Grant program targeting faculty members at partner universities. The grant provides up to ₱300,000 for proof-of-concept development, plus access to Navigatú's mentorship network and coworking space. The program aims to bridge the gap between academic research and market-ready products, with a focus on AgriTech, HealthTech, and Smart Cities applications.",
-    location: 'Bukidnon, Philippines',
-    date: 'November 25, 2024',
-    author: 'Navigatú Research Team',
-    category: 'Research',
-    image: '/images/news/news6.jpg',
-    tags: ['Grant', 'Faculty', 'Research', 'University'],
-  },
-])
+function normalizeNewsItem(item) {
+  return {
+    ...item,
+    fullDescription: item.fullDescription || item.full_description || item.description || '',
+    tags:
+      item.tags ||
+      (item.tags_raw
+        ? item.tags_raw
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean)
+        : []) ||
+      [],
+    image: item.image || item.image_event || '/images/news/news1.jpg',
+    category: item.category || 'Other',
+    date: item.date || '',
+    location: item.location || '',
+    author: item.author || 'Navigatú',
+  }
+}
 
-// ── Computed ─────────────────────────────────────────────────────────────────
+async function fetchNews() {
+  loadingNews.value = true
+  newsError.value = ''
+  try {
+    const { data, error } = await supabase
+      .from('news')
+      .select('*')
+      .eq('tbi_id', 'navigatu')
+      .eq('status', 'active')
+      .order('date', { ascending: false })
+
+    if (error) throw error
+
+    news.value = Array.isArray(data) ? data.map(normalizeNewsItem) : []
+  } catch (err) {
+    newsError.value = err?.message || String(err)
+  } finally {
+    loadingNews.value = false
+  }
+}
+
+onMounted(fetchNews)
+
 const featuredItem = computed(() => news.value.find((n) => n.featured))
 
 const filteredNews = computed(() => {
@@ -466,6 +432,7 @@ const filteredNews = computed(() => {
   if (activeCategory.value !== 'All') {
     list = list.filter((n) => n.category === activeCategory.value)
   }
+
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase()
     list = list.filter(
@@ -475,20 +442,22 @@ const filteredNews = computed(() => {
         n.location.toLowerCase().includes(q),
     )
   }
+
   if (sortBy.value === 'Oldest First') list = [...list].reverse()
   if (sortBy.value === 'A–Z') list = [...list].sort((a, b) => a.title.localeCompare(b.title))
   return list
 })
 
-// ── Methods ──────────────────────────────────────────────────────────────────
 function openDetail(item) {
   selectedItem.value = item
   dialog.value = true
 }
+
 function resetFilters() {
   activeCategory.value = 'All'
   searchQuery.value = ''
 }
+
 function loadMore() {
   loadingMore.value = true
   setTimeout(() => {
