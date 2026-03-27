@@ -140,12 +140,7 @@
                   <h2 class="featured-title mb-4">{{ featuredItem.title }}</h2>
                   <p class="featured-desc mb-6">{{ featuredItem.description }}</p>
                   <div class="d-flex align-center justify-space-between">
-                    <div class="author-row">
-                      <v-avatar size="32" color="primary" class="mr-2">
-                        <v-icon icon="mdi-account" size="18" color="white" />
-                      </v-avatar>
-                      <span class="author-name">{{ featuredItem.author }}</span>
-                    </div>
+                    <div class="author-row"></div>
                     <v-btn
                       variant="outlined"
                       color="primary"
@@ -249,12 +244,7 @@
 
                   <!-- Footer row -->
                   <div class="news-footer-row">
-                    <div class="author-row">
-                      <v-avatar size="26" color="blue-grey-lighten-4" class="mr-2">
-                        <v-icon icon="mdi-account" size="15" color="blue-grey" />
-                      </v-avatar>
-                      <span class="news-author">{{ item.author }}</span>
-                    </div>
+                    <div class="author-row"></div>
                     <v-btn
                       variant="text"
                       color="primary"
@@ -316,8 +306,6 @@
               <v-icon icon="mdi-calendar-outline" size="15" color="#1565C0" class="mr-1" />
               <span class="detail-meta-text">{{ selectedItem.date }}</span>
               <span class="meta-sep mx-2">·</span>
-              <v-icon icon="mdi-account-outline" size="15" color="#1565C0" class="mr-1" />
-              <span class="detail-meta-text">{{ selectedItem.author }}</span>
             </div>
 
             <h2 class="detail-title mb-5">{{ selectedItem.title }}</h2>
