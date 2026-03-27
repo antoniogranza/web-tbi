@@ -2073,7 +2073,7 @@ async function uploadToSupabase(file, bucket, folder, progressKey) {
   // Simulate progress (Supabase JS v2 doesn't expose upload progress natively)
   uploadProgress[progressKey] = 10
 
-  const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
+  const { error } = await supabase.storage.from(bucket).upload(filePath, file, {
     cacheControl: '3600',
     upsert: false,
     contentType: file.type,
@@ -2100,7 +2100,7 @@ async function uploadToSupabase(file, bucket, folder, progressKey) {
 }
 
 // ── Logo upload handler ───────────────────────────────────────────────────────
-async function handleFileUpload(event, field) {
+async function handleFileUpload(event) {
   const file = event.target.files?.[0]
   if (!file) return
   // Show local preview immediately
@@ -2404,10 +2404,10 @@ function buildPayload() {
       hero_bg: form.heroBg || null,
       gallery: form.gallery.filter(Boolean),
       gallery_captions: form.galleryCaptions.filter(Boolean),
-      achievements: form.achievements.map(({ photoPreview, ...a }) => a),
+      achievements: form.achievements.map(({ photoPreview: _photoPreview, ...a }) => a),
       partners: form.partners,
-      team: form.team.map(({ photoPreview, ...m }) => m),
-      testimonials: form.testimonials.map(({ photoPreview, ...t }) => t),
+      team: form.team.map(({ photoPreview: _photoPreview, ...m }) => m),
+      testimonials: form.testimonials.map(({ photoPreview: _photoPreview, ...t }) => t),
     }
   }
 
