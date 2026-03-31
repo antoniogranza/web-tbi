@@ -1354,6 +1354,19 @@
                 </v-col>
 
                 <v-col cols="12">
+                  <div class="tab-section-header">
+                    <v-icon
+                      icon="mdi-image-filter-center-focus"
+                      size="14"
+                      color="#1565C0"
+                      class="mr-1"
+                    />
+                    Hero Section
+                    <span class="hint-text ml-2">— primary image + primary short/long content</span>
+                  </div>
+                </v-col>
+
+                <v-col cols="12">
                   <div class="form-label">
                     Short Description * <span class="hint-text">(shown on card)</span>
                   </div>
@@ -1417,7 +1430,7 @@
                 <v-col cols="12">
                   <div class="form-label d-flex align-center mb-2" style="gap: 8px">
                     <v-icon icon="mdi-image-outline" size="14" color="#1565C0" class="mr-1" />
-                    News Cover Image
+                    Hero Image
                   </div>
                   <div
                     class="upload-box upload-box--event-banner"
@@ -1461,6 +1474,164 @@
                   >
                     Remove Image
                   </v-btn>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-divider class="my-3" />
+                  <div class="tab-section-header">
+                    <v-icon
+                      icon="mdi-view-gallery-outline"
+                      size="14"
+                      color="#1565C0"
+                      class="mr-1"
+                    />
+                    Gallery Section
+                    <span class="hint-text ml-2"
+                      >— add gallery groups with multiple photos, descriptions per photo</span
+                    >
+                  </div>
+                  <div class="d-flex align-center justify-space-between mb-3" style="gap: 10px">
+                    <p class="hint-text" style="margin: 0">
+                      Each gallery group starts with 3 photo slots. Add more as needed.
+                    </p>
+                    <v-btn
+                      size="small"
+                      variant="tonal"
+                      color="primary"
+                      prepend-icon="mdi-plus"
+                      @click="addNewsGalleryItem"
+                    >
+                      Add Gallery Group
+                    </v-btn>
+                  </div>
+
+                  <div v-if="form.news_gallery.length === 0" class="empty-tab-state">
+                    <v-icon icon="mdi-image-multiple-outline" size="36" color="#d0d7e2" />
+                    <p class="empty-tab-text">No gallery groups added yet.</p>
+                  </div>
+
+                  <div
+                    v-for="(galleryGroup, gi) in form.news_gallery"
+                    :key="`news-gallery-${gi}`"
+                    class="sub-card mb-3"
+                  >
+                    <div class="sub-card-header">
+                      <span class="sub-card-label">Gallery Group {{ gi + 1 }}</span>
+                      <v-btn
+                        icon="mdi-close"
+                        size="x-small"
+                        variant="text"
+                        color="error"
+                        @click="removeNewsGalleryItem(gi)"
+                      />
+                    </div>
+
+                    <!-- Images within gallery group -->
+                    <div class="d-flex align-center justify-space-between mb-3" style="gap: 8px">
+                      <span style="font-size: 12px; color: #666">
+                        Photos in this group: {{ galleryGroup.images.length }}
+                      </span>
+                      <v-btn
+                        size="x-small"
+                        variant="text"
+                        color="primary"
+                        prepend-icon="mdi-plus"
+                        @click="addImageToNewsGalleryItem(gi)"
+                      >
+                        Add Photo
+                      </v-btn>
+                    </div>
+
+                    <div
+                      v-if="galleryGroup.images.length === 0"
+                      class="empty-tab-state"
+                      style="padding: 16px"
+                    >
+                      <p class="empty-tab-text" style="margin: 0">No photos in this group yet.</p>
+                    </div>
+
+                    <!-- Photos in this group (no descriptions per photo) -->
+                    <div v-else class="mb-4">
+                      <div
+                        v-for="(imageItem, ii) in galleryGroup.images"
+                        :key="`news-gallery-${gi}-image-${ii}`"
+                        class="d-inline-block mr-3 mb-3"
+                        style="position: relative; display: inline-block"
+                      >
+                        <div class="upload-box upload-box--sm" style="width: 100px; height: 100px">
+                          <template v-if="imageItem.imagePreview || imageItem.image">
+                            <v-img
+                              :src="imageItem.imagePreview || imageItem.image"
+                              cover
+                              height="100"
+                              width="100"
+                              class="rounded"
+                            />
+                          </template>
+                          <template v-else>
+                            <v-icon icon="mdi-image-plus-outline" size="26" color="#9aa5b5" />
+                          </template>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style="display: none"
+                            @change="(e) => handleNewsGalleryImageUpload(e, gi, ii)"
+                          />
+                          <v-btn
+                            size="x-small"
+                            class="mt-2"
+                            variant="tonal"
+                            color="primary"
+                            @click="$event.currentTarget.previousElementSibling.click()"
+                          >
+                            Choose
+                          </v-btn>
+                        </div>
+                        <v-btn
+                          icon="mdi-close"
+                          size="x-small"
+                          variant="text"
+                          color="error"
+                          style="position: absolute; top: -8px; right: -8px"
+                          @click="removeImageFromNewsGalleryItem(gi, ii)"
+                        />
+                        <v-progress-linear
+                          v-if="uploadProgress[`news_gallery_${gi}_${ii}`]"
+                          :model-value="uploadProgress[`news_gallery_${gi}_${ii}`]"
+                          color="primary"
+                          rounded
+                          height="3"
+                          class="mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Descriptions for entire group -->
+                    <v-row dense class="mt-2">
+                      <v-col cols="12">
+                        <div class="form-label">Group Description (Short)</div>
+                        <v-textarea
+                          v-model="galleryGroup.short_description"
+                          placeholder="Short description for all photos in this group"
+                          variant="outlined"
+                          rounded="lg"
+                          rows="2"
+                          class="form-field"
+                        />
+                      </v-col>
+                      <v-col cols="12">
+                        <div class="form-label">Group Description (Long)</div>
+                        <v-textarea
+                          v-model="galleryGroup.long_description"
+                          placeholder="Long description for all photos in this group"
+                          variant="outlined"
+                          rounded="lg"
+                          rows="3"
+                          class="form-field"
+                        />
+                      </v-col>
+                    </v-row>
+                  </div>
                 </v-col>
               </v-row>
             </template>
@@ -1630,6 +1801,19 @@
                   />
                 </v-col>
                 <v-col cols="12">
+                  <div class="tab-section-header">
+                    <v-icon
+                      icon="mdi-image-filter-center-focus"
+                      size="14"
+                      color="#E65100"
+                      class="mr-1"
+                    />
+                    Hero Section
+                    <span class="hint-text ml-2">— primary image + primary short/long content</span>
+                  </div>
+                </v-col>
+
+                <v-col cols="12">
                   <div class="form-label">
                     Short Description * <span class="hint-text">(shown on card)</span>
                   </div>
@@ -1733,6 +1917,164 @@
                       This image appears as the card background on the Events page and in the Next
                       Event spotlight banner.
                     </p>
+                  </div>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-divider class="my-3" />
+                  <div class="tab-section-header">
+                    <v-icon
+                      icon="mdi-view-gallery-outline"
+                      size="14"
+                      color="#E65100"
+                      class="mr-1"
+                    />
+                    Gallery Section
+                    <span class="hint-text ml-2"
+                      >— add gallery groups with multiple photos, descriptions per photo</span
+                    >
+                  </div>
+                  <div class="d-flex align-center justify-space-between mb-3" style="gap: 10px">
+                    <p class="hint-text" style="margin: 0">
+                      Each gallery group starts with 3 photo slots. Add more as needed.
+                    </p>
+                    <v-btn
+                      size="small"
+                      variant="tonal"
+                      color="warning"
+                      prepend-icon="mdi-plus"
+                      @click="addEventGalleryItem"
+                    >
+                      Add Gallery Group
+                    </v-btn>
+                  </div>
+
+                  <div v-if="form.event_gallery.length === 0" class="empty-tab-state">
+                    <v-icon icon="mdi-image-multiple-outline" size="36" color="#d0d7e2" />
+                    <p class="empty-tab-text">No gallery groups added yet.</p>
+                  </div>
+
+                  <div
+                    v-for="(galleryGroup, gi) in form.event_gallery"
+                    :key="`event-gallery-${gi}`"
+                    class="sub-card mb-3"
+                  >
+                    <div class="sub-card-header">
+                      <span class="sub-card-label">Gallery Group {{ gi + 1 }}</span>
+                      <v-btn
+                        icon="mdi-close"
+                        size="x-small"
+                        variant="text"
+                        color="error"
+                        @click="removeEventGalleryItem(gi)"
+                      />
+                    </div>
+
+                    <!-- Images within gallery group -->
+                    <div class="d-flex align-center justify-space-between mb-3" style="gap: 8px">
+                      <span style="font-size: 12px; color: #666">
+                        Photos in this group: {{ galleryGroup.images.length }}
+                      </span>
+                      <v-btn
+                        size="x-small"
+                        variant="text"
+                        color="warning"
+                        prepend-icon="mdi-plus"
+                        @click="addImageToEventGalleryItem(gi)"
+                      >
+                        Add Photo
+                      </v-btn>
+                    </div>
+
+                    <div
+                      v-if="galleryGroup.images.length === 0"
+                      class="empty-tab-state"
+                      style="padding: 16px"
+                    >
+                      <p class="empty-tab-text" style="margin: 0">No photos in this group yet.</p>
+                    </div>
+
+                    <!-- Photos in this group (no descriptions per photo) -->
+                    <div v-else class="mb-4">
+                      <div
+                        v-for="(imageItem, ii) in galleryGroup.images"
+                        :key="`event-gallery-${gi}-image-${ii}`"
+                        class="d-inline-block mr-3 mb-3"
+                        style="position: relative; display: inline-block"
+                      >
+                        <div class="upload-box upload-box--sm" style="width: 100px; height: 100px">
+                          <template v-if="imageItem.imagePreview || imageItem.image">
+                            <v-img
+                              :src="imageItem.imagePreview || imageItem.image"
+                              cover
+                              height="100"
+                              width="100"
+                              class="rounded"
+                            />
+                          </template>
+                          <template v-else>
+                            <v-icon icon="mdi-image-plus-outline" size="26" color="#9aa5b5" />
+                          </template>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style="display: none"
+                            @change="(e) => handleEventGalleryImageUpload(e, gi, ii)"
+                          />
+                          <v-btn
+                            size="x-small"
+                            class="mt-2"
+                            variant="tonal"
+                            color="warning"
+                            @click="$event.currentTarget.previousElementSibling.click()"
+                          >
+                            Choose
+                          </v-btn>
+                        </div>
+                        <v-btn
+                          icon="mdi-close"
+                          size="x-small"
+                          variant="text"
+                          color="error"
+                          style="position: absolute; top: -8px; right: -8px"
+                          @click="removeImageFromEventGalleryItem(gi, ii)"
+                        />
+                        <v-progress-linear
+                          v-if="uploadProgress[`event_gallery_${gi}_${ii}`]"
+                          :model-value="uploadProgress[`event_gallery_${gi}_${ii}`]"
+                          color="warning"
+                          rounded
+                          height="3"
+                          class="mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Descriptions for entire group -->
+                    <v-row dense class="mt-2">
+                      <v-col cols="12">
+                        <div class="form-label">Group Description (Short)</div>
+                        <v-textarea
+                          v-model="galleryGroup.short_description"
+                          placeholder="Short description for all photos in this group"
+                          variant="outlined"
+                          rounded="lg"
+                          rows="2"
+                          class="form-field"
+                        />
+                      </v-col>
+                      <v-col cols="12">
+                        <div class="form-label">Group Description (Long)</div>
+                        <v-textarea
+                          v-model="galleryGroup.long_description"
+                          placeholder="Long description for all photos in this group"
+                          variant="outlined"
+                          rounded="lg"
+                          rows="3"
+                          class="form-field"
+                        />
+                      </v-col>
+                    </v-row>
                   </div>
                 </v-col>
               </v-row>
@@ -2331,6 +2673,140 @@ function clearEventImage() {
   form.image_event = ''
 }
 
+function createGalleryImage() {
+  return {
+    image: '',
+    imagePreview: null,
+  }
+}
+
+function createDetailGalleryItem() {
+  return {
+    images: [createGalleryImage(), createGalleryImage(), createGalleryImage()],
+    short_description: '',
+    long_description: '',
+  }
+}
+
+function normalizeDetailGalleryItems(items) {
+  if (!Array.isArray(items)) return []
+  // Rebuild group structure from flat DB array using group_index.
+  // Fallback: older rows without group_index are chunked by 3.
+  const groupsMap = new Map()
+  const fallbackRows = []
+
+  items.forEach((item) => {
+    const groupIndex = Number.isInteger(item?.group_index) ? item.group_index : null
+    if (groupIndex === null) {
+      fallbackRows.push(item)
+      return
+    }
+
+    if (!groupsMap.has(groupIndex)) {
+      groupsMap.set(groupIndex, {
+        images: [],
+        short_description: item?.short_description || item?.short || '',
+        long_description: item?.long_description || item?.long || '',
+      })
+    }
+
+    groupsMap.get(groupIndex).images.push({
+      image: item?.image || '',
+      imagePreview: null,
+    })
+  })
+
+  if (fallbackRows.length) {
+    for (let i = 0; i < fallbackRows.length; i += 3) {
+      const chunk = fallbackRows.slice(i, i + 3)
+      groupsMap.set(groupsMap.size, {
+        images: chunk.map((item) => ({
+          image: item?.image || '',
+          imagePreview: null,
+        })),
+        short_description: chunk[0]?.short_description || chunk[0]?.short || '',
+        long_description: chunk[0]?.long_description || chunk[0]?.long || '',
+      })
+    }
+  }
+
+  return Array.from(groupsMap.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([, group]) => group)
+}
+
+function addNewsGalleryItem() {
+  // No limit on gallery items
+  form.news_gallery.push(createDetailGalleryItem())
+}
+
+function removeNewsGalleryItem(index) {
+  form.news_gallery.splice(index, 1)
+}
+
+function addEventGalleryItem() {
+  // No limit on gallery items
+  form.event_gallery.push(createDetailGalleryItem())
+}
+
+function removeEventGalleryItem(index) {
+  form.event_gallery.splice(index, 1)
+}
+
+function addImageToNewsGalleryItem(itemIndex) {
+  if (form.news_gallery[itemIndex]) {
+    form.news_gallery[itemIndex].images.push(createGalleryImage())
+  }
+}
+
+function removeImageFromNewsGalleryItem(itemIndex, imageIndex) {
+  if (form.news_gallery[itemIndex]) {
+    form.news_gallery[itemIndex].images.splice(imageIndex, 1)
+  }
+}
+
+function addImageToEventGalleryItem(itemIndex) {
+  if (form.event_gallery[itemIndex]) {
+    form.event_gallery[itemIndex].images.push(createGalleryImage())
+  }
+}
+
+function removeImageFromEventGalleryItem(itemIndex, imageIndex) {
+  if (form.event_gallery[itemIndex]) {
+    form.event_gallery[itemIndex].images.splice(imageIndex, 1)
+  }
+}
+
+async function handleNewsGalleryImageUpload(event, itemIndex, imageIndex) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  if (!form.news_gallery[itemIndex]) return
+  form.news_gallery[itemIndex].images[imageIndex].imagePreview = URL.createObjectURL(file)
+  const key = `news_gallery_${itemIndex}_${imageIndex}_${Date.now()}`
+  const url = await uploadToSupabase(file, 'news', 'gallery', key)
+  if (url) {
+    form.news_gallery[itemIndex].images[imageIndex].image = url
+    // Update upload progress
+    uploadProgress[`news_gallery_${itemIndex}_${imageIndex}`] = 0
+  }
+  event.target.value = ''
+}
+
+async function handleEventGalleryImageUpload(event, itemIndex, imageIndex) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  if (!form.event_gallery[itemIndex]) return
+  form.event_gallery[itemIndex].images[imageIndex].imagePreview = URL.createObjectURL(file)
+  const key = `event_gallery_${itemIndex}_${imageIndex}_${Date.now()}`
+  const url = await uploadToSupabase(file, 'events', 'gallery', key)
+  if (url) {
+    form.event_gallery[itemIndex].images[imageIndex].image = url
+    // Update upload progress
+    uploadProgress[`event_gallery_${itemIndex}_${imageIndex}`] = 0
+  }
+  event.target.value = ''
+}
+
 // ── Form state ────────────────────────────────────────────────────────────────
 const formDialog = ref(false)
 const deleteDialog = ref(false)
@@ -2424,6 +2900,7 @@ const blankForm = () => ({
   full_description: '',
   image: '',
   newsImagePreview: null,
+  news_gallery: [],
   tags_raw_news: '',
   featured: false,
 
@@ -2440,6 +2917,7 @@ const blankForm = () => ({
   full_description_event: '',
   image_event: '',
   eventImagePreview: null,
+  event_gallery: [],
   tags_raw_event: '',
 })
 
@@ -2493,7 +2971,11 @@ function openEditDialog(item) {
     // Explicitly map database field names to form field names
     image_event: activeSection.value === 'events' ? item.image || '' : item.image || '',
     newsImagePreview: null,
+    news_gallery:
+      activeSection.value === 'news' ? normalizeDetailGalleryItems(item.gallery_items) : [],
     eventImagePreview: null,
+    event_gallery:
+      activeSection.value === 'events' ? normalizeDetailGalleryItems(item.gallery_items) : [],
     descriptionLong: item.description_long || '',
     descriptionExtra: item.description_extra || '',
     yearFounded: item.year_founded || '',
@@ -2573,6 +3055,20 @@ function buildPayload() {
           .map((t) => t.trim())
           .filter(Boolean)
       : []
+    // Flatten nested gallery structure:
+    // Each group has images array + one shared description
+    // When flattening, each image inherits the group's description
+    const galleryItems = form.news_gallery
+      .flatMap((galleryGroup, groupIndex) =>
+        galleryGroup.images.map(({ imagePreview: _imagePreview, ...image }, imageIndex) => ({
+          ...image,
+          group_index: groupIndex,
+          image_index: imageIndex,
+          short_description: galleryGroup.short_description,
+          long_description: galleryGroup.long_description,
+        })),
+      )
+      .filter((item) => item.image)
     return {
       tbi_id: form.tbi_id,
       title: form.title,
@@ -2583,6 +3079,7 @@ function buildPayload() {
       description: form.description,
       full_description: form.full_description || null,
       image: form.image || null,
+      gallery_items: galleryItems,
       tags,
       status: form.status,
       featured: form.featured,
@@ -2596,6 +3093,20 @@ function buildPayload() {
         .map((t) => t.trim())
         .filter(Boolean)
     : []
+  // Flatten nested gallery structure:
+  // Each group has images array + one shared description
+  // When flattening, each image inherits the group's description
+  const eventGalleryItems = form.event_gallery
+    .flatMap((galleryGroup, groupIndex) =>
+      galleryGroup.images.map(({ imagePreview: _imagePreview, ...image }, imageIndex) => ({
+        ...image,
+        group_index: groupIndex,
+        image_index: imageIndex,
+        short_description: galleryGroup.short_description,
+        long_description: galleryGroup.long_description,
+      })),
+    )
+    .filter((item) => item.image)
   return {
     tbi_id: form.tbi_id,
     title: form.title,
@@ -2612,6 +3123,7 @@ function buildPayload() {
     description: form.description_event,
     full_description: form.full_description_event || null,
     image: form.image_event || null,
+    gallery_items: eventGalleryItems,
     tags: eventTags,
   }
 }

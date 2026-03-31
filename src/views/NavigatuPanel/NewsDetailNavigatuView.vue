@@ -118,6 +118,34 @@
                 <div class="body-text" style="white-space: pre-line">
                   {{ article.fullDescription || article.description }}
                 </div>
+
+                <section v-if="galleryGroups.length" class="gallery-section mt-8">
+                  <div
+                    v-for="(group, index) in galleryGroups"
+                    :key="`news-gallery-group-${index}`"
+                    class="detail-extra-block"
+                  >
+                    <div class="inline-gallery-grid mb-4">
+                      <v-img
+                        v-for="(imageItem, ii) in group.images"
+                        :key="`news-gallery-group-${index}-image-${ii}`"
+                        :src="imageItem.image"
+                        cover
+                        class="inline-gallery-image"
+                      />
+                    </div>
+                    <p v-if="group.short_description" class="lead-text mb-3">
+                      {{ group.short_description }}
+                    </p>
+                    <div
+                      v-if="group.long_description"
+                      class="body-text"
+                      style="white-space: pre-line"
+                    >
+                      {{ group.long_description }}
+                    </div>
+                  </div>
+                </section>
               </article>
             </v-col>
 
@@ -169,7 +197,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
@@ -198,8 +226,58 @@ function normalizeNewsItem(item) {
     date: item.date || '',
     location: item.location || 'Navigatu TBI',
     author: item.author || 'Navigatu',
+    gallery_items: Array.isArray(item.gallery_items)
+      ? item.gallery_items.map((galleryItem) => ({
+          image: galleryItem?.image || '',
+          short_description: galleryItem?.short_description || galleryItem?.short || '',
+          long_description: galleryItem?.long_description || galleryItem?.long || '',
+        }))
+      : [],
   }
 }
+
+const galleryItems = computed(() => {
+  if (!article.value) return []
+  return (article.value.gallery_items || []).filter((item) => item.image)
+})
+
+const galleryGroups = computed(() => {
+  if (!galleryItems.value.length) return []
+
+  const grouped = new Map()
+  const fallback = []
+
+  galleryItems.value.forEach((item) => {
+    const groupIndex = Number.isInteger(item.group_index) ? item.group_index : null
+    if (groupIndex === null) {
+      fallback.push(item)
+      return
+    }
+    if (!grouped.has(groupIndex)) {
+      grouped.set(groupIndex, {
+        images: [],
+        short_description: item.short_description || '',
+        long_description: item.long_description || '',
+      })
+    }
+    grouped.get(groupIndex).images.push(item)
+  })
+
+  if (fallback.length) {
+    for (let i = 0; i < fallback.length; i += 3) {
+      const chunk = fallback.slice(i, i + 3)
+      grouped.set(grouped.size, {
+        images: chunk,
+        short_description: chunk[0]?.short_description || '',
+        long_description: chunk[0]?.long_description || '',
+      })
+    }
+  }
+
+  return Array.from(grouped.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([, group]) => group)
+})
 
 async function fetchArticle() {
   loading.value = true
@@ -324,6 +402,27 @@ watch(() => route.params.id, fetchArticle)
   color: #4e5f74;
 }
 
+.gallery-section {
+  border-top: 1px solid #e8edf6;
+  padding-top: 18px;
+}
+
+.detail-extra-block + .detail-extra-block {
+  margin-top: 28px;
+}
+
+.inline-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.inline-gallery-image {
+  border-radius: 14px;
+  border: 1px solid #e7eef8;
+  aspect-ratio: 4 / 3;
+}
+
 .meta-card {
   position: sticky;
   top: 90px;
@@ -352,6 +451,16 @@ watch(() => route.params.id, fetchArticle)
 
   .detail-image {
     height: 280px !important;
+  }
+
+  .inline-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .inline-gallery-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>
