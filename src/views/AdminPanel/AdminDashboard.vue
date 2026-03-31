@@ -430,47 +430,8 @@
         <!-- ════════════ INCUBATEE WIZARD BODY ════════════ -->
         <v-card-text v-if="activeSection === 'incubatees'" class="px-7 pt-5 pb-2">
           <v-form ref="formRef" @submit.prevent>
-            <!-- STEP 0: TBI Portal -->
+            <!-- STEP 0: Identity -->
             <template v-if="wizardStep === 0">
-              <div class="form-section-label mb-4">
-                <v-icon icon="mdi-office-building-outline" size="16" class="mr-2" color="#1565C0" />
-                Where should this incubatee appear? *
-              </div>
-              <div class="tbi-selector-row">
-                <div
-                  v-for="tbi in tbiOptions"
-                  :key="tbi.id"
-                  class="tbi-selector-item tbi-selector-item--lg"
-                  :class="{ 'tbi-selector-item--active': form.tbi_id === tbi.id }"
-                  :style="
-                    form.tbi_id === tbi.id
-                      ? { borderColor: tbi.color, background: tbi.color + '10' }
-                      : {}
-                  "
-                  @click="form.tbi_id = tbi.id"
-                >
-                  <div class="tsi-color-bar" :style="{ background: tbi.color }" />
-                  <div class="tsi-dot" :style="{ background: tbi.color }" />
-                  <div class="tsi-text">
-                    <div class="tsi-name">{{ tbi.name }}</div>
-                    <div class="tsi-sub">{{ tbi.sub }}</div>
-                  </div>
-                  <v-icon
-                    v-if="form.tbi_id === tbi.id"
-                    icon="mdi-check-circle"
-                    size="22"
-                    :color="tbi.color"
-                    class="ml-auto"
-                  />
-                </div>
-              </div>
-              <p v-if="tbiRequired" class="field-error mt-2">
-                Please select a TBI portal to continue.
-              </p>
-            </template>
-
-            <!-- STEP 1: Identity -->
-            <template v-else-if="wizardStep === 1">
               <v-row>
                 <v-col cols="12" sm="8">
                   <div class="form-label">Startup Name *</div>
@@ -555,7 +516,7 @@
             </template>
 
             <!-- STEP 2: About -->
-            <template v-else-if="wizardStep === 2">
+            <template v-else-if="wizardStep === 1">
               <v-row>
                 <v-col cols="12">
                   <div class="form-label">
@@ -672,7 +633,7 @@
             </template>
 
             <!-- STEP 3: Media — Logo + Gallery with upload buttons -->
-            <template v-else-if="wizardStep === 3">
+            <template v-else-if="wizardStep === 2">
               <!-- Hidden file inputs -->
               <input
                 ref="logoFileInput"
@@ -816,7 +777,7 @@
             </template>
 
             <!-- STEP 4: Achievements — with upload button for photo -->
-            <template v-else-if="wizardStep === 4">
+            <template v-else-if="wizardStep === 3">
               <!-- Hidden file input for achievement photos -->
               <input
                 ref="achievementFileInput"
@@ -967,7 +928,7 @@
             </template>
 
             <!-- STEP 5: Partners (was step 7, now step 5 after removing Awards + Funding) -->
-            <template v-else-if="wizardStep === 5">
+            <template v-else-if="wizardStep === 4">
               <div v-if="form.partners.length === 0" class="empty-tab-state">
                 <v-icon icon="mdi-handshake-outline" size="44" color="#ddd" />
                 <p class="empty-tab-text">No partners yet.</p>
@@ -1038,7 +999,7 @@
             </template>
 
             <!-- STEP 6: Team — with photo upload button -->
-            <template v-else-if="wizardStep === 6">
+            <template v-else-if="wizardStep === 5">
               <!-- Hidden file input for team member photos -->
               <input
                 ref="teamFileInput"
@@ -1162,7 +1123,7 @@
             </template>
 
             <!-- STEP 7: Testimonials — with photo upload button -->
-            <template v-else-if="wizardStep === 7">
+            <template v-else-if="wizardStep === 6">
               <!-- Hidden file input for testimonial photos -->
               <input
                 ref="testimonialFileInput"
@@ -1316,46 +1277,6 @@
         <!-- ════════════ NEWS / EVENTS FLAT BODY ════════════ -->
         <v-card-text v-else class="pa-7">
           <v-form ref="formRef" @submit.prevent="handleSubmit">
-            <!-- TBI SELECTOR -->
-            <div class="form-section-label mb-3">
-              <v-icon
-                icon="mdi-office-building-outline"
-                size="15"
-                class="mr-1"
-                :color="activeCategoryColor"
-              />
-              Where should this {{ activeSingular.toLowerCase() }} appear? *
-            </div>
-            <div class="tbi-selector-row mb-2">
-              <div
-                v-for="tbi in tbiOptions"
-                :key="tbi.id"
-                class="tbi-selector-item"
-                :class="{ 'tbi-selector-item--active': form.tbi_id === tbi.id }"
-                :style="
-                  form.tbi_id === tbi.id
-                    ? { borderColor: tbi.color, background: tbi.color + '12' }
-                    : {}
-                "
-                @click="form.tbi_id = tbi.id"
-              >
-                <div class="tsi-dot" :style="{ background: tbi.color }" />
-                <div class="tsi-text">
-                  <div class="tsi-name">{{ tbi.name }}</div>
-                  <div class="tsi-sub">{{ tbi.sub }}</div>
-                </div>
-                <v-icon
-                  v-if="form.tbi_id === tbi.id"
-                  icon="mdi-check-circle"
-                  size="18"
-                  :color="tbi.color"
-                  class="ml-auto"
-                />
-              </div>
-            </div>
-            <p v-if="tbiRequired" class="field-error mb-4">Please select a TBI portal above.</p>
-            <v-divider class="mb-5" />
-
             <!-- NEWS FIELDS -->
             <template v-if="activeSection === 'news'">
               <input
@@ -1823,6 +1744,71 @@
             </div>
           </v-form>
         </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- PUBLISH DESTINATION CONFIRM -->
+    <v-dialog v-model="publishDialog" max-width="520">
+      <v-card rounded="xl" class="pa-6" elevation="0" border>
+        <div class="d-flex align-start" style="gap: 12px">
+          <v-avatar size="42" :color="activeCategoryColor + '20'">
+            <v-icon :icon="activeCategoryIcon" :color="activeCategoryColor" />
+          </v-avatar>
+          <div>
+            <h3 class="dialog-title">Confirm Publish Destination</h3>
+            <p class="dialog-sub mt-1">
+              Choose where this {{ activeSingular.toLowerCase() }} will be published before saving.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <div class="form-label mb-2">Content Type</div>
+          <v-text-field
+            :model-value="activeCategoryName"
+            variant="outlined"
+            density="comfortable"
+            rounded="lg"
+            readonly
+            hide-details
+            class="form-field mb-4"
+          />
+
+          <div class="form-label mb-2">Publish To TBI Portal *</div>
+          <v-select
+            v-model="publishDestination"
+            :items="tbiOptions"
+            item-title="name"
+            item-value="id"
+            placeholder="Select destination portal"
+            variant="outlined"
+            density="comfortable"
+            rounded="lg"
+            :error="!!publishError"
+            :error-messages="publishError"
+            class="form-field"
+          />
+        </div>
+
+        <v-row dense class="mt-2">
+          <v-col cols="6">
+            <v-btn block variant="outlined" rounded="lg" @click="publishDialog = false"
+              >Cancel</v-btn
+            >
+          </v-col>
+          <v-col cols="6">
+            <v-btn
+              block
+              :color="activeCategoryBtnColor"
+              rounded="lg"
+              elevation="0"
+              :loading="activeTable.saving.value"
+              @click="confirmPublishSubmit"
+            >
+              Confirm & Save
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card>
     </v-dialog>
 
@@ -2341,13 +2327,14 @@ const formRef = ref(null)
 const isEditing = ref(false)
 const editId = ref(null)
 const deleteTarget = ref(null)
-const tbiRequired = ref(false)
 const formError = ref('')
+const publishDialog = ref(false)
+const publishDestination = ref('')
+const publishError = ref('')
 
 // ── Wizard state — 8 steps now (Awards + Funding removed) ────────────────────
 const wizardStep = ref(0)
 const wizardSteps = [
-  { label: 'TBI Portal', icon: 'mdi-office-building-outline' },
   { label: 'Identity', icon: 'mdi-card-account-details-outline' },
   { label: 'About', icon: 'mdi-text-box-outline' },
   { label: 'Media', icon: 'mdi-image-multiple-outline' },
@@ -2358,15 +2345,6 @@ const wizardSteps = [
 ]
 
 async function wizardNext() {
-  if (wizardStep.value === 0) {
-    if (!form.tbi_id) {
-      tbiRequired.value = true
-      return
-    }
-    tbiRequired.value = false
-    wizardStep.value++
-    return
-  }
   if (formRef.value) {
     const { valid } = await formRef.value.validate()
     if (!valid) return
@@ -2478,8 +2456,10 @@ watch(
 function openAddDialog() {
   isEditing.value = false
   editId.value = null
-  tbiRequired.value = false
   formError.value = ''
+  publishDialog.value = false
+  publishDestination.value = ''
+  publishError.value = ''
   wizardStep.value = 0
   Object.assign(form, blankForm())
   if (tbiFilter.value) form.tbi_id = tbiFilter.value
@@ -2490,9 +2470,11 @@ function openAddDialog() {
 function openEditDialog(item) {
   isEditing.value = true
   editId.value = item.id
-  tbiRequired.value = false
   formError.value = ''
-  wizardStep.value = activeSection.value === 'incubatees' ? 1 : 0
+  publishDialog.value = false
+  publishDestination.value = item.tbi_id || ''
+  publishError.value = ''
+  wizardStep.value = 0
   const base = blankForm()
   Object.assign(form, {
     ...base,
@@ -2624,20 +2606,32 @@ function buildPayload() {
 }
 
 async function handleSubmit() {
-  if (!form.tbi_id) {
-    tbiRequired.value = true
-    return
-  }
-  tbiRequired.value = false
   const { valid } = await formRef.value.validate()
   if (!valid) return
   formError.value = ''
+
+  publishError.value = ''
+  publishDestination.value = form.tbi_id || tbiFilter.value || ''
+  publishDialog.value = true
+}
+
+async function confirmPublishSubmit() {
+  if (!publishDestination.value) {
+    publishError.value = 'Please select a TBI portal before saving.'
+    return
+  }
+
+  form.tbi_id = publishDestination.value
+  publishError.value = ''
+
   const payload = buildPayload()
   const table = activeTable.value
   const result = isEditing.value
     ? await table.updateRecord(editId.value, payload)
     : await table.insertRecord(payload)
+
   if (result.success) {
+    publishDialog.value = false
     formDialog.value = false
   } else {
     formError.value = result.error?.message || 'Failed to save. Please try again.'
