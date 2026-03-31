@@ -1525,10 +1525,7 @@
                     color="error"
                     class="mt-2"
                     prepend-icon="mdi-trash-can-outline"
-                    @click="
-                      form.newsImagePreview = null
-                      form.image = ''
-                    "
+                    @click="clearNewsImage"
                   >
                     Remove Image
                   </v-btn>
@@ -1793,10 +1790,7 @@
                     color="error"
                     class="mt-2"
                     prepend-icon="mdi-trash-can-outline"
-                    @click="
-                      form.eventImagePreview = null
-                      form.image_event = ''
-                    "
+                    @click="clearEventImage"
                     >Remove Image</v-btn
                   >
                 </v-col>
@@ -2328,6 +2322,16 @@ async function handleNewsImageUpload(event) {
   const url = await uploadToSupabase(file, 'news', 'covers', 'news_image')
   if (url) form.image = url
   event.target.value = ''
+}
+
+function clearNewsImage() {
+  form.newsImagePreview = null
+  form.image = ''
+}
+
+function clearEventImage() {
+  form.eventImagePreview = null
+  form.image_event = ''
 }
 
 // ── Form state ────────────────────────────────────────────────────────────────
