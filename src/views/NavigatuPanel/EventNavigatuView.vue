@@ -17,8 +17,10 @@
           <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
           <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
           <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link nav-link--active" to="/news-navigatu">News</v-btn>
-          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
+          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
+          <v-btn variant="text" class="nav-link nav-link--active" to="/events-navigatu"
+            >Events</v-btn
+          >
           <v-btn variant="text" icon="mdi-magnify" size="small" />
         </div>
 
@@ -374,125 +376,6 @@
           </v-container>
         </v-container>
       </template>
-
-      <!-- ===== EVENT DETAIL DIALOG ===== -->
-      <v-dialog v-model="dialog" max-width="700" scrollable>
-        <v-card v-if="selectedEvent" rounded="xl" class="detail-dialog" elevation="4">
-          <!-- Banner -->
-          <div class="detail-banner-wrap">
-            <v-img v-if="selectedEvent.image" :src="selectedEvent.image" height="260" cover />
-            <div
-              v-else
-              class="detail-banner-placeholder"
-              :style="{ background: typeColorMap[selectedEvent.type] || '#1565C0' }"
-            >
-              <v-icon
-                :icon="typeIcon(selectedEvent.type)"
-                size="64"
-                color="rgba(255,255,255,0.4)"
-              />
-            </div>
-            <div class="detail-banner-overlay" />
-            <v-btn
-              icon="mdi-close"
-              size="small"
-              variant="flat"
-              color="white"
-              class="detail-close-btn"
-              @click="dialog = false"
-            />
-            <!-- Date block over image -->
-            <div
-              class="detail-date-block"
-              :style="{ background: typeColorMap[selectedEvent.type] || '#1565C0' }"
-            >
-              <div class="ddb-day">{{ selectedEvent.day }}</div>
-              <div class="ddb-month">{{ selectedEvent.month }}</div>
-              <div class="ddb-year">{{ selectedEvent.year }}</div>
-            </div>
-          </div>
-
-          <v-card-text class="pa-8">
-            <!-- Type chip -->
-            <v-chip
-              :color="selectedEvent.status === 'past' ? 'secondary' : 'primary'"
-              variant="tonal"
-              size="small"
-              class="mb-4"
-              :prepend-icon="typeIcon(selectedEvent.type)"
-              >{{ selectedEvent.type }}</v-chip
-            >
-
-            <h2 class="dialog-title mb-4">{{ selectedEvent.title }}</h2>
-
-            <!-- Info rows -->
-            <div class="dialog-info-grid mb-6">
-              <div class="dialog-info-item">
-                <v-icon icon="mdi-map-marker-outline" size="18" color="#1565C0" />
-                <div>
-                  <div class="info-label">Location</div>
-                  <div class="info-value">{{ selectedEvent.location }}</div>
-                </div>
-              </div>
-              <div class="dialog-info-item">
-                <v-icon icon="mdi-clock-outline" size="18" color="#1565C0" />
-                <div>
-                  <div class="info-label">Time</div>
-                  <div class="info-value">{{ selectedEvent.time }}</div>
-                </div>
-              </div>
-              <div class="dialog-info-item">
-                <v-icon icon="mdi-calendar-outline" size="18" color="#1565C0" />
-                <div>
-                  <div class="info-label">Date</div>
-                  <div class="info-value">
-                    {{ selectedEvent.day }} {{ selectedEvent.month }} {{ selectedEvent.year }}
-                  </div>
-                </div>
-              </div>
-              <div class="dialog-info-item">
-                <v-icon icon="mdi-tag-outline" size="18" color="#1565C0" />
-                <div>
-                  <div class="info-label">Type</div>
-                  <div class="info-value">{{ selectedEvent.type }}</div>
-                </div>
-              </div>
-            </div>
-
-            <p class="dialog-desc mb-6">
-              {{ selectedEvent.full_description || selectedEvent.description }}
-            </p>
-
-            <!-- Tags -->
-            <div v-if="selectedEvent.tags?.length" class="d-flex flex-wrap gap-2 mb-6">
-              <v-chip
-                v-for="tag in selectedEvent.tags"
-                :key="tag"
-                size="small"
-                variant="tonal"
-                color="primary"
-                >{{ tag }}</v-chip
-              >
-            </div>
-
-            <!-- Status chip — no registration CTA -->
-            <div class="dialog-status-row">
-              <v-chip
-                :color="selectedEvent.status === 'upcoming' ? 'success' : 'secondary'"
-                variant="tonal"
-                size="large"
-                :prepend-icon="
-                  selectedEvent.status === 'upcoming'
-                    ? 'mdi-clock-outline'
-                    : 'mdi-check-circle-outline'
-                "
-              >
-                {{ selectedEvent.status === 'upcoming' ? 'Upcoming Event' : 'Completed Event' }}
-              </v-chip>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
     </v-main>
 
     <!-- ===================== FOOTER ===================== -->
@@ -511,15 +394,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
 const drawer = ref(false)
-const dialog = ref(false)
-const selectedEvent = ref(null)
 const searchQuery = ref('')
 const activeType = ref('All')
 const viewMode = ref('upcoming')
 const sortBy = ref('Date (Soonest)')
+const router = useRouter()
 
 // ── Supabase data state ───────────────────────────────────────────────────────
 const events = ref([])
@@ -631,8 +514,8 @@ const filteredEvents = computed(() => {
 
 // ── Methods ───────────────────────────────────────────────────────────────────
 function openDetail(event) {
-  selectedEvent.value = event
-  dialog.value = true
+  if (!event?.id) return
+  router.push({ name: 'NavigatuEventDetail', params: { id: String(event.id) } })
 }
 
 function resetFilters() {

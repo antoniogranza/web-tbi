@@ -15,6 +15,7 @@ import IncubateePageView from '@/views/NavigatuPanel/IncubateePageView.vue'
 import NewsNavigatuView from '@/views/NavigatuPanel/NewsNavigatuView.vue'
 import NewsDetailNavigatuView from '@/views/NavigatuPanel/NewsDetailNavigatuView.vue'
 import EventNavigatuView from '@/views/NavigatuPanel/EventNavigatuView.vue'
+import EventDetailNavigatuView from '@/views/NavigatuPanel/EventDetailNavigatuView.vue'
 
 //TBI Main Routing
 import Home from '@/views/tbi_main/HomeView.vue'
@@ -107,6 +108,11 @@ const routes = [
   {
     path: '/events-navigatu',
     component: EventNavigatuView,
+  },
+  {
+    path: '/events-navigatu/:id',
+    name: 'NavigatuEventDetail',
+    component: EventDetailNavigatuView,
   },
 
   // Admin Panel Routes (Protected - require admin role)
