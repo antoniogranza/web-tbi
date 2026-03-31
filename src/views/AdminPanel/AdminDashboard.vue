@@ -1330,7 +1330,18 @@
                     class="form-field"
                   />
                 </v-col>
-                <v-col cols="12" sm="12">
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Author</div>
+                  <v-text-field
+                    v-model="form.author"
+                    placeholder="e.g. TBI Communications Team"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
                   <div class="form-label">Location</div>
                   <v-text-field
                     v-model="form.location"
