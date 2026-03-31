@@ -140,7 +140,15 @@
                   <h2 class="featured-title mb-4">{{ featuredItem.title }}</h2>
                   <p class="featured-desc mb-6">{{ featuredItem.description }}</p>
                   <div class="d-flex align-center justify-space-between">
-                    <div class="author-row"></div>
+                    <div class="author-row">
+                      <v-icon
+                        icon="mdi-account-circle-outline"
+                        size="15"
+                        color="#607D8B"
+                        class="mr-1"
+                      />
+                      <span class="author-name">{{ featuredItem.author }}</span>
+                    </div>
                     <v-btn
                       variant="outlined"
                       color="primary"
@@ -244,7 +252,15 @@
 
                   <!-- Footer row -->
                   <div class="news-footer-row">
-                    <div class="author-row"></div>
+                    <div class="author-row">
+                      <v-icon
+                        icon="mdi-account-circle-outline"
+                        size="14"
+                        color="#90A4AE"
+                        class="mr-1"
+                      />
+                      <span class="news-author">{{ item.author }}</span>
+                    </div>
                     <v-btn
                       variant="text"
                       color="primary"
@@ -274,59 +290,6 @@
           </div>
         </v-container>
       </v-container>
-
-      <!-- ===== NEWS DETAIL DIALOG ===== -->
-      <v-dialog v-model="dialog" max-width="760" scrollable>
-        <v-card v-if="selectedItem" rounded="xl" class="detail-dialog">
-          <!-- Header image -->
-          <div class="detail-img-wrap">
-            <v-img :src="selectedItem.image" height="280" cover />
-            <v-btn
-              icon="mdi-close"
-              size="small"
-              variant="flat"
-              color="white"
-              class="detail-close-btn"
-              @click="dialog = false"
-            />
-            <div
-              class="detail-cat-badge"
-              :style="{ background: categoryColor(selectedItem.category) }"
-            >
-              {{ selectedItem.category }}
-            </div>
-          </div>
-
-          <v-card-text class="detail-body pa-8">
-            <!-- Meta -->
-            <div class="detail-meta-row mb-4">
-              <v-icon icon="mdi-map-marker-outline" size="15" color="#1565C0" class="mr-1" />
-              <span class="detail-meta-text">{{ selectedItem.location }}</span>
-              <span class="meta-sep mx-2">·</span>
-              <v-icon icon="mdi-calendar-outline" size="15" color="#1565C0" class="mr-1" />
-              <span class="detail-meta-text">{{ selectedItem.date }}</span>
-              <span class="meta-sep mx-2">·</span>
-            </div>
-
-            <h2 class="detail-title mb-5">{{ selectedItem.title }}</h2>
-            <p class="detail-full-desc">
-              {{ selectedItem.fullDescription || selectedItem.description }}
-            </p>
-
-            <!-- Tags -->
-            <div class="d-flex flex-wrap gap-2 mt-6">
-              <v-chip
-                v-for="tag in selectedItem.tags"
-                :key="tag"
-                size="small"
-                variant="tonal"
-                color="primary"
-                >{{ tag }}</v-chip
-              >
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
     </v-main>
 
     <!-- ===================== FOOTER ===================== -->
@@ -345,11 +308,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
 const drawer = ref(false)
-const dialog = ref(false)
-const selectedItem = ref(null)
 const searchQuery = ref('')
 const activeCategory = ref('All')
 const sortBy = ref('Newest First')
@@ -358,6 +320,7 @@ const allLoaded = ref(false)
 const loadingNews = ref(false)
 const newsError = ref('')
 const news = ref([])
+const router = useRouter()
 
 const categories = ['All', 'Announcement', 'Achievement', 'Partnership', 'Program', 'Research']
 
@@ -449,8 +412,8 @@ const filteredNews = computed(() => {
 })
 
 function openDetail(item) {
-  selectedItem.value = item
-  dialog.value = true
+  if (!item?.id) return
+  router.push({ name: 'NavigatuNewsDetail', params: { id: String(item.id) } })
 }
 
 function resetFilters() {

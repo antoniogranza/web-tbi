@@ -13,6 +13,7 @@ import CoworkingNavigatuView from '@/views/NavigatuPanel/CoworkingNavigatuView.v
 import ServiceNavigatuView from '@/views/NavigatuPanel/ServiceNavigatuView.vue'
 import IncubateePageView from '@/views/NavigatuPanel/IncubateePageView.vue'
 import NewsNavigatuView from '@/views/NavigatuPanel/NewsNavigatuView.vue'
+import NewsDetailNavigatuView from '@/views/NavigatuPanel/NewsDetailNavigatuView.vue'
 import EventNavigatuView from '@/views/NavigatuPanel/EventNavigatuView.vue'
 
 //TBI Main Routing
@@ -97,6 +98,11 @@ const routes = [
   {
     path: '/news-navigatu',
     component: NewsNavigatuView,
+  },
+  {
+    path: '/news-navigatu/:id',
+    name: 'NavigatuNewsDetail',
+    component: NewsDetailNavigatuView,
   },
   {
     path: '/events-navigatu',
