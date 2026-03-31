@@ -1358,6 +1358,13 @@
 
             <!-- NEWS FIELDS -->
             <template v-if="activeSection === 'news'">
+              <input
+                ref="newsImageFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="handleNewsImageUpload"
+              />
               <v-row>
                 <v-col cols="12">
                   <div class="form-label">News Title *</div>
@@ -1474,11 +1481,71 @@
                     density="compact"
                   />
                 </v-col>
+
+                <v-col cols="12">
+                  <div class="form-label d-flex align-center mb-2" style="gap: 8px">
+                    <v-icon icon="mdi-image-outline" size="14" color="#1565C0" class="mr-1" />
+                    News Cover Image
+                  </div>
+                  <div
+                    class="upload-box upload-box--event-banner"
+                    @click="$refs.newsImageFileInput.click()"
+                  >
+                    <template v-if="form.newsImagePreview || form.image">
+                      <v-img
+                        :src="form.newsImagePreview || form.image"
+                        cover
+                        class="upload-box-preview"
+                        height="190"
+                      />
+                      <div class="upload-box-overlay">
+                        <v-icon icon="mdi-camera-flip-outline" size="20" color="white" />
+                      </div>
+                    </template>
+                    <template v-else>
+                      <v-icon icon="mdi-image-plus-outline" size="40" color="#1565C0" />
+                      <div class="upload-box-label">Click to upload cover image</div>
+                      <div class="upload-box-hint">
+                        PNG, JPG, WEBP — max 5MB · Recommended: 1200x630
+                      </div>
+                    </template>
+                  </div>
+                  <v-progress-linear
+                    v-if="uploadProgress.news_image"
+                    :model-value="uploadProgress.news_image"
+                    color="primary"
+                    rounded
+                    height="4"
+                    class="mt-2"
+                  />
+                  <v-btn
+                    v-if="form.newsImagePreview || form.image"
+                    size="x-small"
+                    variant="tonal"
+                    color="error"
+                    class="mt-2"
+                    prepend-icon="mdi-trash-can-outline"
+                    @click="
+                      form.newsImagePreview = null
+                      form.image = ''
+                    "
+                  >
+                    Remove Image
+                  </v-btn>
+                </v-col>
               </v-row>
             </template>
 
             <!-- EVENTS FIELDS -->
             <template v-else-if="activeSection === 'events'">
+              <!-- Hidden file input for event banner image -->
+              <input
+                ref="eventImageFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="handleEventImageUpload"
+              />
               <v-row>
                 <v-col cols="12">
                   <div class="form-label">Event Title *</div>
@@ -1672,6 +1739,75 @@
                     rounded="lg"
                     class="form-field"
                   />
+                </v-col>
+
+                <!-- ── EVENT BANNER IMAGE UPLOAD ── -->
+                <v-col cols="12">
+                  <div class="tab-section-header">
+                    <v-icon icon="mdi-image-outline" size="14" color="#E65100" class="mr-1" />
+                    Event Banner Image
+                    <span class="hint-text ml-2"
+                      >— displayed on the events page card and spotlight</span
+                    >
+                  </div>
+                </v-col>
+                <v-col cols="12" sm="8">
+                  <div
+                    class="upload-box upload-box--event-banner"
+                    @click="$refs.eventImageFileInput.click()"
+                  >
+                    <template v-if="form.eventImagePreview || form.image_event">
+                      <v-img
+                        :src="form.eventImagePreview || form.image_event"
+                        height="160"
+                        cover
+                        class="rounded-lg"
+                      />
+                      <div class="upload-box-overlay">
+                        <v-icon icon="mdi-camera" size="22" color="white" />
+                        <span>Change Banner</span>
+                      </div>
+                    </template>
+                    <template v-else>
+                      <v-icon icon="mdi-image-plus-outline" size="40" color="#E65100" />
+                      <div class="upload-box-label" style="color: #e65100">
+                        Click to upload event banner
+                      </div>
+                      <div class="upload-box-hint">
+                        PNG, JPG, WEBP — max 5MB · Recommended: 1200×630
+                      </div>
+                    </template>
+                  </div>
+                  <v-progress-linear
+                    v-if="uploadProgress.event_image"
+                    :model-value="uploadProgress.event_image"
+                    color="warning"
+                    rounded
+                    height="4"
+                    class="mt-2"
+                  />
+                  <v-btn
+                    v-if="form.eventImagePreview || form.image_event"
+                    size="x-small"
+                    variant="tonal"
+                    color="error"
+                    class="mt-2"
+                    prepend-icon="mdi-trash-can-outline"
+                    @click="
+                      form.eventImagePreview = null
+                      form.image_event = ''
+                    "
+                    >Remove Image</v-btn
+                  >
+                </v-col>
+                <v-col cols="12" sm="4" class="d-flex align-center">
+                  <div class="event-image-tip">
+                    <v-icon icon="mdi-information-outline" size="16" color="#888" class="mb-1" />
+                    <p class="tip-text">
+                      This image appears as the card background on the Events page and in the Next
+                      Event spotlight banner.
+                    </p>
+                  </div>
                 </v-col>
               </v-row>
             </template>
@@ -2036,6 +2172,8 @@ const galleryFileInput = ref(null)
 const achievementFileInput = ref(null)
 const teamFileInput = ref(null)
 const testimonialFileInput = ref(null)
+const eventImageFileInput = ref(null)
+const newsImageFileInput = ref(null)
 
 /**
  * Upload a file to Supabase Storage and return its public URL.
@@ -2071,7 +2209,12 @@ async function uploadToSupabase(file, bucket, folder, progressKey) {
 
   if (error) {
     console.error('Supabase upload error:', error)
-    formError.value = `Upload failed: ${error.message}`
+    const policyHint =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.message?.toLowerCase().includes('not allowed')
+        ? ' Check your Supabase Storage bucket policies for INSERT access.'
+        : ''
+    formError.value = `Upload failed: ${error.message}${policyHint}`
     uploadProgress[progressKey] = 0
     return null
   }
@@ -2164,6 +2307,26 @@ async function handleTestimonialPhotoUpload(event, index) {
   const key = `testimonial_${index}`
   const url = await uploadToSupabase(file, 'incubatees', 'testimonials', key)
   if (url) form.testimonials[index].photo = url
+  event.target.value = ''
+}
+
+// ── Event banner upload handler ────────────────────────────────────────────
+async function handleEventImageUpload(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  form.eventImagePreview = URL.createObjectURL(file)
+  const url = await uploadToSupabase(file, 'events', 'banners', 'event_image')
+  if (url) form.image_event = url
+  event.target.value = ''
+}
+
+// ── News cover image upload handler ──────────────────────────────────────────
+async function handleNewsImageUpload(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  form.newsImagePreview = URL.createObjectURL(file)
+  const url = await uploadToSupabase(file, 'news', 'covers', 'news_image')
+  if (url) form.image = url
   event.target.value = ''
 }
 
@@ -2267,6 +2430,7 @@ const blankForm = () => ({
   description: '',
   full_description: '',
   image: '',
+  newsImagePreview: null,
   tags_raw_news: '',
   featured: false,
 
@@ -2282,6 +2446,7 @@ const blankForm = () => ({
   description_event: '',
   full_description_event: '',
   image_event: '',
+  eventImagePreview: null,
   tags_raw_event: '',
 })
 
@@ -2329,6 +2494,9 @@ function openEditDialog(item) {
     ...base,
     ...item,
     // Explicitly map database field names to form field names
+    image_event: activeSection.value === 'events' ? item.image || '' : item.image || '',
+    newsImagePreview: null,
+    eventImagePreview: null,
     descriptionLong: item.description_long || '',
     descriptionExtra: item.description_extra || '',
     yearFounded: item.year_founded || '',

@@ -40,8 +40,16 @@
           prepend-icon="mdi-office-building-outline"
           to="/coworking-navigatu"
         />
-        <v-list-item title="News" prepend-icon="mdi-newspaper-variant-outline" to="/news" />
-        <v-list-item title="Events" prepend-icon="mdi-calendar-star-outline" to="/events" />
+        <v-list-item
+          title="News"
+          prepend-icon="mdi-newspaper-variant-outline"
+          to="/news-navigatu"
+        />
+        <v-list-item
+          title="Events"
+          prepend-icon="mdi-calendar-star-outline"
+          to="/events-navigatu"
+        />
       </v-list>
     </v-navigation-drawer>
 
@@ -87,7 +95,7 @@
               </div>
             </v-col>
 
-            <!-- Mini calendar widget -->
+            <!-- Mini stats widget -->
             <v-col cols="12" md="4" class="d-none d-md-flex justify-end">
               <div class="mini-stat-stack">
                 <div class="mini-stat">
@@ -101,7 +109,7 @@
                 </div>
                 <div class="mini-stat-divider" />
                 <div class="mini-stat">
-                  <div class="mini-stat-value">{{ eventTypes.length - 1 }}</div>
+                  <div class="mini-stat-value">{{ uniqueTypeCount }}</div>
                   <div class="mini-stat-label">Categories</div>
                 </div>
               </div>
@@ -110,266 +118,280 @@
         </v-container>
       </div>
 
-      <!-- ===== FILTER BAR ===== -->
-      <div class="filter-bar">
+      <!-- ===== LOADING STATE ===== -->
+      <div v-if="loading" class="loading-state">
+        <v-container class="py-16 text-center">
+          <v-progress-circular indeterminate color="primary" size="48" />
+          <p class="loading-text mt-4">Loading events...</p>
+        </v-container>
+      </div>
+
+      <!-- ===== ERROR STATE ===== -->
+      <div v-else-if="fetchError" class="py-10">
         <v-container>
-          <v-row align="center" justify="space-between">
-            <v-col cols="12" md="7" class="d-flex flex-wrap align-center" style="gap: 8px">
-              <button
-                v-for="type in eventTypes"
-                :key="type"
-                class="type-chip"
-                :class="{ 'type-chip--active': activeType === type }"
-                @click="activeType = type"
+          <v-alert type="error" variant="tonal" rounded="lg">
+            {{ fetchError }}
+          </v-alert>
+        </v-container>
+      </div>
+
+      <template v-else>
+        <!-- ===== FILTER BAR ===== -->
+        <div class="filter-bar">
+          <v-container>
+            <v-row align="center" justify="space-between">
+              <v-col cols="12" md="7" class="d-flex flex-wrap align-center" style="gap: 8px">
+                <button
+                  v-for="type in eventTypes"
+                  :key="type"
+                  class="type-chip"
+                  :class="{ 'type-chip--active': activeType === type }"
+                  @click="activeType = type"
+                >
+                  <v-icon :icon="typeIcon(type)" size="13" class="mr-1" />
+                  {{ type }}
+                </button>
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="searchQuery"
+                  placeholder="Search events..."
+                  prepend-inner-icon="mdi-magnify"
+                  variant="outlined"
+                  density="compact"
+                  rounded="lg"
+                  hide-details
+                  bg-color="white"
+                  class="search-field"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
+
+        <!-- ===== NEXT EVENT SPOTLIGHT ===== -->
+        <v-container
+          fluid
+          class="spotlight-section pt-12 pb-4"
+          v-if="nextEvent && viewMode === 'upcoming'"
+        >
+          <v-container>
+            <p class="section-eyebrow mb-5">
+              <v-icon icon="mdi-lightning-bolt" size="13" class="mr-1" />
+              Next Event
+            </p>
+
+            <div class="spotlight-card" @click="openDetail(nextEvent)" style="cursor: pointer">
+              <!-- Left: date column -->
+              <div
+                class="spotlight-date-col"
+                :style="{ background: typeColorMap[nextEvent.type] || '#1565C0' }"
               >
-                <v-icon :icon="typeIcon(type)" size="13" class="mr-1" />
-                {{ type }}
-              </button>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="searchQuery"
-                placeholder="Search events..."
-                prepend-inner-icon="mdi-magnify"
+                <div class="spotlight-month">{{ nextEvent.month }}</div>
+                <div class="spotlight-day">{{ nextEvent.day }}</div>
+                <div class="spotlight-year">{{ nextEvent.year }}</div>
+                <div class="spotlight-type-badge">{{ nextEvent.type }}</div>
+              </div>
+
+              <!-- Right: content -->
+              <div class="spotlight-content pa-8">
+                <!-- Banner image if available -->
+                <div v-if="nextEvent.image" class="spotlight-banner-wrap mb-5">
+                  <v-img
+                    :src="nextEvent.image"
+                    height="180"
+                    cover
+                    rounded="lg"
+                    class="spotlight-banner-img"
+                  />
+                </div>
+
+                <div class="spotlight-meta mb-3">
+                  <v-icon icon="mdi-map-marker-outline" size="15" class="mr-1" color="#1565C0" />
+                  <span>{{ nextEvent.location }}</span>
+                  <span class="meta-sep mx-2">·</span>
+                  <v-icon icon="mdi-clock-outline" size="15" class="mr-1" color="#1565C0" />
+                  <span>{{ nextEvent.time }}</span>
+                </div>
+
+                <h2 class="spotlight-title mb-3">{{ nextEvent.title }}</h2>
+                <p class="spotlight-desc mb-6">{{ nextEvent.description }}</p>
+
+                <div class="d-flex align-center flex-wrap" style="gap: 12px">
+                  <v-btn
+                    color="primary"
+                    rounded="lg"
+                    size="large"
+                    prepend-icon="mdi-information-outline"
+                    class="register-btn"
+                    @click.stop="openDetail(nextEvent)"
+                    >View Details</v-btn
+                  >
+                  <v-btn
+                    variant="outlined"
+                    color="primary"
+                    rounded="lg"
+                    size="large"
+                    prepend-icon="mdi-share-variant-outline"
+                    class="share-btn"
+                    >Share Event</v-btn
+                  >
+                </div>
+              </div>
+            </div>
+          </v-container>
+        </v-container>
+
+        <!-- ===== EVENTS LIST ===== -->
+        <v-container fluid class="events-list-section py-8 pb-16">
+          <v-container>
+            <div class="d-flex align-center justify-space-between mb-6">
+              <p class="results-count">
+                <strong>{{ filteredEvents.length }}</strong>
+                {{ viewMode === 'upcoming' ? 'upcoming' : 'past' }}
+                {{ activeType !== 'All' ? `"${activeType}"` : '' }} events
+              </p>
+              <v-select
+                v-model="sortBy"
+                :items="['Date (Soonest)', 'Date (Latest)', 'A–Z']"
                 variant="outlined"
                 density="compact"
                 rounded="lg"
                 hide-details
-                bg-color="white"
-                class="search-field"
+                style="max-width: 170px"
               />
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== NEXT EVENT SPOTLIGHT ===== -->
-      <v-container
-        fluid
-        class="spotlight-section pt-12 pb-4"
-        v-if="nextEvent && viewMode === 'upcoming'"
-      >
-        <v-container>
-          <p class="section-eyebrow mb-5">
-            <v-icon icon="mdi-lightning-bolt" size="13" class="mr-1" />
-            Next Event
-          </p>
-
-          <div class="spotlight-card">
-            <!-- Left: date column -->
-            <div
-              class="spotlight-date-col"
-              :style="{ background: typeColorMap[nextEvent.type] || '#1565C0' }"
-            >
-              <div class="spotlight-month">{{ nextEvent.month }}</div>
-              <div class="spotlight-day">{{ nextEvent.day }}</div>
-              <div class="spotlight-year">{{ nextEvent.year }}</div>
-              <div class="spotlight-type-badge">{{ nextEvent.type }}</div>
             </div>
 
-            <!-- Right: content -->
-            <div class="spotlight-content pa-8">
-              <div class="spotlight-meta mb-3">
-                <v-icon icon="mdi-map-marker-outline" size="15" class="mr-1" color="#1565C0" />
-                <span>{{ nextEvent.location }}</span>
-                <span class="meta-sep mx-2">·</span>
-                <v-icon icon="mdi-clock-outline" size="15" class="mr-1" color="#1565C0" />
-                <span>{{ nextEvent.time }}</span>
-                <span class="meta-sep mx-2">·</span>
-                <v-icon
-                  icon="mdi-account-multiple-outline"
-                  size="15"
-                  class="mr-1"
-                  color="#1565C0"
-                />
-                <span>{{ nextEvent.slots }} Slots Available</span>
-              </div>
-
-              <h2 class="spotlight-title mb-3">{{ nextEvent.title }}</h2>
-              <p class="spotlight-desc mb-6">{{ nextEvent.description }}</p>
-
-              <div class="d-flex align-center flex-wrap" style="gap: 12px">
-                <v-btn
-                  color="primary"
-                  rounded="lg"
-                  size="large"
-                  prepend-icon="mdi-calendar-check"
-                  class="register-btn"
-                  @click="openDetail(nextEvent)"
-                  >Register Now</v-btn
-                >
-                <v-btn
-                  variant="outlined"
-                  color="primary"
-                  rounded="lg"
-                  size="large"
-                  prepend-icon="mdi-share-variant-outline"
-                  class="share-btn"
-                  >Share Event</v-btn
-                >
-
-                <!-- Seats progress -->
-                <div class="seats-indicator ml-2">
-                  <div class="seats-label">
-                    {{ nextEvent.registered }}/{{ nextEvent.capacity }} registered
-                  </div>
-                  <v-progress-linear
-                    :model-value="(nextEvent.registered / nextEvent.capacity) * 100"
-                    color="primary"
-                    rounded
-                    height="6"
-                    class="mt-1"
-                    style="width: 140px"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </v-container>
-      </v-container>
-
-      <!-- ===== EVENTS LIST ===== -->
-      <v-container fluid class="events-list-section py-8 pb-16">
-        <v-container>
-          <div class="d-flex align-center justify-space-between mb-6">
-            <p class="results-count">
-              <strong>{{ filteredEvents.length }}</strong>
-              {{ viewMode === 'upcoming' ? 'upcoming' : 'past' }}
-              {{ activeType !== 'All' ? `"${activeType}"` : '' }} events
-            </p>
-            <v-select
-              v-model="sortBy"
-              :items="['Date (Soonest)', 'Date (Latest)', 'A–Z']"
-              variant="outlined"
-              density="compact"
-              rounded="lg"
-              hide-details
-              style="max-width: 170px"
-            />
-          </div>
-
-          <!-- Empty state -->
-          <div v-if="filteredEvents.length === 0" class="empty-state">
-            <v-icon icon="mdi-calendar-remove-outline" size="64" color="#ccc" />
-            <p class="empty-title mt-4">No events found</p>
-            <p class="empty-sub">Try a different category or search term.</p>
-            <v-btn
-              variant="outlined"
-              color="primary"
-              rounded="lg"
-              class="mt-4"
-              @click="resetFilters"
-            >
-              Clear Filters
-            </v-btn>
-          </div>
-
-          <!-- Event cards -->
-          <v-row v-else>
-            <v-col v-for="event in filteredEvents" :key="event.id" cols="12" sm="6" md="4">
-              <v-card
-                class="event-card h-100"
-                rounded="xl"
-                elevation="0"
-                hover
-                @click="openDetail(event)"
+            <!-- Empty state -->
+            <div v-if="filteredEvents.length === 0" class="empty-state">
+              <v-icon icon="mdi-calendar-remove-outline" size="64" color="#ccc" />
+              <p class="empty-title mt-4">No events found</p>
+              <p class="empty-sub">Try a different category or search term.</p>
+              <v-btn
+                variant="outlined"
+                color="primary"
+                rounded="lg"
+                class="mt-4"
+                @click="resetFilters"
+                >Clear Filters</v-btn
               >
-                <!-- Top color band with date pill -->
-                <div
-                  class="event-top-band"
-                  :style="{ background: typeColorMap[event.type] || '#1565C0' }"
+            </div>
+
+            <!-- Event cards -->
+            <v-row v-else>
+              <v-col v-for="event in filteredEvents" :key="event.id" cols="12" sm="6" md="4">
+                <v-card
+                  class="event-card h-100"
+                  rounded="xl"
+                  elevation="0"
+                  hover
+                  @click="openDetail(event)"
                 >
-                  <v-img :src="event.image" height="160" cover class="event-banner-img" />
-                  <div class="event-overlay" />
-
-                  <!-- Date pill — floats over the image -->
-                  <div class="event-date-pill">
-                    <span class="date-pill-day">{{ event.day }}</span>
-                    <span class="date-pill-month">{{ event.month }}</span>
-                  </div>
-
-                  <!-- Type badge -->
-                  <div class="event-type-badge" :style="{ background: typeColorMap[event.type] }">
-                    <v-icon :icon="typeIcon(event.type)" size="11" class="mr-1" />
-                    {{ event.type }}
-                  </div>
-
-                  <!-- Past overlay -->
-                  <div v-if="event.status === 'past'" class="past-overlay">
-                    <span class="past-label">Completed</span>
-                  </div>
-                </div>
-
-                <div class="event-body pa-5">
-                  <!-- Meta row -->
-                  <div class="event-meta-row mb-3">
-                    <span class="event-meta-item">
-                      <v-icon icon="mdi-map-marker-outline" size="13" class="mr-1" />
-                      {{ event.location }}
-                    </span>
-                    <span class="event-meta-sep">·</span>
-                    <span class="event-meta-item">
-                      <v-icon icon="mdi-clock-outline" size="13" class="mr-1" />
-                      {{ event.time }}
-                    </span>
-                  </div>
-
-                  <h3 class="event-title mb-2">{{ event.title }}</h3>
-                  <p class="event-desc mb-4">{{ event.description }}</p>
-
-                  <!-- Footer: seats + register -->
-                  <div class="event-footer">
-                    <div v-if="event.status === 'upcoming'" class="seats-row">
+                  <!-- Top: image or color band -->
+                  <div
+                    class="event-top-band"
+                    :style="{ background: typeColorMap[event.type] || '#1565C0' }"
+                  >
+                    <!-- Show uploaded image if available, else show colored placeholder -->
+                    <v-img
+                      v-if="event.image"
+                      :src="event.image"
+                      height="160"
+                      cover
+                      class="event-banner-img"
+                    />
+                    <div v-else class="event-no-image">
                       <v-icon
-                        icon="mdi-account-multiple-outline"
-                        size="14"
-                        class="mr-1"
-                        color="#888"
+                        :icon="typeIcon(event.type)"
+                        size="40"
+                        color="rgba(255,255,255,0.5)"
                       />
-                      <span class="seats-text">{{ event.slots }} slots left</span>
                     </div>
-                    <div v-else class="seats-row">
-                      <v-icon
-                        icon="mdi-check-circle-outline"
-                        size="14"
-                        class="mr-1"
-                        color="#2E7D32"
-                      />
-                      <span class="seats-text past-text">{{ event.registered }} attended</span>
+
+                    <div class="event-overlay" />
+
+                    <!-- Date pill -->
+                    <div class="event-date-pill">
+                      <span class="date-pill-day">{{ event.day }}</span>
+                      <span class="date-pill-month">{{ event.month }}</span>
                     </div>
-                    <v-btn
-                      v-if="event.status === 'upcoming'"
-                      size="x-small"
-                      color="primary"
-                      variant="flat"
-                      rounded="lg"
-                      class="register-mini-btn"
-                      @click.stop="openDetail(event)"
-                      >Register</v-btn
+
+                    <!-- Type badge -->
+                    <div
+                      class="event-type-badge"
+                      :style="{ background: typeColorMap[event.type] || '#1565C0' }"
                     >
-                    <v-btn
-                      v-else
-                      size="x-small"
-                      variant="tonal"
-                      color="secondary"
-                      rounded="lg"
-                      class="register-mini-btn"
-                      >View Recap</v-btn
-                    >
+                      <v-icon :icon="typeIcon(event.type)" size="11" class="mr-1" />
+                      {{ event.type }}
+                    </div>
+
+                    <!-- Past overlay -->
+                    <div v-if="event.status === 'past'" class="past-overlay">
+                      <span class="past-label">Completed</span>
+                    </div>
                   </div>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
+
+                  <div class="event-body pa-5">
+                    <!-- Meta row -->
+                    <div class="event-meta-row mb-3">
+                      <span class="event-meta-item">
+                        <v-icon icon="mdi-map-marker-outline" size="13" class="mr-1" />
+                        {{ event.location }}
+                      </span>
+                      <span class="event-meta-sep">·</span>
+                      <span class="event-meta-item">
+                        <v-icon icon="mdi-clock-outline" size="13" class="mr-1" />
+                        {{ event.time }}
+                      </span>
+                    </div>
+
+                    <h3 class="event-title mb-2">{{ event.title }}</h3>
+                    <p class="event-desc mb-4">{{ event.description }}</p>
+
+                    <!-- Footer: type tag + details button only (no registration) -->
+                    <div class="event-footer">
+                      <v-chip
+                        size="x-small"
+                        variant="tonal"
+                        :color="event.status === 'past' ? 'secondary' : 'primary'"
+                      >
+                        {{ event.status === 'past' ? 'Completed' : 'Upcoming' }}
+                      </v-chip>
+                      <v-btn
+                        size="x-small"
+                        variant="tonal"
+                        color="primary"
+                        rounded="lg"
+                        class="details-mini-btn"
+                        @click.stop="openDetail(event)"
+                        >Details</v-btn
+                      >
+                    </div>
+                  </div>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-container>
-      </v-container>
+      </template>
 
       <!-- ===== EVENT DETAIL DIALOG ===== -->
       <v-dialog v-model="dialog" max-width="700" scrollable>
         <v-card v-if="selectedEvent" rounded="xl" class="detail-dialog" elevation="4">
           <!-- Banner -->
           <div class="detail-banner-wrap">
-            <v-img :src="selectedEvent.image" height="260" cover />
+            <v-img v-if="selectedEvent.image" :src="selectedEvent.image" height="260" cover />
+            <div
+              v-else
+              class="detail-banner-placeholder"
+              :style="{ background: typeColorMap[selectedEvent.type] || '#1565C0' }"
+            >
+              <v-icon
+                :icon="typeIcon(selectedEvent.type)"
+                size="64"
+                color="rgba(255,255,255,0.4)"
+              />
+            </div>
             <div class="detail-banner-overlay" />
             <v-btn
               icon="mdi-close"
@@ -382,7 +404,7 @@
             <!-- Date block over image -->
             <div
               class="detail-date-block"
-              :style="{ background: typeColorMap[selectedEvent.type] }"
+              :style="{ background: typeColorMap[selectedEvent.type] || '#1565C0' }"
             >
               <div class="ddb-day">{{ selectedEvent.day }}</div>
               <div class="ddb-month">{{ selectedEvent.month }}</div>
@@ -393,7 +415,7 @@
           <v-card-text class="pa-8">
             <!-- Type chip -->
             <v-chip
-              :color="selectedEvent.type === 'Workshop' ? 'primary' : 'secondary'"
+              :color="selectedEvent.status === 'past' ? 'secondary' : 'primary'"
               variant="tonal"
               size="small"
               class="mb-4"
@@ -429,85 +451,45 @@
                 </div>
               </div>
               <div class="dialog-info-item">
-                <v-icon icon="mdi-account-multiple-outline" size="18" color="#1565C0" />
+                <v-icon icon="mdi-tag-outline" size="18" color="#1565C0" />
                 <div>
-                  <div class="info-label">Capacity</div>
-                  <div class="info-value">
-                    {{ selectedEvent.registered }}/{{ selectedEvent.capacity }} registered
-                  </div>
+                  <div class="info-label">Type</div>
+                  <div class="info-value">{{ selectedEvent.type }}</div>
                 </div>
               </div>
             </div>
 
             <p class="dialog-desc mb-6">
-              {{ selectedEvent.fullDescription || selectedEvent.description }}
+              {{ selectedEvent.full_description || selectedEvent.description }}
             </p>
 
-            <!-- Speakers / facilitators -->
-            <div v-if="selectedEvent.speakers?.length" class="mb-6">
-              <p class="dialog-section-label mb-3">Speakers / Facilitators</p>
-              <div class="speakers-row">
-                <div v-for="sp in selectedEvent.speakers" :key="sp.name" class="speaker-item">
-                  <v-avatar size="44" color="blue-lighten-4" class="mb-1">
-                    <v-icon icon="mdi-account" size="26" color="#1565C0" />
-                  </v-avatar>
-                  <div class="speaker-name">{{ sp.name }}</div>
-                  <div class="speaker-role">{{ sp.role }}</div>
-                </div>
-              </div>
-            </div>
-
             <!-- Tags -->
-            <div class="d-flex flex-wrap gap-2 mb-6">
+            <div v-if="selectedEvent.tags?.length" class="d-flex flex-wrap gap-2 mb-6">
               <v-chip
                 v-for="tag in selectedEvent.tags"
                 :key="tag"
                 size="small"
                 variant="tonal"
                 color="primary"
+                >{{ tag }}</v-chip
               >
-                {{ tag }}
+            </div>
+
+            <!-- Status chip — no registration CTA -->
+            <div class="dialog-status-row">
+              <v-chip
+                :color="selectedEvent.status === 'upcoming' ? 'success' : 'secondary'"
+                variant="tonal"
+                size="large"
+                :prepend-icon="
+                  selectedEvent.status === 'upcoming'
+                    ? 'mdi-clock-outline'
+                    : 'mdi-check-circle-outline'
+                "
+              >
+                {{ selectedEvent.status === 'upcoming' ? 'Upcoming Event' : 'Completed Event' }}
               </v-chip>
             </div>
-
-            <!-- Seats bar -->
-            <div class="seats-bar-wrap mb-6" v-if="selectedEvent.status === 'upcoming'">
-              <div class="d-flex justify-space-between mb-1">
-                <span class="seats-bar-label">Registration Progress</span>
-                <span class="seats-bar-pct"
-                  >{{ Math.round((selectedEvent.registered / selectedEvent.capacity) * 100) }}%
-                  full</span
-                >
-              </div>
-              <v-progress-linear
-                :model-value="(selectedEvent.registered / selectedEvent.capacity) * 100"
-                color="primary"
-                rounded
-                height="8"
-              />
-            </div>
-
-            <!-- CTA -->
-            <v-btn
-              v-if="selectedEvent.status === 'upcoming'"
-              block
-              color="primary"
-              rounded="lg"
-              size="large"
-              prepend-icon="mdi-calendar-check"
-              class="register-dialog-btn"
-              >Confirm Registration</v-btn
-            >
-            <v-btn
-              v-else
-              block
-              variant="outlined"
-              color="primary"
-              rounded="lg"
-              size="large"
-              prepend-icon="mdi-image-multiple-outline"
-              >View Event Recap</v-btn
-            >
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -528,25 +510,27 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { supabase } from '@/utils/supabase'
 
 const drawer = ref(false)
 const dialog = ref(false)
 const selectedEvent = ref(null)
 const searchQuery = ref('')
 const activeType = ref('All')
-const viewMode = ref('upcoming') // 'upcoming' | 'past'
+const viewMode = ref('upcoming')
 const sortBy = ref('Date (Soonest)')
 
-const eventTypes = [
-  'All',
-  'Workshop',
-  'Pitch Night',
-  'Demo Day',
-  'Networking',
-  'Training',
-  'Summit',
-]
+// ── Supabase data state ───────────────────────────────────────────────────────
+const events = ref([])
+const loading = ref(true)
+const fetchError = ref('')
+
+// ── Static config ─────────────────────────────────────────────────────────────
+const eventTypes = computed(() => {
+  const types = [...new Set(events.value.map((e) => e.type).filter(Boolean))]
+  return ['All', ...types]
+})
 
 const typeColorMap = {
   Workshop: '#1565C0',
@@ -555,6 +539,8 @@ const typeColorMap = {
   Networking: '#2E7D32',
   Training: '#00695C',
   Summit: '#B71C1C',
+  Conference: '#AD1457',
+  Other: '#546E7A',
 }
 
 function typeIcon(type) {
@@ -565,228 +551,81 @@ function typeIcon(type) {
     Networking: 'mdi-account-group-outline',
     Training: 'mdi-book-open-outline',
     Summit: 'mdi-flag-outline',
+    Conference: 'mdi-domain',
     All: 'mdi-apps',
+    Other: 'mdi-calendar-outline',
   }
   return map[type] || 'mdi-calendar-outline'
 }
 
-// ── Sample events data ────────────────────────────────────────────────────────
-const events = ref([
-  {
-    id: 1,
-    title: 'Startup Pitch Night: Spring 2025 Cohort',
-    description:
-      'Watch our latest incubatees pitch their ventures to a panel of investors and industry mentors in a live pitch night.',
-    fullDescription:
-      'Join us for an exciting evening as the Spring 2025 cohort of Navigatú TBI startups present their ventures to a distinguished panel of investors and industry mentors. This pitch night is open to the public and provides a unique opportunity to witness the next generation of Mindanao tech startups in action. Networking reception to follow.',
-    location: 'Navigatú TBI Main Hall, Bukidnon',
-    date: 'April 18, 2025',
-    day: '18',
-    month: 'APR',
-    year: '2025',
-    time: '2:00 PM – 6:00 PM',
-    type: 'Pitch Night',
-    status: 'upcoming',
-    image: '/images/events/event1.jpg',
-    slots: 40,
-    registered: 60,
-    capacity: 100,
-    tags: ['Pitching', 'Investors', 'Startups', 'Networking'],
-    speakers: [
-      { name: 'Dr. Riah Encarnacion', role: 'TBI Director' },
-      { name: 'Engr. John Mark Correa', role: 'Project Head' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Business Model Canvas Workshop for Early-Stage Founders',
-    description:
-      'A hands-on full-day workshop guiding founders through the Business Model Canvas framework with real startup case studies.',
-    fullDescription:
-      'This intensive workshop is designed for pre-seed and seed-stage founders who want to sharpen their business model before seeking investment. Participants will work through the Business Model Canvas using their own startup as the case study, guided by experienced mentors from the Navigatú TBI network. Lunch and materials included.',
-    location: 'Navigatú TBI Training Room, Bukidnon',
-    date: 'April 25, 2025',
-    day: '25',
-    month: 'APR',
-    year: '2025',
-    time: '8:00 AM – 5:00 PM',
-    type: 'Workshop',
-    status: 'upcoming',
-    image: '/images/events/event2.jpg',
-    slots: 20,
-    registered: 10,
-    capacity: 30,
-    tags: ['BMC', 'Business Model', 'Founders', 'Workshop'],
-    speakers: [{ name: 'Mary Pilar Barber', role: 'Community Dev Head' }],
-  },
-  {
-    id: 3,
-    title: 'Navigatú Demo Day 2025',
-    description:
-      'The flagship annual event showcasing live product demos from all active Navigatú incubatees to investors and the public.',
-    fullDescription:
-      'Navigatú Demo Day is our flagship annual showcase where all active incubatees present live product demonstrations to a room full of investors, government officials, media, and the general public. The event also features an exhibition area, panel discussions, and a networking dinner. Early registration is strongly advised as seats fill up quickly.',
-    location: 'CMU Convention Hall, Musuan, Bukidnon',
-    date: 'May 10, 2025',
-    day: '10',
-    month: 'MAY',
-    year: '2025',
-    time: '9:00 AM – 8:00 PM',
-    type: 'Demo Day',
-    status: 'upcoming',
-    image: '/images/events/event3.jpg',
-    slots: 100,
-    registered: 180,
-    capacity: 280,
-    tags: ['Demo Day', 'Showcase', 'Annual', 'Investors'],
-    speakers: [
-      { name: 'Dr. Riah Encarnacion', role: 'TBI Director' },
-      { name: 'Guest Investor Panel', role: 'DICT & Private Sector' },
-    ],
-  },
-  {
-    id: 4,
-    title: 'Tech Founders Networking Night',
-    description:
-      'An informal evening networking event connecting founders, developers, designers, and mentors in the Bukidnon tech ecosystem.',
-    fullDescription:
-      'Join fellow founders, developers, designers, and mentors for a casual evening of networking, idea exchange, and community building. This is a great opportunity to meet your next co-founder, collaborator, or advisor. Light refreshments will be provided.',
-    location: 'Navigatú TBI Coworking Space',
-    date: 'May 22, 2025',
-    day: '22',
-    month: 'MAY',
-    year: '2025',
-    time: '6:00 PM – 9:00 PM',
-    type: 'Networking',
-    status: 'upcoming',
-    image: '/images/events/event4.jpg',
-    slots: 30,
-    registered: 20,
-    capacity: 50,
-    tags: ['Networking', 'Founders', 'Community', 'Tech'],
-    speakers: [],
-  },
-  {
-    id: 5,
-    title: 'Digital Marketing for Startups — Training Series',
-    description:
-      'A 3-session training series covering SEO, social media growth, and paid advertising specifically tailored for tech startups.',
-    fullDescription:
-      'This 3-session training series will equip startup founders and their marketing teams with practical digital marketing skills. Topics covered include SEO fundamentals for tech products, building a social media presence from zero, running effective paid campaigns on limited budgets, and measuring ROI. Sessions will be held on three consecutive Saturdays.',
-    location: 'Navigatú TBI Training Room, Bukidnon',
-    date: 'June 7–21, 2025',
-    day: '07',
-    month: 'JUN',
-    year: '2025',
-    time: '9:00 AM – 12:00 PM (Saturdays)',
-    type: 'Training',
-    status: 'upcoming',
-    image: '/images/events/event5.jpg',
-    slots: 15,
-    registered: 12,
-    capacity: 25,
-    tags: ['Marketing', 'SEO', 'Social Media', 'Training'],
-    speakers: [{ name: 'Guest Marketing Expert', role: 'Digital Marketing Consultant' }],
-  },
-  {
-    id: 6,
-    title: 'Mindanao Startup Summit 2024',
-    description:
-      'The largest startup gathering in Mindanao, hosted by Navigatú TBI with over 300 participants from across the region.',
-    fullDescription:
-      "The Mindanao Startup Summit 2024 brought together over 300 founders, investors, government officials, and ecosystem builders for a full-day conference on the state of startups in Mindanao. Keynote speakers, breakout sessions, pitch competitions, and an innovation exhibition made this the most successful startup event in the region's history.",
-    location: 'CMU Convention Hall, Musuan, Bukidnon',
-    date: 'November 15, 2024',
-    day: '15',
-    month: 'NOV',
-    year: '2024',
-    time: '8:00 AM – 9:00 PM',
-    type: 'Summit',
-    status: 'past',
-    image: '/images/events/event6.jpg',
-    slots: 0,
-    registered: 312,
-    capacity: 350,
-    tags: ['Summit', 'Mindanao', 'Conference', '2024'],
-    speakers: [
-      { name: 'DICT Secretary', role: 'Keynote Speaker' },
-      { name: 'Dr. Riah Encarnacion', role: 'Host' },
-    ],
-  },
-  {
-    id: 7,
-    title: 'Pitch Training Boot Camp — Batch 5',
-    description:
-      'An intensive 2-day boot camp preparing startup founders for investor pitches, covering storytelling, financials, and Q&A handling.',
-    fullDescription:
-      'The Pitch Training Boot Camp is a rigorous 2-day immersive program where startup founders receive hands-on coaching in crafting compelling investor pitches. Participants go through multiple rounds of mock pitching, receive structured feedback from experienced mentors, and refine their decks and financial projections.',
-    location: 'Navigatú TBI Main Hall, Bukidnon',
-    date: 'October 3–4, 2024',
-    day: '03',
-    month: 'OCT',
-    year: '2024',
-    time: '8:00 AM – 6:00 PM',
-    type: 'Workshop',
-    status: 'past',
-    image: '/images/events/event7.jpg',
-    slots: 0,
-    registered: 24,
-    capacity: 25,
-    tags: ['Pitching', 'Boot Camp', 'Investors', 'Training'],
-    speakers: [{ name: 'Engr. John Mark Correa', role: 'Lead Facilitator' }],
-  },
-  {
-    id: 8,
-    title: 'Alumni Networking Night — Navigatú Graduates',
-    description:
-      'An exclusive evening for Navigatú TBI alumni to reconnect, share milestones, and mentor the current cohort of incubatees.',
-    fullDescription:
-      'This exclusive event brought together Navigatú TBI alumni from all previous cohorts for an evening of reconnection, storytelling, and mentorship. Alumni shared their post-incubation journeys with the current incubatees, creating a powerful mentorship loop within the Navigatú ecosystem.',
-    location: 'Navigatú TBI Coworking Space',
-    date: 'September 20, 2024',
-    day: '20',
-    month: 'SEP',
-    year: '2024',
-    time: '5:00 PM – 9:00 PM',
-    type: 'Networking',
-    status: 'past',
-    image: '/images/events/event8.jpg',
-    slots: 0,
-    registered: 45,
-    capacity: 50,
-    tags: ['Alumni', 'Networking', 'Mentorship'],
-    speakers: [],
-  },
-])
+// ── Fetch from Supabase ───────────────────────────────────────────────────────
+// Columns fetched match exactly what buildPayload() writes from AdminDashboard.vue:
+//   tbi_id, title, type, status, day, month, year, time, location,
+//   capacity, slots, registered, description, full_description, image, tags
+async function fetchEvents() {
+  loading.value = true
+  fetchError.value = ''
+
+  const { data, error } = await supabase
+    .from('events')
+    .select(
+      'id, tbi_id, title, type, status, day, month, year, time, location, description, full_description, image, tags, capacity, slots, registered, created_at',
+    )
+    .eq('tbi_id', 'navigatu')
+    .neq('status', 'draft') // hide drafts from the public page
+    .order('created_at', { ascending: false })
+
+  loading.value = false
+
+  if (error) {
+    fetchError.value = error.message
+    return
+  }
+
+  events.value = data ?? []
+}
+
+onMounted(fetchEvents)
 
 // ── Computed ──────────────────────────────────────────────────────────────────
 const upcomingCount = computed(() => events.value.filter((e) => e.status === 'upcoming').length)
 const pastCount = computed(() => events.value.filter((e) => e.status === 'past').length)
+const uniqueTypeCount = computed(
+  () => new Set(events.value.map((e) => e.type).filter(Boolean)).size,
+)
 
+// The first upcoming event becomes the spotlight
 const nextEvent = computed(() => events.value.find((e) => e.status === 'upcoming'))
 
 const filteredEvents = computed(() => {
+  // filter by tab (upcoming / past)
   let list = events.value.filter((e) => e.status === viewMode.value)
 
-  // exclude the next event spotlight from the list
+  // exclude the spotlight from the list cards
   if (viewMode.value === 'upcoming' && nextEvent.value) {
     list = list.filter((e) => e.id !== nextEvent.value.id)
   }
 
+  // filter by type chip
   if (activeType.value !== 'All') {
     list = list.filter((e) => e.type === activeType.value)
   }
+
+  // search filter
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase()
     list = list.filter(
       (e) =>
-        e.title.toLowerCase().includes(q) ||
-        e.description.toLowerCase().includes(q) ||
-        e.location.toLowerCase().includes(q),
+        e.title?.toLowerCase().includes(q) ||
+        e.description?.toLowerCase().includes(q) ||
+        e.location?.toLowerCase().includes(q),
     )
   }
+
+  // sort
   if (sortBy.value === 'Date (Latest)') list = [...list].reverse()
-  if (sortBy.value === 'A–Z') list = [...list].sort((a, b) => a.title.localeCompare(b.title))
+  if (sortBy.value === 'A–Z') list = [...list].sort((a, b) => a.title?.localeCompare(b.title))
+
   return list
 })
 
@@ -795,6 +634,7 @@ function openDetail(event) {
   selectedEvent.value = event
   dialog.value = true
 }
+
 function resetFilters() {
   activeType.value = 'All'
   searchQuery.value = ''
@@ -833,13 +673,21 @@ function resetFilters() {
   font-weight: 700 !important;
 }
 
+/* ── Loading ─────────────────────────────────────────────────────────────────── */
+.loading-state {
+  background: #f5f7fb;
+}
+.loading-text {
+  font-size: 0.88rem;
+  color: #888;
+}
+
 /* ── HERO ────────────────────────────────────────────────────────────────────── */
 .events-hero {
   background: linear-gradient(135deg, #1a237e 0%, #1565c0 60%, #0288d1 100%);
   position: relative;
   overflow: hidden;
 }
-/* Decorative floating circles */
 .hero-circles {
   position: absolute;
   inset: 0;
@@ -869,12 +717,10 @@ function resetFilters() {
   top: 30%;
   right: 25%;
 }
-
 .hero-inner {
   position: relative;
   z-index: 1;
 }
-
 .hero-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -910,8 +756,6 @@ function resetFilters() {
   max-width: 520px;
   margin: 0;
 }
-
-/* View toggle */
 .view-toggle {
   display: inline-flex;
   background: rgba(255, 255, 255, 0.12);
@@ -941,8 +785,6 @@ function resetFilters() {
 .toggle-btn:hover:not(.toggle-btn--active) {
   color: #ffffff;
 }
-
-/* Mini stats */
 .mini-stat-stack {
   display: flex;
   align-items: center;
@@ -1051,7 +893,6 @@ function resetFilters() {
     flex-direction: column;
   }
 }
-
 .spotlight-date-col {
   display: flex;
   flex-direction: column;
@@ -1096,6 +937,13 @@ function resetFilters() {
 .spotlight-content {
   flex: 1;
 }
+.spotlight-banner-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.spotlight-banner-img {
+  border-radius: 12px;
+}
 .spotlight-meta {
   display: flex;
   align-items: center;
@@ -1127,21 +975,11 @@ function resetFilters() {
   font-weight: 600 !important;
   letter-spacing: 0 !important;
 }
-.seats-indicator {
-  display: flex;
-  flex-direction: column;
-}
-.seats-label {
-  font-size: 0.72rem;
-  color: #888;
-  font-weight: 600;
-}
 
 /* ── EVENTS LIST ─────────────────────────────────────────────────────────────── */
 .events-list-section {
   background: #f5f7fb;
 }
-
 .event-card {
   background: #ffffff;
   border: 1px solid #edf0f7;
@@ -1155,10 +993,10 @@ function resetFilters() {
   transform: translateY(-6px);
   box-shadow: 0 14px 36px rgba(21, 101, 192, 0.12) !important;
 }
-
 .event-top-band {
   position: relative;
   overflow: hidden;
+  min-height: 160px;
 }
 .event-banner-img {
   display: block;
@@ -1168,13 +1006,17 @@ function resetFilters() {
 .event-card:hover .event-banner-img {
   transform: scale(1.04);
 }
+.event-no-image {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .event-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
 }
-
-/* Date pill — white badge over image bottom-left */
 .event-date-pill {
   position: absolute;
   bottom: 14px;
@@ -1202,8 +1044,6 @@ function resetFilters() {
   letter-spacing: 1px;
   margin-top: 1px;
 }
-
-/* Type badge top-right */
 .event-type-badge {
   position: absolute;
   top: 12px;
@@ -1218,8 +1058,6 @@ function resetFilters() {
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
-
-/* Past overlay */
 .past-overlay {
   position: absolute;
   inset: 0;
@@ -1238,7 +1076,6 @@ function resetFilters() {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .event-meta-row {
   display: flex;
   align-items: center;
@@ -1269,29 +1106,16 @@ function resetFilters() {
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
   line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .event-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.seats-row {
-  display: inline-flex;
-  align-items: center;
-}
-.seats-text {
-  font-size: 0.72rem;
-  color: #888;
-}
-.past-text {
-  color: #2e7d32;
-  font-weight: 600;
-}
-.register-mini-btn {
+.details-mini-btn {
   text-transform: none !important;
   font-weight: 700 !important;
   letter-spacing: 0 !important;
@@ -1319,6 +1143,12 @@ function resetFilters() {
 }
 .detail-banner-wrap {
   position: relative;
+}
+.detail-banner-placeholder {
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .detail-banner-overlay {
   position: absolute;
@@ -1361,7 +1191,6 @@ function resetFilters() {
   color: rgba(255, 255, 255, 0.6);
   letter-spacing: 1px;
 }
-
 .dialog-title {
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.3rem, 2.5vw, 1.65rem);
@@ -1400,51 +1229,10 @@ function resetFilters() {
   color: #555;
   line-height: 1.85;
 }
-.dialog-section-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-.speakers-row {
+.dialog-status-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-.speaker-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 80px;
-  text-align: center;
-}
-.speaker-name {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.2;
-  margin-top: 4px;
-}
-.speaker-role {
-  font-size: 0.65rem;
-  color: #888;
-  margin-top: 1px;
-}
-.seats-bar-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #888;
-}
-.seats-bar-pct {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #1565c0;
-}
-.register-dialog-btn {
-  text-transform: none !important;
-  font-weight: 700 !important;
-  letter-spacing: 0 !important;
+  justify-content: center;
+  padding-top: 8px;
 }
 
 /* ── FOOTER ──────────────────────────────────────────────────────────────────── */
