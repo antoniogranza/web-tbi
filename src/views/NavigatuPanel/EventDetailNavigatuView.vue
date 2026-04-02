@@ -145,7 +145,10 @@
                     :key="`event-gallery-group-${index}`"
                     class="detail-extra-block"
                   >
-                    <div class="inline-gallery-grid mb-4">
+                    <div
+                      class="inline-gallery-grid mb-4"
+                      :style="{ '--gallery-columns': getGalleryGridColumns(group.images.length) }"
+                    >
                       <v-img
                         v-for="(imageItem, ii) in group.images"
                         :key="`event-gallery-group-${index}-image-${ii}`"
@@ -154,7 +157,7 @@
                         class="inline-gallery-image"
                       />
                     </div>
-                    <p v-if="group.short_description" class="lead-text mb-3">
+                    <p v-if="group.short_description" class="gallery-lead-text mb-3">
                       {{ group.short_description }}
                     </p>
                     <div
@@ -327,6 +330,10 @@ const galleryGroups = computed(() => {
     .map(([, group]) => group)
 })
 
+function getGalleryGridColumns(imagesCount) {
+  return Math.min(Math.max(imagesCount || 1, 1), 3)
+}
+
 async function fetchEvent() {
   loading.value = true
   error.value = ''
@@ -450,6 +457,13 @@ watch(() => route.params.id, fetchEvent)
   line-height: 1.8;
 }
 
+.gallery-lead-text {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: #1e3f66;
+  line-height: 1.8;
+}
+
 .body-text {
   font-size: 0.95rem;
   line-height: 1.95;
@@ -467,7 +481,7 @@ watch(() => route.params.id, fetchEvent)
 
 .inline-gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--gallery-columns, 3), minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -531,16 +545,6 @@ watch(() => route.params.id, fetchEvent)
 
   .detail-image {
     height: 280px !important;
-  }
-
-  .inline-gallery-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .inline-gallery-grid {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

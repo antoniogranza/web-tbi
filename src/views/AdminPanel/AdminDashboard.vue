@@ -2970,6 +2970,8 @@ function openEditDialog(item) {
     ...item,
     // Explicitly map database field names to form field names
     image_event: activeSection.value === 'events' ? item.image || '' : item.image || '',
+    description_event: activeSection.value === 'events' ? item.description || '' : '',
+    full_description_event: activeSection.value === 'events' ? item.full_description || '' : '',
     newsImagePreview: null,
     news_gallery:
       activeSection.value === 'news' ? normalizeDetailGalleryItems(item.gallery_items) : [],
