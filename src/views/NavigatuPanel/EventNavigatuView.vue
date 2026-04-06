@@ -410,9 +410,23 @@ const loading = ref(true)
 const fetchError = ref('')
 
 // ── Static config ─────────────────────────────────────────────────────────────
+const predefinedEventTypes = [
+  'Workshop',
+  'Pitch Night',
+  'Demo Day',
+  'Networking',
+  'Training',
+  'Summit',
+  'Conference',
+  'Other',
+]
+
 const eventTypes = computed(() => {
-  const types = [...new Set(events.value.map((e) => e.type).filter(Boolean))]
-  return ['All', ...types]
+  const dynamic = events.value
+    .map((e) => e.type || 'Other')
+    .filter(Boolean)
+    .map((t) => t.trim())
+  return ['All', ...new Set([...predefinedEventTypes, ...dynamic])]
 })
 
 const typeColorMap = {
@@ -705,9 +719,6 @@ function resetFilters() {
   background: #ffffff;
   border-bottom: 1px solid #e8eaf0;
   padding: 14px 0;
-  position: sticky;
-  top: 64px;
-  z-index: 9;
 }
 .type-chip {
   display: inline-flex;

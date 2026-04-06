@@ -541,9 +541,6 @@ function loadMore() {
   background: #f5f7fb;
   border-bottom: 1px solid #e8eaf0;
   padding: 16px 0;
-  position: sticky;
-  top: 64px;
-  z-index: 9;
 }
 .cat-chip {
   display: inline-block;
