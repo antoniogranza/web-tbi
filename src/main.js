@@ -12,25 +12,34 @@ import * as directives from 'vuetify/directives'
 const vuetify = createVuetify({
   components,
   directives,
-  icons: { defaultSet: 'mdi' },
   theme: {
+    defaultTheme: 'navigatuTheme',
     themes: {
-      light: {
+      navigatuTheme: {
+        dark: false,
         colors: {
-          primary: '#25671E',
-          secondary: '#48A111',
-          accent: '#F2B50B',
-        }
-      }
-    }
+          primary: '#1565C0',
+          'primary-darken-1': '#1A237E',
+          'primary-darken-2': '#0D47A1',
+          secondary: '#F9A825',
+          surface: '#FFFFFF',
+          background: '#F5F7FB',
+          success: '#2E7D32',
+          warning: '#F57F17',
+          error: '#C62828',
+          info: '#1976D2',
+        },
+      },
+    },
   },
   defaults: {
-    global: {
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      }
-    }
-  }
+    VBtn: {
+      style: 'font-family: "DM Sans", sans-serif; text-transform: none; letter-spacing: 0',
+    },
+    VCard: {
+      rounded: 'xl',
+    },
+  },
 })
 
 createApp(App)

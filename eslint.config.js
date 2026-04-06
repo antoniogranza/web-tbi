@@ -17,7 +17,22 @@ export default defineConfig([
     languageOptions: {
       globals: {
         ...globals.browser,
+        ...globals.node,
       },
+    },
+  },
+
+  // ── Custom rules ──────────────────────────────────────────────────────────
+  {
+    rules: {
+      'no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
     },
   },
 
