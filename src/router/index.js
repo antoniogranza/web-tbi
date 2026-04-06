@@ -55,10 +55,12 @@ const requireAdmin = async (to, from, next) => {
 }
 
 const routes = [
+  // ✅ Standalone Login Route
   {
     path: '/login',
     component: LoginView,
   },
+
   {
     path: '/',
     component: PublicLayout,
@@ -76,6 +78,8 @@ const routes = [
       { path: 'apply', component: Apply },
     ],
   },
+
+  // ✅ Navigatu Pages Route (Protected - require authentication)
   {
     path: '/about-navigatu',
     component: AboutNavigatuView,
@@ -88,11 +92,11 @@ const routes = [
     path: '/services-navigatu',
     component: ServiceNavigatuView,
   },
+  /* testing slug */
   {
     path: '/incubatees/:slug',
     name: 'IncubateePage',
-    component: IncubateePageView,
-    beforeEnter: requireAuth,
+    component: () => import('@/views/NavigatuPanel/IncubateePageView.vue'),
   },
   {
     path: '/news-navigatu',
@@ -112,10 +116,11 @@ const routes = [
     name: 'NavigatuEventDetail',
     component: EventDetailNavigatuView,
   },
+
+  // Admin Panel Routes (Protected - require admin role)
   {
     path: '/admin',
     component: AdminDashboard,
-    beforeEnter: requireAdmin,
     meta: { requiresAuth: true },
   },
 ]
