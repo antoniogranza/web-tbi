@@ -1320,15 +1320,27 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                   <div class="form-label">Date *</div>
-                  <v-text-field
-                    v-model="form.date"
-                    placeholder="e.g. March 5, 2025"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
-                  />
+                  <v-menu v-model="newsDateMenu" :close-on-content-click="false" location="bottom">
+                    <template #activator="{ props }">
+                      <v-text-field
+                        v-model="form.date"
+                        v-bind="props"
+                        readonly
+                        placeholder="Select date"
+                        prepend-inner-icon="mdi-calendar"
+                        variant="outlined"
+                        density="comfortable"
+                        rounded="lg"
+                        :rules="[(r) => !!r || 'Required']"
+                        class="form-field"
+                      />
+                    </template>
+                    <v-date-picker
+                      :model-value="newsDatePicker"
+                      color="primary"
+                      @update:model-value="applyNewsDateFromPicker"
+                    />
+                  </v-menu>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <div class="form-label">Author</div>
@@ -1691,54 +1703,29 @@
                     class="form-field"
                   />
                 </v-col>
-                <v-col cols="12" sm="4">
-                  <div class="form-label">Day *</div>
-                  <v-text-field
-                    v-model="form.day"
-                    placeholder="e.g. 18"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="4">
-                  <div class="form-label">Month *</div>
-                  <v-select
-                    v-model="form.month"
-                    :items="[
-                      'JAN',
-                      'FEB',
-                      'MAR',
-                      'APR',
-                      'MAY',
-                      'JUN',
-                      'JUL',
-                      'AUG',
-                      'SEP',
-                      'OCT',
-                      'NOV',
-                      'DEC',
-                    ]"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
-                  />
-                </v-col>
-                <v-col cols="12" sm="4">
-                  <div class="form-label">Year *</div>
-                  <v-text-field
-                    v-model="form.year"
-                    placeholder="e.g. 2025"
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
-                  />
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Event Date *</div>
+                  <v-menu v-model="eventDateMenu" :close-on-content-click="false" location="bottom">
+                    <template #activator="{ props }">
+                      <v-text-field
+                        :model-value="eventDateDisplay"
+                        v-bind="props"
+                        readonly
+                        placeholder="Select event date"
+                        prepend-inner-icon="mdi-calendar"
+                        variant="outlined"
+                        density="comfortable"
+                        rounded="lg"
+                        :rules="[(r) => !!r || 'Required']"
+                        class="form-field"
+                      />
+                    </template>
+                    <v-date-picker
+                      :model-value="eventDatePicker"
+                      color="primary"
+                      @update:model-value="applyEventDateFromPicker"
+                    />
+                  </v-menu>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <div class="form-label">Time *</div>
@@ -2934,6 +2921,80 @@ const blankForm = () => ({
 
 const form = reactive(blankForm())
 
+const newsDateMenu = ref(false)
+const eventDateMenu = ref(false)
+const newsDatePicker = ref(null)
+const eventDatePicker = ref(null)
+
+const MONTH_ABBR = [
+  'JAN',
+  'FEB',
+  'MAR',
+  'APR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AUG',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DEC',
+]
+
+function normalizeToIsoDate(value) {
+  if (!value) return null
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return null
+
+  const year = parsed.getFullYear()
+  const month = String(parsed.getMonth() + 1).padStart(2, '0')
+  const day = String(parsed.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function formatIsoForDisplay(isoDate) {
+  if (!isoDate) return ''
+  const parsed = new Date(`${isoDate}T00:00:00`)
+  if (Number.isNaN(parsed.getTime())) return ''
+  return parsed.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+function getPickerValue(value) {
+  return Array.isArray(value) ? value[0] : value
+}
+
+function applyNewsDateFromPicker(value) {
+  const picked = normalizeToIsoDate(getPickerValue(value))
+  if (!picked) return
+  newsDatePicker.value = picked
+  form.date = formatIsoForDisplay(picked)
+  newsDateMenu.value = false
+}
+
+function applyEventDateFromPicker(value) {
+  const picked = normalizeToIsoDate(getPickerValue(value))
+  if (!picked) return
+
+  eventDatePicker.value = picked
+  const [year, month, day] = picked.split('-')
+  form.year = year
+  form.month = MONTH_ABBR[Number(month) - 1] || ''
+  form.day = String(Number(day))
+  eventDateMenu.value = false
+}
+
+const eventDateDisplay = computed(() => {
+  if (eventDatePicker.value) return formatIsoForDisplay(eventDatePicker.value)
+  if (form.year && form.month && form.day) return `${form.month} ${form.day}, ${form.year}`
+  return ''
+})
+
 // ── Auto-generate slug from startup name ──────────────────────────────────────
 // Only fires when adding a new incubatee (isEditing = false).
 // Never overwrites the slug when editing — changing a live slug would
@@ -2962,6 +3023,8 @@ function openAddDialog() {
   publishError.value = ''
   wizardStep.value = 0
   Object.assign(form, blankForm())
+  newsDatePicker.value = null
+  eventDatePicker.value = null
   if (tbiFilter.value) form.tbi_id = tbiFilter.value
   if (activeSection.value === 'events') form.status = 'upcoming'
   formDialog.value = true
@@ -3012,6 +3075,21 @@ function openEditDialog(item) {
     testimonials: (item.testimonials || []).map((t) => ({ ...t, photoPreview: null })),
     logoPreview: null,
   })
+
+  newsDatePicker.value = activeSection.value === 'news' ? normalizeToIsoDate(form.date) : null
+  if (activeSection.value === 'events' && form.year && form.month && form.day) {
+    const monthIndex = MONTH_ABBR.indexOf(String(form.month).toUpperCase())
+    if (monthIndex >= 0) {
+      const month = String(monthIndex + 1).padStart(2, '0')
+      const day = String(Number(form.day)).padStart(2, '0')
+      eventDatePicker.value = `${form.year}-${month}-${day}`
+    } else {
+      eventDatePicker.value = null
+    }
+  } else {
+    eventDatePicker.value = null
+  }
+
   formDialog.value = true
 }
 

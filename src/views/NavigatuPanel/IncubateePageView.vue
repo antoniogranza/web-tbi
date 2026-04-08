@@ -1432,8 +1432,8 @@ onUnmounted(() => {
     box-shadow 0.22s ease;
 }
 .team-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 28px rgba(21, 101, 192, 0.1);
+  transform: translateY(0px);
+  box-shadow: 0 5px 20px rgba(21, 101, 192, 0.1);
 }
 .team-photo-wrap {
   overflow: hidden;
@@ -1441,6 +1441,7 @@ onUnmounted(() => {
 .team-photo {
   display: block;
   width: 100%;
+  height: 300px !important;
 }
 .team-photo-fallback {
   height: 180px;
