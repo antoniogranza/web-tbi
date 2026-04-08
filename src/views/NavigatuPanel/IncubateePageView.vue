@@ -496,7 +496,49 @@
             </h2>
             <p class="section-sub text-center mb-12">Success stories in their own words</p>
 
-            <v-row>
+            <div v-if="shouldUseTestimonialsCarousel" class="testimonials-carousel-shell">
+              <div class="testimonials-viewport">
+                <div
+                  class="testimonials-track"
+                  :style="testimonialTrackStyle"
+                  @transitionend="handleTestimonialTrackTransitionEnd"
+                >
+                  <div
+                    v-for="(t, i) in carouselTestimonials"
+                    :key="`${t.name}-${i}`"
+                    class="testimonials-track-item"
+                    :style="{ '--visible-cards': visibleTestimonialCards }"
+                  >
+                    <div class="testi-card">
+                      <div class="quote-mark">"</div>
+                      <p class="testi-text">{{ t.quote }}</p>
+                      <div class="testi-author-row mt-5">
+                        <div class="testi-avatar-wrap">
+                          <v-img
+                            v-if="t.photo"
+                            :src="t.photo"
+                            height="48"
+                            width="48"
+                            cover
+                            rounded="circle"
+                            class="testi-avatar"
+                          />
+                          <v-avatar v-else size="48" color="blue-lighten-4">
+                            <v-icon icon="mdi-account" size="28" color="#1565C0" />
+                          </v-avatar>
+                        </div>
+                        <div class="testi-author-info ml-3">
+                          <div class="testi-name">{{ t.name }}</div>
+                          <div class="testi-role">{{ t.role }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <v-row v-else>
               <v-col v-for="(t, i) in startup.testimonials" :key="t.name" cols="12" md="4">
                 <div class="testi-card" :class="i === 1 ? 'testi-card--featured' : ''">
                   <div class="quote-mark">"</div>
@@ -591,7 +633,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
@@ -669,6 +711,10 @@ onMounted(async () => {
   setupObservers()
 })
 
+onMounted(() => {
+  window.addEventListener('resize', handleViewportResize)
+})
+
 // ── Anchor nav — automatically computed from actual data ───────────────────
 // Values dynamically calculate from achievements, partners, team, and testimonials arrays
 const anchorTabs = computed(() => [
@@ -704,6 +750,87 @@ const getActiveTags = computed(() => {
   if (!Array.isArray(tags)) return []
   return tags.filter((tag) => tag && String(tag).trim().length > 0)
 })
+
+// ── Testimonials carousel state ───────────────────────────────────────────
+const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
+const testimonialIndex = ref(0)
+const enableTrackTransition = ref(true)
+let testimonialsAutoplayTimer = null
+
+const shouldUseTestimonialsCarousel = computed(() => {
+  const total = startup.value?.testimonials?.length ?? 0
+  return total >= 3
+})
+
+const visibleTestimonialCards = computed(() => {
+  if (viewportWidth.value >= 960) return 3
+  if (viewportWidth.value >= 600) return 2
+  return 1
+})
+
+const carouselTestimonials = computed(() => {
+  const list = startup.value?.testimonials || []
+  if (!shouldUseTestimonialsCarousel.value) return list
+  return [...list, ...list.slice(0, visibleTestimonialCards.value)]
+})
+
+const testimonialTrackStyle = computed(() => {
+  const step = 100 / visibleTestimonialCards.value
+  return {
+    transform: `translateX(-${testimonialIndex.value * step}%)`,
+    transition: enableTrackTransition.value ? 'transform 560ms ease' : 'none',
+  }
+})
+
+function moveToNextTestimonial() {
+  if (!shouldUseTestimonialsCarousel.value) return
+  testimonialIndex.value += 1
+}
+
+function handleTestimonialTrackTransitionEnd() {
+  const total = startup.value?.testimonials?.length ?? 0
+  if (!total) return
+
+  if (testimonialIndex.value >= total) {
+    enableTrackTransition.value = false
+    testimonialIndex.value = 0
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        enableTrackTransition.value = true
+      })
+    })
+  }
+}
+
+function stopTestimonialsAutoplay() {
+  if (testimonialsAutoplayTimer) {
+    window.clearInterval(testimonialsAutoplayTimer)
+    testimonialsAutoplayTimer = null
+  }
+}
+
+function startTestimonialsAutoplay() {
+  stopTestimonialsAutoplay()
+  if (!shouldUseTestimonialsCarousel.value) return
+  testimonialsAutoplayTimer = window.setInterval(moveToNextTestimonial, 5000)
+}
+
+function handleViewportResize() {
+  viewportWidth.value = window.innerWidth
+}
+
+watch(
+  [
+    shouldUseTestimonialsCarousel,
+    visibleTestimonialCards,
+    () => startup.value?.testimonials?.length,
+  ],
+  () => {
+    testimonialIndex.value = 0
+    enableTrackTransition.value = true
+    startTestimonialsAutoplay()
+  },
+)
 
 // ── Status icon fallback ───────────────────────────────────────────────────
 function defaultStatusIcon(status) {
@@ -750,7 +877,11 @@ function setupObservers() {
   })
 }
 
-onUnmounted(() => observers.forEach((o) => o.disconnect()))
+onUnmounted(() => {
+  observers.forEach((o) => o.disconnect())
+  stopTestimonialsAutoplay()
+  window.removeEventListener('resize', handleViewportResize)
+})
 </script>
 
 <style scoped>
@@ -1336,6 +1467,27 @@ onUnmounted(() => observers.forEach((o) => o.disconnect()))
 /* ── TESTIMONIALS ────────────────────────────────────────────────────────────── */
 .testimonials-section {
   background: #f5f7fb;
+}
+
+.testimonials-carousel-shell {
+  position: relative;
+}
+
+.testimonials-viewport {
+  overflow: hidden;
+  margin: 0 -10px;
+}
+
+.testimonials-track {
+  display: flex;
+  align-items: stretch;
+  will-change: transform;
+}
+
+.testimonials-track-item {
+  flex: 0 0 calc(100% / var(--visible-cards));
+  max-width: calc(100% / var(--visible-cards));
+  padding: 0 10px;
 }
 
 .testi-card {
