@@ -6,7 +6,7 @@
       color="white"
       border="b"
       height="64"
-      :elevation="scrolled ? 2 : 0"
+      :elevation="scrolled ? 3 : 0"
       style="transition: box-shadow 0.3s"
     >
       <v-container class="d-flex align-center pa-0" fluid>
@@ -27,6 +27,7 @@
           <v-btn variant="text" icon size="small" @click="searchDialog = true">
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
+          <button class="nav-apply-btn ml-2" @click="applyDialog = true">Apply Now</button>
         </div>
         <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
       </v-container>
@@ -64,20 +65,12 @@
       </v-list>
       <template #append>
         <div class="pa-4">
-          <v-btn
-            block
-            color="primary"
-            variant="outlined"
-            rounded="lg"
-            prepend-icon="mdi-rocket-launch-outline"
-          >
-            Apply Now
-          </v-btn>
+          <button class="nav-apply-btn w-full" @click="openApplyFromDrawer">Apply Now</button>
         </div>
       </template>
     </v-navigation-drawer>
 
-    <!-- ===================== SEARCH DIALOG ===================== -->
+    <!-- SEARCH DIALOG -->
     <v-dialog v-model="searchDialog" max-width="560" transition="dialog-top-transition">
       <v-card rounded="xl" class="pa-2">
         <v-text-field
@@ -88,7 +81,6 @@
           variant="outlined"
           rounded="lg"
           hide-details
-          class="search-field"
           @keyup.esc="searchDialog = false"
         />
         <div v-if="!searchQuery" class="pa-4 pb-2">
@@ -126,129 +118,117 @@
       </v-card>
     </v-dialog>
 
-    <!-- ===================== MAIN CONTENT ===================== -->
     <v-main>
       <!-- ===== HERO ===== -->
-      <v-container fluid class="hero-section pa-0">
-        <div class="hero-bg-pattern" />
-        <v-container class="py-16 position-relative">
-          <v-row justify="center">
-            <v-col cols="12" md="9" lg="7" class="text-center">
-              <v-chip
-                color="primary"
-                variant="tonal"
-                size="small"
-                class="mb-5 font-weight-semibold"
-                prepend-icon="mdi-map-marker-outline"
-              >
+      <div class="hero-section">
+        <div class="hero-grid" />
+        <v-container class="hero-inner">
+          <v-row align="center">
+            <v-col cols="12" md="6" class="hero-left">
+              <div class="hero-pill mb-6">
+                <span class="live-dot" />
                 Butuan City, Caraga Region
-              </v-chip>
+              </div>
               <h1 class="hero-title">
-                <span class="hero-italic">Your Hub</span> for Innovation<br
-                  class="d-none d-sm-block"
-                />
-                and Technopreneurship
+                <em>Your Hub</em> for<br />Innovation &<br />Technopreneurship
               </h1>
-              <p class="hero-body mt-4 mb-8 mx-auto">
+              <p class="hero-body mt-5 mb-8">
                 Navigatú TBI empowers the next generation of Filipino tech founders through
                 mentorship, funding pathways, and a thriving startup community.
               </p>
-              <div class="d-flex justify-center flex-wrap gap-3">
-                <v-btn
-                  color="primary"
-                  rounded="lg"
-                  size="large"
-                  class="hero-btn"
-                  prepend-icon="mdi-rocket-launch-outline"
-                  elevation="0"
-                  @click="applyDialog = true"
-                >
-                  Apply Now
-                </v-btn>
-                <v-btn
-                  variant="outlined"
-                  color="primary"
-                  rounded="lg"
-                  size="large"
-                  class="hero-btn"
-                  prepend-icon="mdi-play-circle-outline"
-                  @click="learnMoreScroll"
-                >
-                  Learn More
-                </v-btn>
+              <div class="d-flex flex-wrap gap-3 mb-10">
+                <button class="btn-primary" @click="applyDialog = true">
+                  <v-icon size="17" class="mr-2">mdi-rocket-launch-outline</v-icon> Apply Now
+                </button>
+                <button class="btn-ghost" @click="learnMoreScroll">
+                  <v-icon size="17" class="mr-2">mdi-play-circle-outline</v-icon> Learn More
+                </button>
               </div>
-
-              <!-- Stats row -->
-              <v-row justify="center" class="mt-12 mb-2">
-                <v-col v-for="stat in heroStats" :key="stat.label" cols="6" sm="3">
-                  <div class="stat-box">
-                    <div class="stat-num">{{ stat.num }}</div>
-                    <div class="stat-label">{{ stat.label }}</div>
+              <div class="hero-stats">
+                <div v-for="s in heroStats" :key="s.label" class="hero-stat">
+                  <div class="hero-stat-num">{{ s.num }}</div>
+                  <div class="hero-stat-label">{{ s.label }}</div>
+                </div>
+              </div>
+            </v-col>
+            <v-col cols="12" md="6" class="d-none d-md-block">
+              <div class="hero-collage">
+                <div class="collage-main">
+                  <img
+                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80"
+                    alt="Team"
+                    class="collage-img-main"
+                  />
+                  <div class="collage-live-badge"><span class="live-dot" /> Live Programs</div>
+                </div>
+                <div class="collage-side">
+                  <div class="collage-stat-card">
+                    <div class="collage-big">60+</div>
+                    <div class="collage-sub">Startups Launched</div>
                   </div>
-                </v-col>
-              </v-row>
+                  <img
+                    src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&q=80"
+                    alt="Office"
+                    class="collage-img-side"
+                  />
+                </div>
+              </div>
             </v-col>
           </v-row>
 
-          <!-- Tech Category Cards -->
-          <v-row justify="center" class="mt-6" id="learn-more">
+          <!-- Tech cards -->
+          <v-row id="learn-more" class="mt-10">
             <v-col
               v-for="(cat, i) in techCategories"
               :key="cat.title"
               cols="12"
               sm="6"
               md="3"
-              :class="['tech-col', { 'animate-in': animatedCards }]"
+              :class="['tc', { 'tc--in': animatedCards }]"
               :style="{ animationDelay: `${i * 80}ms` }"
             >
-              <v-card
-                class="tech-card pa-5 h-100"
-                flat
-                rounded="xl"
-                :class="{ 'tech-card--selected': selectedTech === cat.title }"
+              <div
+                class="tech-card"
+                :class="{ 'tech-card--sel': selectedTech === cat.title }"
                 @click="selectedTech = selectedTech === cat.title ? null : cat.title"
               >
-                <div class="tech-icon-wrap mb-4" :style="{ background: cat.iconBg }">
-                  <v-icon :icon="cat.icon" :color="cat.color" size="24" />
+                <div class="tech-icon" :style="{ background: cat.iconBg }">
+                  <v-icon :icon="cat.icon" :color="cat.color" size="22" />
                 </div>
-                <v-card-title class="tech-card-title px-0 pb-1">{{ cat.title }}</v-card-title>
-                <v-card-text class="tech-card-text px-0 pt-0">{{ cat.desc }}</v-card-text>
-                <v-expand-transition>
-                  <div v-if="selectedTech === cat.title" class="tech-expanded mt-2">
-                    <v-divider class="mb-3" />
-                    <p class="text-caption" style="color: #555; line-height: 1.7">
-                      {{ cat.detail }}
-                    </p>
-                    <v-btn
-                      size="x-small"
-                      variant="tonal"
-                      :color="cat.color"
-                      rounded="lg"
-                      class="mt-2"
-                      prepend-icon="mdi-arrow-right"
-                      >Explore</v-btn
+                <div class="tech-title">{{ cat.title }}</div>
+                <div class="tech-desc">{{ cat.desc }}</div>
+                <transition name="fx">
+                  <div v-if="selectedTech === cat.title" class="tech-detail">
+                    <div class="tech-divider" />
+                    <p class="tech-detail-text">{{ cat.detail }}</p>
+                    <button
+                      class="btn-micro"
+                      :style="{
+                        color: cat.color,
+                        borderColor: cat.color + '55',
+                        background: cat.color + '14',
+                      }"
                     >
+                      <v-icon size="12" class="mr-1">mdi-arrow-right</v-icon> Explore
+                    </button>
                   </div>
-                </v-expand-transition>
-              </v-card>
+                </transition>
+              </div>
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </div>
 
       <!-- ===== WHO CAN APPLY ===== -->
-      <v-container fluid class="apply-section py-16">
+      <div class="sec-white py-sec">
         <v-container>
           <div class="text-center mb-12">
-            <v-chip color="primary" variant="tonal" size="small" class="mb-3">Eligibility</v-chip>
-            <h2 class="section-title">Who can <span class="italic-accent">Apply</span></h2>
-            <p class="section-subtitle mt-2">
-              Students, Faculty and Researchers, Early-Stage startups, and Tech Entrepreneurs can
-              apply
+            <div class="eyebrow">Eligibility</div>
+            <h2 class="sec-title">Who can <em>Apply</em></h2>
+            <p class="sec-sub">
+              Students, Faculty, Early-Stage startups, and Tech Entrepreneurs can apply
             </p>
           </div>
-
-          <!-- Tabs for mobile / filter -->
           <v-tabs
             v-model="activeApplyTab"
             color="primary"
@@ -257,71 +237,47 @@
             show-arrows
           >
             <v-tab value="all">All</v-tab>
-            <v-tab v-for="card in applyCards" :key="card.id" :value="card.id">{{
-              card.short
-            }}</v-tab>
+            <v-tab v-for="c in applyCards" :key="c.id" :value="c.id">{{ c.short }}</v-tab>
           </v-tabs>
-
           <v-row>
             <v-col v-for="card in filteredApplyCards" :key="card.id" cols="12" md="6" class="mb-4">
-              <v-card
-                class="apply-card h-100"
-                :class="['apply-card--' + card.id]"
-                rounded="xl"
-                flat
-                :ripple="false"
-                @click="openApplyDetail(card)"
-              >
-                <div class="apply-card-inner pa-8">
-                  <div class="apply-badge mb-4" :style="{ background: card.badgeColor }">
-                    <v-icon :icon="card.icon" size="30" color="white" />
+              <div class="apply-card" :class="'ac--' + card.id" @click="openApplyDetail(card)">
+                <div class="ac-inner">
+                  <div class="ac-badge" :style="{ background: card.badgeColor }">
+                    <v-icon :icon="card.icon" size="26" color="white" />
                   </div>
-                  <h3 class="apply-card-title">{{ card.title }}</h3>
-                  <p class="apply-card-body mt-2 mb-4">{{ card.desc }}</p>
-                  <div class="apply-tags">
-                    <v-chip
-                      v-for="tag in card.tags"
-                      :key="tag"
-                      size="small"
-                      class="apply-chip mr-2 mb-2"
-                      >{{ tag }}</v-chip
-                    >
+                  <h3 class="ac-title mt-4 mb-2">{{ card.title }}</h3>
+                  <p class="ac-body mb-4">{{ card.desc }}</p>
+                  <div class="ac-chips mb-4">
+                    <span v-for="tag in card.tags" :key="tag" class="ac-chip">{{ tag }}</span>
                   </div>
-                  <v-btn
-                    size="small"
-                    variant="tonal"
-                    rounded="lg"
-                    class="mt-4"
-                    :style="{ background: 'rgba(255,255,255,0.5)', color: card.badgeColor }"
-                    append-icon="mdi-arrow-right"
-                    @click.stop="openApplyDetail(card)"
-                  >
-                    Learn More
-                  </v-btn>
-                  <div class="apply-deco">{{ card.emoji }}</div>
+                  <button class="btn-card" :style="{ '--c': card.badgeColor }">
+                    Learn More <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
+                  </button>
                 </div>
-              </v-card>
+                <div class="ac-deco">{{ card.emoji }}</div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </div>
 
       <!-- Apply Detail Dialog -->
       <v-dialog v-model="applyDetailDialog" max-width="520" transition="dialog-bottom-transition">
-        <v-card v-if="activeApplyCard" rounded="xl" class="pa-0 overflow-hidden">
-          <div class="pa-6 pb-4" :class="['apply-card--' + activeApplyCard.id]">
+        <v-card v-if="activeApplyCard" rounded="xl" class="overflow-hidden">
+          <div class="pa-6 pb-5" :class="'ac--' + activeApplyCard.id">
             <div class="d-flex align-center justify-space-between">
-              <div class="apply-badge" :style="{ background: activeApplyCard.badgeColor }">
-                <v-icon :icon="activeApplyCard.icon" size="28" color="white" />
+              <div class="ac-badge" :style="{ background: activeApplyCard.badgeColor }">
+                <v-icon :icon="activeApplyCard.icon" size="24" color="white" />
               </div>
-              <v-btn icon size="small" variant="text" @click="applyDetailDialog = false">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
+              <v-btn icon size="small" variant="text" @click="applyDetailDialog = false"
+                ><v-icon>mdi-close</v-icon></v-btn
+              >
             </div>
-            <h3 class="apply-card-title mt-3">{{ activeApplyCard.title }}</h3>
+            <h3 class="ac-title mt-3">{{ activeApplyCard.title }}</h3>
           </div>
           <div class="pa-6">
-            <p class="text-body-2 text-medium-emphasis mb-5" style="line-height: 1.75">
+            <p class="text-body-2 text-medium-emphasis mb-5" style="line-height: 1.8">
               {{ activeApplyCard.fullDesc }}
             </p>
             <v-divider class="mb-4" />
@@ -337,350 +293,279 @@
                 class="px-0"
               />
             </v-list>
-            <v-btn
-              block
-              color="primary"
-              rounded="lg"
-              class="mt-6"
-              @click="openApplyDialogFromDetail"
+            <button
+              class="btn-primary mt-6"
+              style="width: 100%; justify-content: center"
+              @click="openApplyFromDetail"
             >
               Apply as {{ activeApplyCard.short }}
-            </v-btn>
+            </button>
           </div>
         </v-card>
       </v-dialog>
 
-      <!-- ===== PROCESS TIMELINE ===== -->
-      <v-container fluid class="timeline-section py-16">
-        <v-container>
-          <div class="text-center mb-12">
-            <v-chip color="deep-orange" variant="tonal" size="small" class="mb-3"
-              >How it works</v-chip
-            >
-            <h2 class="section-title">The Incubation <span class="italic-accent">Journey</span></h2>
-            <p class="section-subtitle mt-2">
+      <!-- ===== INCUBATION JOURNEY ===== -->
+      <div class="journey-section">
+        <div class="journey-glow" />
+        <v-container class="position-relative">
+          <div class="text-center mb-16">
+            <div class="eyebrow" style="color: #f97316">How it works</div>
+            <h2 class="sec-title" style="color: #fff">The Incubation <em>Journey</em></h2>
+            <p class="sec-sub" style="color: rgba(255, 255, 255, 0.5)">
               From idea to market-ready startup in four structured phases
             </p>
           </div>
 
-          <v-timeline align="start" side="end" class="d-none d-md-block">
-            <v-timeline-item
+          <!-- Desktop -->
+          <div class="d-none d-md-block journey-desktop">
+            <div class="journey-rail" />
+            <v-row>
+              <v-col v-for="(step, i) in journeySteps" :key="step.phase" cols="3">
+                <div
+                  class="jcard"
+                  :class="{ 'jcard--open': activeJourneyStep === i }"
+                  @click="activeJourneyStep = activeJourneyStep === i ? null : i"
+                >
+                  <div class="jcard-bubble" :style="{ background: step.color }">
+                    <v-icon :icon="step.icon" color="white" size="20" />
+                  </div>
+                  <div class="jcard-num">Phase {{ i + 1 }}</div>
+                  <h4 class="jcard-title">{{ step.phase }}</h4>
+                  <div class="jcard-dur" :style="{ color: step.color }">
+                    <v-icon size="11" class="mr-1">mdi-clock-outline</v-icon>{{ step.duration }}
+                  </div>
+                  <p class="jcard-desc">{{ step.desc }}</p>
+                  <div class="jcard-tags mt-3">
+                    <span
+                      v-for="tag in step.tags"
+                      :key="tag"
+                      class="jtag"
+                      :style="{ background: step.color + '22', color: step.color }"
+                      >{{ tag }}</span
+                    >
+                  </div>
+                  <transition name="fx">
+                    <div v-if="activeJourneyStep === i" class="jcard-expand">
+                      <img :src="step.img" :alt="step.phase" class="jcard-img" />
+                      <p class="jcard-expand-text">{{ step.expandDetail }}</p>
+                    </div>
+                  </transition>
+                </div>
+              </v-col>
+            </v-row>
+          </div>
+
+          <!-- Mobile -->
+          <div class="d-md-none">
+            <div
               v-for="(step, i) in journeySteps"
               :key="step.phase"
-              :dot-color="step.color"
-              size="large"
-              class="mb-4"
+              class="jmobile"
+              :class="{ 'jmobile--open': mobileJourneyOpen === i }"
             >
-              <template #icon>
-                <v-icon :icon="step.icon" color="white" size="20" />
-              </template>
-              <v-card class="timeline-card pa-5" flat rounded="xl">
-                <div class="d-flex align-center justify-space-between mb-3">
-                  <v-chip
-                    :color="step.color"
-                    size="x-small"
-                    label
-                    variant="tonal"
-                    class="font-weight-bold"
-                    >Phase {{ i + 1 }}</v-chip
-                  >
-                  <span class="text-caption text-medium-emphasis">{{ step.duration }}</span>
+              <div
+                class="jmobile-header"
+                @click="mobileJourneyOpen = mobileJourneyOpen === i ? null : i"
+              >
+                <div class="d-flex align-center gap-3">
+                  <div class="jbubble-sm" :style="{ background: step.color }">
+                    <v-icon :icon="step.icon" color="white" size="15" />
+                  </div>
+                  <div>
+                    <div class="jmobile-num">Phase {{ i + 1 }} · {{ step.duration }}</div>
+                    <div class="jmobile-title">{{ step.phase }}</div>
+                  </div>
                 </div>
-                <h4 class="timeline-card-title mb-2">{{ step.phase }}</h4>
-                <p class="text-caption text-medium-emphasis mb-3" style="line-height: 1.7">
-                  {{ step.desc }}
-                </p>
-                <div class="d-flex flex-wrap gap-1">
-                  <v-chip
-                    v-for="tag in step.tags"
-                    :key="tag"
-                    size="x-small"
-                    :color="step.color"
-                    variant="tonal"
-                    >{{ tag }}</v-chip
-                  >
-                </div>
-              </v-card>
-            </v-timeline-item>
-          </v-timeline>
-
-          <!-- Mobile stepper -->
-          <v-stepper v-model="timelineStep" class="d-md-none" flat rounded="xl" alt-labels>
-            <v-stepper-header>
-              <template v-for="(step, i) in journeySteps" :key="step.phase">
-                <v-stepper-item
-                  :value="i + 1"
-                  :color="step.color"
-                  :title="step.phase"
-                  :icon="step.icon"
+                <v-icon
+                  :icon="mobileJourneyOpen === i ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                  color="white"
+                  size="20"
                 />
-                <v-divider v-if="i < journeySteps.length - 1" />
-              </template>
-            </v-stepper-header>
-            <v-stepper-window>
-              <v-stepper-window-item
-                v-for="(step, i) in journeySteps"
-                :key="step.phase"
-                :value="i + 1"
-              >
-                <div class="pa-4 text-center">
-                  <v-chip :color="step.color" class="mb-3" variant="tonal">{{
-                    step.duration
-                  }}</v-chip>
-                  <p class="text-body-2 text-medium-emphasis" style="line-height: 1.75">
-                    {{ step.desc }}
-                  </p>
+              </div>
+              <transition name="fx">
+                <div v-if="mobileJourneyOpen === i" class="jmobile-body">
+                  <img :src="step.img" :alt="step.phase" class="jmobile-img" />
+                  <p class="jmobile-desc">{{ step.desc }}</p>
+                  <div class="jcard-tags mt-2">
+                    <span
+                      v-for="tag in step.tags"
+                      :key="tag"
+                      class="jtag"
+                      :style="{ background: step.color + '30', color: step.color }"
+                      >{{ tag }}</span
+                    >
+                  </div>
                 </div>
-              </v-stepper-window-item>
-            </v-stepper-window>
-            <div class="d-flex justify-space-between pa-4 pt-0">
-              <v-btn variant="text" :disabled="timelineStep === 1" @click="timelineStep--"
-                >Back</v-btn
-              >
-              <v-btn
-                variant="text"
-                :disabled="timelineStep === journeySteps.length"
-                @click="timelineStep++"
-                >Next</v-btn
-              >
+              </transition>
             </div>
-          </v-stepper>
+          </div>
         </v-container>
-      </v-container>
+      </div>
 
       <!-- ===== SERVICES ===== -->
-      <v-container fluid class="services-section py-16">
+      <div class="sec-offwhite py-sec">
         <v-container>
           <div class="text-center mb-12">
-            <v-chip color="green" variant="tonal" size="small" class="mb-3">What we offer</v-chip>
-            <h2 class="section-title">NAVIGATÚ <span class="italic-accent">Services</span></h2>
-            <p class="section-subtitle mt-2">
-              Comprehensive support to help your venture thrive at every stage
-            </p>
+            <div class="eyebrow" style="color: #16a34a">What we offer</div>
+            <h2 class="sec-title">NAVIGATÚ <em>Services</em></h2>
+            <p class="sec-sub">Comprehensive support to help your venture thrive at every stage</p>
           </div>
-
-          <v-row>
-            <v-col v-for="svc in navServices" :key="svc.title" cols="12" sm="6" md="3">
-              <v-card
-                class="svc-card pa-6 h-100"
-                flat
-                rounded="xl"
-                :class="{ 'svc-card--active': activeSvc === svc.title }"
-                @click="activeSvc = activeSvc === svc.title ? null : svc.title"
-              >
-                <div class="svc-icon-wrap mb-4" :style="{ background: svc.iconBg }">
-                  <v-icon :icon="svc.icon" :color="svc.color" size="22" />
+          <v-row align="stretch">
+            <v-col cols="12" md="5" class="d-none d-md-flex">
+              <div class="svc-img-wrap">
+                <img
+                  src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80"
+                  alt="Services"
+                  class="svc-img"
+                />
+                <div class="svc-img-badge">
+                  <v-icon icon="mdi-star-four-points" size="15" color="#f59e0b" class="mr-2" />
+                  Top-rated TBI in Caraga
                 </div>
-                <h4 class="svc-card-title mb-4" :style="{ color: svc.color }">{{ svc.title }}</h4>
-                <v-list density="compact" class="pa-0 bg-transparent">
-                  <v-list-item
-                    v-for="item in svc.items"
-                    :key="item"
-                    prepend-icon="mdi-circle-small"
-                    :base-color="svc.color"
-                    class="px-0"
-                    density="compact"
+              </div>
+            </v-col>
+            <v-col cols="12" md="7">
+              <v-row>
+                <v-col v-for="svc in navServices" :key="svc.title" cols="12" sm="6" class="mb-4">
+                  <div
+                    class="svc-card"
+                    :class="{ 'svc-card--active': activeSvc === svc.title }"
+                    @click="activeSvc = activeSvc === svc.title ? null : svc.title"
                   >
-                    <v-list-item-title class="svc-item-text">{{ item }}</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-                <v-expand-transition>
-                  <div v-if="activeSvc === svc.title" class="mt-4">
-                    <v-divider class="mb-3" />
-                    <p class="text-caption" style="line-height: 1.7; color: #666">
-                      {{ svc.detail }}
-                    </p>
+                    <div class="svc-icon" :style="{ background: svc.iconBg }">
+                      <v-icon :icon="svc.icon" :color="svc.color" size="20" />
+                    </div>
+                    <h4 class="svc-title mt-3 mb-2" :style="{ color: svc.color }">
+                      {{ svc.title }}
+                    </h4>
+                    <ul class="svc-list">
+                      <li v-for="item in svc.items" :key="item">{{ item }}</li>
+                    </ul>
+                    <transition name="fx">
+                      <div v-if="activeSvc === svc.title" class="svc-detail mt-3">
+                        {{ svc.detail }}
+                      </div>
+                    </transition>
                   </div>
-                </v-expand-transition>
-              </v-card>
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </div>
 
       <!-- ===== MENTORS ===== -->
-      <v-container fluid class="mentors-section py-16">
+      <div class="sec-white py-sec">
         <v-container>
           <div class="text-center mb-12">
-            <v-chip color="purple" variant="tonal" size="small" class="mb-3">Our Network</v-chip>
-            <h2 class="section-title">Meet the <span class="italic-accent">Mentors</span></h2>
-            <p class="section-subtitle mt-2">
-              Industry experts and seasoned entrepreneurs guiding your startup journey
-            </p>
+            <div class="eyebrow" style="color: #7c3aed">Our Network</div>
+            <h2 class="sec-title">Meet the <em>Mentors</em></h2>
+            <p class="sec-sub">Industry experts and seasoned entrepreneurs guiding your journey</p>
           </div>
           <v-row justify="center">
-            <v-col
-              v-for="mentor in mentors"
-              :key="mentor.name"
-              cols="12"
-              sm="6"
-              md="3"
-              class="text-center"
-            >
-              <v-card
-                class="mentor-card pa-6"
-                flat
-                rounded="xl"
-                @click="activeMentor = activeMentor?.name === mentor.name ? null : mentor"
-              >
-                <v-avatar
-                  size="80"
-                  class="mentor-avatar mb-4"
-                  :style="{ background: mentor.avatarBg }"
-                >
-                  <span class="mentor-initials">{{ mentor.initials }}</span>
-                </v-avatar>
-                <h4 class="mentor-name">{{ mentor.name }}</h4>
-                <p class="mentor-role text-caption text-medium-emphasis">{{ mentor.role }}</p>
-                <div class="d-flex justify-center flex-wrap gap-1 mt-3">
-                  <v-chip
-                    v-for="tag in mentor.expertise"
-                    :key="tag"
-                    size="x-small"
-                    variant="tonal"
-                    color="purple"
-                    >{{ tag }}</v-chip
-                  >
+            <v-col v-for="mentor in mentors" :key="mentor.name" cols="12" sm="6" md="3">
+              <div class="mentor-card">
+                <div class="mentor-photo-wrap">
+                  <img :src="mentor.photo" :alt="mentor.name" class="mentor-photo" />
                 </div>
-              </v-card>
+                <h4 class="mentor-name mt-4">{{ mentor.name }}</h4>
+                <p class="mentor-role">{{ mentor.role }}</p>
+                <div class="d-flex justify-center flex-wrap gap-1 mt-3">
+                  <span v-for="tag in mentor.expertise" :key="tag" class="mentor-chip">{{
+                    tag
+                  }}</span>
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </div>
 
       <!-- ===== SUCCESS STORIES ===== -->
-      <v-container fluid class="stories-section py-16">
+      <div class="sec-offwhite py-sec">
         <v-container>
           <div class="text-center mb-12">
-            <v-chip color="primary" variant="tonal" size="small" class="mb-3">Graduates</v-chip>
-            <h2 class="section-title">Success <span class="italic-accent">Stories</span></h2>
-            <p class="section-subtitle mt-2">
+            <div class="eyebrow">Graduates</div>
+            <h2 class="sec-title">Success <em>Stories</em></h2>
+            <p class="sec-sub">
               Every startup tells a story of success and milestones in their journey
             </p>
           </div>
-
-          <!-- Filter chips -->
-          <div class="d-flex flex-wrap justify-center gap-2 mb-8">
-            <v-chip
-              v-for="filter in storyFilters"
-              :key="filter"
-              :color="activeStoryFilter === filter ? 'primary' : 'default'"
-              :variant="activeStoryFilter === filter ? 'flat' : 'outlined'"
-              size="small"
-              class="cursor-pointer"
-              @click="activeStoryFilter = filter"
-              >{{ filter }}</v-chip
+          <div class="d-flex justify-center flex-wrap gap-2 mb-8">
+            <button
+              v-for="f in storyFilters"
+              :key="f"
+              class="filter-pill"
+              :class="{ 'filter-pill--on': activeStoryFilter === f }"
+              @click="activeStoryFilter = f"
             >
+              {{ f }}
+            </button>
           </div>
-
-          <v-row justify="center">
-            <v-col
-              v-for="story in filteredStories"
-              :key="story.name"
-              cols="12"
-              md="10"
-              class="mb-6"
-            >
-              <v-card class="story-card" rounded="xl" elevation="0" @click="openStory(story)">
-                <v-row no-gutters align="stretch">
-                  <v-col cols="12" sm="3" class="d-flex align-center justify-center">
-                    <div class="story-logo-box">
-                      <v-avatar size="90" :style="{ background: story.logoBg }" rounded="lg">
-                        <span style="font-size: 1.3rem; font-weight: 700; color: #fff">{{
-                          story.initials
-                        }}</span>
-                      </v-avatar>
-                    </div>
-                  </v-col>
-                  <v-col cols="12" sm="9">
-                    <div class="story-content pa-7">
-                      <div class="d-flex align-center justify-space-between mb-2">
-                        <h3 class="story-name">{{ story.name }}</h3>
-                        <v-chip
-                          :color="story.statusColor"
-                          size="x-small"
-                          variant="tonal"
-                          label
-                          class="font-weight-semibold"
-                          >{{ story.status }}</v-chip
-                        >
-                      </div>
-                      <p class="story-desc mb-5">{{ story.desc }}</p>
-                      <div class="d-flex flex-wrap story-meta-row gap-4">
-                        <div class="story-meta-item">
-                          <v-icon icon="mdi-tag-outline" size="14" color="#1565c0" class="mr-1" />
-                          <span class="story-meta-label">Industry:</span>
-                          <span class="story-meta-value ml-1">{{ story.industry }}</span>
-                        </div>
-                        <div class="story-meta-item">
-                          <v-icon icon="mdi-cash-multiple" size="14" color="#2e7d32" class="mr-1" />
-                          <span class="story-meta-label">Funding:</span>
-                          <span class="story-meta-value ml-1">{{ story.funding }}</span>
-                        </div>
-                        <div class="story-meta-item">
-                          <v-icon
-                            icon="mdi-calendar-outline"
-                            size="14"
-                            color="#e65100"
-                            class="mr-1"
-                          />
-                          <span class="story-meta-label">Year:</span>
-                          <span class="story-meta-value ml-1">{{ story.year }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-
-          <v-row justify="end">
-            <v-col cols="12" md="10" class="text-right">
-              <v-btn
-                variant="outlined"
-                color="primary"
-                rounded="lg"
-                append-icon="mdi-arrow-right"
-                class="more-btn"
-                @click="$router.push('/success-stories')"
-              >
-                More Stories
-              </v-btn>
-            </v-col>
-          </v-row>
+          <div
+            v-for="story in filteredStories"
+            :key="story.name"
+            class="story-card mb-5"
+            @click="openStory(story)"
+          >
+            <div class="story-logo" :style="{ background: story.logoBg }">{{ story.initials }}</div>
+            <div class="story-body">
+              <div class="d-flex align-center justify-space-between mb-2 flex-wrap gap-2">
+                <h3 class="story-name">{{ story.name }}</h3>
+                <span
+                  class="story-pill"
+                  :style="{ background: story.statusBg, color: story.statusText }"
+                  >{{ story.status }}</span
+                >
+              </div>
+              <p class="story-desc mb-4">{{ story.desc }}</p>
+              <div class="story-meta">
+                <div class="sm-item">
+                  <v-icon size="13" color="#1565c0" class="mr-1">mdi-tag-outline</v-icon
+                  ><span>{{ story.industry }}</span>
+                </div>
+                <div class="sm-item">
+                  <v-icon size="13" color="#16a34a" class="mr-1">mdi-cash-multiple</v-icon
+                  ><span>{{ story.funding }}</span>
+                </div>
+                <div class="sm-item">
+                  <v-icon size="13" color="#e65100" class="mr-1">mdi-calendar-outline</v-icon
+                  ><span>{{ story.year }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-right mt-4">
+            <button class="btn-outlined">
+              More Stories <v-icon size="15" class="ml-1">mdi-arrow-right</v-icon>
+            </button>
+          </div>
         </v-container>
-      </v-container>
+      </div>
 
-      <!-- Story Detail Dialog -->
-      <v-dialog v-model="storyDialog" max-width="580" transition="dialog-bottom-transition">
+      <!-- Story dialog -->
+      <v-dialog v-model="storyDialog" max-width="560" transition="dialog-bottom-transition">
         <v-card v-if="activeStory" rounded="xl" class="overflow-hidden">
           <div
             class="pa-6"
             :style="{
-              background: activeStory.logoBg + '22',
-              borderBottom: '1px solid ' + activeStory.logoBg + '44',
+              background: activeStory.logoBg + '18',
+              borderBottom: '1px solid ' + activeStory.logoBg + '33',
             }"
           >
             <div class="d-flex align-center gap-4">
-              <v-avatar size="72" :style="{ background: activeStory.logoBg }" rounded="lg">
-                <span style="font-size: 1.2rem; font-weight: 700; color: #fff">{{
-                  activeStory.initials
-                }}</span>
-              </v-avatar>
+              <div class="story-dialog-logo" :style="{ background: activeStory.logoBg }">
+                {{ activeStory.initials }}
+              </div>
               <div>
                 <h3 class="story-name">{{ activeStory.name }}</h3>
-                <v-chip
-                  :color="activeStory.statusColor"
-                  size="x-small"
-                  variant="tonal"
-                  label
-                  class="mt-1"
-                  >{{ activeStory.status }}</v-chip
+                <span
+                  class="story-pill d-inline-block mt-1"
+                  :style="{ background: activeStory.statusBg, color: activeStory.statusText }"
+                  >{{ activeStory.status }}</span
                 >
               </div>
-              <v-spacer />
-              <v-btn icon size="small" variant="text" @click="storyDialog = false"
+              <v-spacer /><v-btn icon size="small" variant="text" @click="storyDialog = false"
                 ><v-icon>mdi-close</v-icon></v-btn
               >
             </div>
@@ -691,93 +576,87 @@
             </p>
             <v-divider class="mb-4" />
             <v-row>
-              <v-col cols="4" class="text-center">
-                <div class="text-h6 font-weight-bold" style="color: #1565c0">
+              <v-col cols="4" class="text-center"
+                ><div class="text-h6 font-weight-bold" style="color: #1565c0">
                   {{ activeStory.funding }}
                 </div>
-                <div class="text-caption text-medium-emphasis">Funding Raised</div>
-              </v-col>
-              <v-col cols="4" class="text-center">
-                <div class="text-h6 font-weight-bold" style="color: #2e7d32">
+                <div class="text-caption text-medium-emphasis">Funding</div></v-col
+              >
+              <v-col cols="4" class="text-center"
+                ><div class="text-h6 font-weight-bold" style="color: #16a34a">
                   {{ activeStory.team }}
                 </div>
-                <div class="text-caption text-medium-emphasis">Team Size</div>
-              </v-col>
-              <v-col cols="4" class="text-center">
-                <div class="text-h6 font-weight-bold" style="color: #e65100">
+                <div class="text-caption text-medium-emphasis">Team</div></v-col
+              >
+              <v-col cols="4" class="text-center"
+                ><div class="text-h6 font-weight-bold" style="color: #e65100">
                   {{ activeStory.year }}
                 </div>
-                <div class="text-caption text-medium-emphasis">Founded</div>
-              </v-col>
+                <div class="text-caption text-medium-emphasis">Founded</div></v-col
+              >
             </v-row>
           </div>
         </v-card>
       </v-dialog>
 
       <!-- ===== FAQ ===== -->
-      <v-container fluid class="faq-section py-16">
+      <div class="sec-white py-sec">
         <v-container>
           <v-row justify="center">
-            <v-col cols="12" md="8">
+            <v-col cols="12" md="7">
               <div class="text-center mb-12">
-                <v-chip color="orange" variant="tonal" size="small" class="mb-3"
-                  >Got questions?</v-chip
-                >
-                <h2 class="section-title">
-                  Frequently Asked <span class="italic-accent">Questions</span>
-                </h2>
+                <div class="eyebrow" style="color: #ea580c">Got questions?</div>
+                <h2 class="sec-title">Frequently Asked <em>Questions</em></h2>
               </div>
-              <v-expansion-panels variant="accordion" rounded="xl" class="faq-panels">
-                <v-expansion-panel v-for="faq in faqs" :key="faq.q" rounded="xl" class="mb-2">
-                  <v-expansion-panel-title class="faq-question">{{
-                    faq.q
-                  }}</v-expansion-panel-title>
-                  <v-expansion-panel-text class="faq-answer">{{ faq.a }}</v-expansion-panel-text>
-                </v-expansion-panel>
-              </v-expansion-panels>
+              <div class="faq-list">
+                <div
+                  v-for="(faq, i) in faqs"
+                  :key="faq.q"
+                  class="faq-item"
+                  :class="{ 'faq-item--open': openFaq === i }"
+                  @click="openFaq = openFaq === i ? null : i"
+                >
+                  <div class="faq-row">
+                    <span class="faq-q">{{ faq.q }}</span>
+                    <v-icon class="faq-icon" size="18">{{
+                      openFaq === i ? 'mdi-minus' : 'mdi-plus'
+                    }}</v-icon>
+                  </div>
+                  <transition name="fx">
+                    <div v-if="openFaq === i" class="faq-ans">{{ faq.a }}</div>
+                  </transition>
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </div>
 
-      <!-- ===== CTA BANNER ===== -->
-      <v-container fluid class="cta-section py-16">
-        <v-container>
-          <v-card class="cta-card pa-12 text-center" rounded="xl" flat>
-            <v-icon icon="mdi-rocket-launch" size="48" color="white" class="mb-4" />
-            <h2 class="cta-title mb-3">Ready to Launch Your Startup?</h2>
-            <p class="cta-sub mb-8">
-              Join Navigatú TBI and get access to mentorship, funding, and a thriving community of
-              innovators.
-            </p>
-            <div class="d-flex justify-center flex-wrap gap-3">
-              <v-btn
-                color="white"
-                rounded="lg"
-                size="large"
-                class="cta-btn-primary"
-                prepend-icon="mdi-send-outline"
-                @click="applyDialog = true"
-              >
-                Start Application
-              </v-btn>
-              <v-btn
-                variant="outlined"
-                color="white"
-                rounded="lg"
-                size="large"
-                class="cta-btn-secondary"
-                prepend-icon="mdi-calendar-check-outline"
-              >
-                Schedule a Tour
-              </v-btn>
-            </div>
-          </v-card>
+      <!-- ===== CTA ===== -->
+      <div class="cta-section">
+        <div class="cta-glow" />
+        <v-container class="text-center position-relative">
+          <div class="cta-icon-ring mb-6">
+            <v-icon icon="mdi-rocket-launch" size="34" color="white" />
+          </div>
+          <h2 class="cta-title mb-4">Ready to Launch Your Startup?</h2>
+          <p class="cta-sub mb-10 mx-auto">
+            Join Navigatú TBI and get access to mentorship, funding, and a thriving community of
+            innovators.
+          </p>
+          <div class="d-flex justify-center flex-wrap gap-4">
+            <button class="btn-cta-solid" @click="applyDialog = true">
+              <v-icon size="17" class="mr-2">mdi-send-outline</v-icon> Start Application
+            </button>
+            <button class="btn-cta-ghost">
+              <v-icon size="17" class="mr-2">mdi-calendar-check-outline</v-icon> Schedule a Tour
+            </button>
+          </div>
         </v-container>
-      </v-container>
+      </div>
     </v-main>
 
-    <!-- ===== APPLY DIALOG ===== -->
+    <!-- APPLY DIALOG -->
     <v-dialog v-model="applyDialog" max-width="540" persistent>
       <v-card rounded="xl" class="pa-2">
         <v-card-title class="pa-6 pb-2 d-flex align-center justify-space-between">
@@ -866,8 +745,7 @@
                 <v-icon icon="mdi-check-circle-outline" size="56" color="success" class="mb-4" />
                 <h3 class="text-h6 font-weight-bold mb-2">You're all set!</h3>
                 <p class="text-body-2 text-medium-emphasis">
-                  Review your application and submit. Our team will contact you within 5 business
-                  days.
+                  Our team will contact you within 5 business days.
                 </p>
                 <v-card class="mt-4 pa-4 text-left" color="grey-lighten-4" rounded="lg" flat>
                   <div class="text-caption font-weight-bold mb-2 text-medium-emphasis">SUMMARY</div>
@@ -894,13 +772,12 @@
             rounded="lg"
             prepend-icon="mdi-send"
             @click="submitApplication"
-            >Submit Application</v-btn
+            >Submit</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <!-- Success Snackbar -->
     <v-snackbar
       v-model="snackbar"
       :timeout="4000"
@@ -908,90 +785,61 @@
       rounded="lg"
       location="bottom center"
     >
-      <v-icon icon="mdi-check-circle" class="mr-2" />
-      Application submitted! We'll be in touch soon.
-      <template #actions>
-        <v-btn variant="text" color="white" @click="snackbar = false">Close</v-btn>
-      </template>
+      <v-icon icon="mdi-check-circle" class="mr-2" /> Application submitted! We'll be in touch soon.
+      <template #actions
+        ><v-btn variant="text" color="white" @click="snackbar = false">Close</v-btn></template
+      >
     </v-snackbar>
 
-    <!-- ===================== FOOTER ===================== -->
-    <v-footer color="grey-darken-4" class="pa-0">
+    <!-- FOOTER -->
+    <footer class="footer-section">
       <v-container class="py-12">
         <v-row>
-          <v-col cols="12" md="4" class="mb-6">
-            <div class="footer-logo mb-1">NAVIGATÚ</div>
-            <p class="footer-tagline mb-4">Technology Business Incubator</p>
-            <p class="text-caption" style="color: rgba(255, 255, 255, 0.45); line-height: 1.7">
+          <v-col cols="12" md="4" class="mb-8">
+            <div class="footer-brand mb-1">NAVIGATÚ</div>
+            <p class="footer-tag mb-4">Technology Business Incubator</p>
+            <p class="footer-desc">
               Empowering the next generation of Filipino tech founders through mentorship,
               innovation, and community.
             </p>
-            <div class="d-flex gap-2 mt-4">
-              <v-btn icon size="small" variant="outlined" color="white" opacity="0.4"
-                ><v-icon>mdi-facebook</v-icon></v-btn
-              >
-              <v-btn icon size="small" variant="outlined" color="white" opacity="0.4"
-                ><v-icon>mdi-linkedin</v-icon></v-btn
-              >
-              <v-btn icon size="small" variant="outlined" color="white" opacity="0.4"
-                ><v-icon>mdi-twitter</v-icon></v-btn
-              >
+            <div class="d-flex gap-3 mt-5">
+              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
+              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
+              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
             </div>
           </v-col>
-          <v-col cols="6" sm="4" md="2" class="mb-6">
+          <v-col cols="6" md="2" class="mb-8">
             <div class="footer-col-title mb-4">Programs</div>
-            <div v-for="link in footerLinks.programs" :key="link" class="footer-link mb-2">
-              {{ link }}
-            </div>
+            <div v-for="l in footerLinks.programs" :key="l" class="footer-link mb-3">{{ l }}</div>
           </v-col>
-          <v-col cols="6" sm="4" md="2" class="mb-6">
+          <v-col cols="6" md="2" class="mb-8">
             <div class="footer-col-title mb-4">Company</div>
-            <div v-for="link in footerLinks.company" :key="link" class="footer-link mb-2">
-              {{ link }}
-            </div>
+            <div v-for="l in footerLinks.company" :key="l" class="footer-link mb-3">{{ l }}</div>
           </v-col>
-          <v-col cols="12" sm="4" md="4" class="mb-6">
+          <v-col cols="12" md="4" class="mb-8">
             <div class="footer-col-title mb-4">Newsletter</div>
-            <p class="text-caption mb-3" style="color: rgba(255, 255, 255, 0.45)">
-              Stay updated on events, funding, and startup news.
-            </p>
-            <div class="d-flex gap-2">
-              <v-text-field
-                v-model="newsletterEmail"
-                placeholder="your@email.com"
-                variant="outlined"
-                density="compact"
-                rounded="lg"
-                hide-details
-                bg-color="grey-darken-3"
-                style="color: white"
-              />
-              <v-btn
-                color="primary"
-                rounded="lg"
-                density="comfortable"
-                icon
-                @click="subscribeNewsletter"
-              >
-                <v-icon>mdi-send</v-icon>
-              </v-btn>
+            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
+            <div class="newsletter">
+              <input v-model="newsletterEmail" class="nl-input" placeholder="your@email.com" />
+              <button class="nl-btn" @click="subscribeNewsletter">
+                <v-icon size="17">mdi-send</v-icon>
+              </button>
             </div>
           </v-col>
         </v-row>
-        <v-divider color="white" opacity="0.1" class="my-6" />
-        <div class="d-flex flex-wrap justify-space-between align-center gap-2">
+        <div class="footer-hr" />
+        <div class="d-flex flex-wrap justify-space-between align-center gap-2 pt-6">
           <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
           <p class="footer-copy">Empowering startups. Building futures.</p>
         </div>
       </v-container>
-    </v-footer>
+    </footer>
   </v-app>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-// ── Scroll ──
 const scrolled = ref(false)
 const onScroll = () => {
   scrolled.value = window.scrollY > 20
@@ -999,7 +847,6 @@ const onScroll = () => {
 onMounted(() => window.addEventListener('scroll', onScroll))
 onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
-// ── Drawer / Search ──
 const drawer = ref(false)
 const searchDialog = ref(false)
 const searchQuery = ref('')
@@ -1017,7 +864,6 @@ const filteredResults = computed(() =>
   allSearchResults.filter((r) => r.toLowerCase().includes(searchQuery.value.toLowerCase())),
 )
 
-// ── Hero animations ──
 const animatedCards = ref(false)
 onMounted(() =>
   setTimeout(() => {
@@ -1028,47 +874,43 @@ onMounted(() =>
 const heroStats = ref([
   { num: '60+', label: 'Startups Incubated' },
   { num: '₱80M+', label: 'Funding Raised' },
-  { num: '15+', label: 'Mentors' },
+  { num: '15+', label: 'Expert Mentors' },
   { num: '95%', label: 'Survival Rate' },
 ])
 
 const selectedTech = ref(null)
 const techCategories = ref([
   {
-    title: 'ICT & Software Development',
+    title: 'ICT & Software',
     desc: 'Mobile apps, web platforms, enterprise solutions.',
     icon: 'mdi-monitor-cellphone',
     color: '#1565C0',
-    iconBg: '#E3F2FD',
-    detail:
-      'Build scalable web and mobile applications with support from seasoned software engineers and product managers.',
+    iconBg: '#dbeafe',
+    detail: 'Build scalable apps with support from seasoned engineers and product managers.',
   },
   {
     title: 'Artificial Intelligence',
     desc: 'Machine learning, computer vision, NLP.',
     icon: 'mdi-brain',
-    color: '#F9A825',
-    iconBg: '#FFF8E1',
-    detail:
-      'Develop AI-driven products with access to compute resources, AI mentors, and open datasets to accelerate your model.',
+    color: '#d97706',
+    iconBg: '#fef3c7',
+    detail: 'Develop AI products with compute resources, AI mentors, and open datasets.',
   },
   {
     title: 'Internet of Things',
     desc: 'Smart devices, sensors, connected systems.',
     icon: 'mdi-access-point-network',
-    color: '#1565C0',
-    iconBg: '#E3F2FD',
-    detail:
-      'Prototype and deploy IoT solutions with hardware lab access, embedded systems mentors, and industry partnerships.',
+    color: '#059669',
+    iconBg: '#d1fae5',
+    detail: 'Prototype IoT solutions with hardware lab access and industry partnerships.',
   },
   {
     title: 'Engineering Tech',
     desc: 'Digital tools for engineering and manufacturing.',
     icon: 'mdi-cog-outline',
-    color: '#F9A825',
-    iconBg: '#FFF8E1',
-    detail:
-      'From CAD tools to digital twins — build the next generation of engineering software with deep industry connections.',
+    color: '#7c3aed',
+    iconBg: '#ede9fe',
+    detail: 'From CAD to digital twins — build next-gen engineering software.',
   },
 ])
 
@@ -1076,7 +918,6 @@ function learnMoreScroll() {
   document.getElementById('learn-more')?.scrollIntoView({ behavior: 'smooth' })
 }
 
-// ── Who Can Apply ──
 const activeApplyTab = ref('all')
 const applyDetailDialog = ref(false)
 const activeApplyCard = ref(null)
@@ -1089,9 +930,9 @@ const applyCards = ref([
     emoji: '🎓',
     icon: 'mdi-school',
     badgeColor: '#1565C0',
-    desc: 'Undergraduate and graduate students with innovative ideas ready to turn academic projects into real-world startups.',
+    desc: 'Undergraduate and graduate students with innovative ideas ready to build real-world startups.',
     fullDesc:
-      'Students from any discipline with a passion for technology and entrepreneurship are encouraged to apply. Whether you have a working prototype or just an idea, Navigatú provides the mentorship, tools, and community to help you build your first venture.',
+      'Students from any discipline with a passion for tech and entrepreneurship are encouraged to apply. Navigatú provides mentorship, tools, and community to help you build your first venture.',
     tags: ['Undergraduate', 'Graduate', 'All Disciplines'],
     requirements: [
       'Enrolled in a Philippine university',
@@ -1106,10 +947,10 @@ const applyCards = ref([
     title: 'Faculty & Researchers',
     emoji: '🔬',
     icon: 'mdi-flask-outline',
-    badgeColor: '#2E7D32',
-    desc: 'Professors and researchers looking to commercialize research findings and bridge the gap between academia and industry.',
+    badgeColor: '#059669',
+    desc: 'Professors and researchers looking to commercialize research and bridge academia and industry.',
     fullDesc:
-      'University faculty and researchers who have developed innovations with commercial potential. Navigatú bridges the gap between academic research and the market through IP support, commercialization strategy, and investor introductions.',
+      'University faculty and researchers who have developed innovations with commercial potential. Navigatú bridges research and market through IP support, commercialization strategy, and investor intros.',
     tags: ['R&D Commercialization', 'Academia', 'IP Support'],
     requirements: [
       'Faculty or researcher at an HEI',
@@ -1124,10 +965,10 @@ const applyCards = ref([
     title: 'Early-Stage Startups',
     emoji: '🚀',
     icon: 'mdi-rocket-launch-outline',
-    badgeColor: '#E65100',
-    desc: 'Pre-seed and seed-stage startups needing structured support to validate business models and access funding networks.',
+    badgeColor: '#ea580c',
+    desc: 'Pre-seed and seed-stage startups needing structured support to validate and scale.',
     fullDesc:
-      'Pre-seed and seed-stage tech startups that need structured support to move from MVP to product-market fit. Gain access to investor networks, legal support, and a community of co-founders.',
+      'Pre-seed and seed-stage tech startups that need support to move from MVP to product-market fit. Gain access to investor networks, legal support, and a community of co-founders.',
     tags: ['Pre-Seed', 'Seed Stage', 'MVP Ready'],
     requirements: [
       'Registered business entity or in process',
@@ -1142,10 +983,10 @@ const applyCards = ref([
     title: 'Tech Entrepreneurs',
     emoji: '⚡',
     icon: 'mdi-lightning-bolt',
-    badgeColor: '#6A1B9A',
+    badgeColor: '#7c3aed',
     desc: 'Experienced entrepreneurs building technology-driven solutions for real market problems.',
     fullDesc:
-      'Seasoned entrepreneurs with prior startup experience looking to scale their technology businesses. Navigatú provides access to coworking facilities, growth mentors, and corporate partnership programs.',
+      'Seasoned entrepreneurs with prior startup experience looking to scale their tech businesses. Navigatú provides coworking, growth mentors, and corporate partnership programs.',
     tags: ['Tech-Driven', 'Growth Stage', 'Market Ready'],
     requirements: [
       'Prior entrepreneurial experience',
@@ -1161,13 +1002,17 @@ const filteredApplyCards = computed(() =>
     ? applyCards.value
     : applyCards.value.filter((c) => c.id === activeApplyTab.value),
 )
-
 function openApplyDetail(card) {
   activeApplyCard.value = card
   applyDetailDialog.value = true
 }
 
-function openApplyDialogFromDetail() {
+function openApplyFromDrawer() {
+  applyDialog.value = true
+  drawer.value = false
+}
+
+function openApplyFromDetail() {
   applyDetailDialog.value = false
   applyDialog.value = true
 }
@@ -1177,60 +1022,72 @@ function closeApplyDialog() {
   applyStep.value = 1
 }
 
-// ── Journey ──
-const timelineStep = ref(1)
+const activeJourneyStep = ref(null)
+const mobileJourneyOpen = ref(0)
+
 const journeySteps = ref([
   {
     phase: 'Application & Screening',
     icon: 'mdi-file-document-outline',
-    color: '#1565C0',
+    color: '#2563eb',
     duration: 'Weeks 1–2',
-    desc: 'Submit your application, pitch deck, and supporting documents. Our screening committee evaluates team, technology, and market fit.',
+    desc: 'Submit your pitch deck and documents. Our committee evaluates team strength, technology, and market fit.',
+    expandDetail:
+      'Our panel of industry experts reviews each application holistically — balancing innovation potential with execution readiness. Top applicants are invited for a live pitch session.',
     tags: ['Pitch Deck', 'Interview', 'Evaluation'],
+    img: '/images/facilities/FacilityA.JPG',
   },
   {
     phase: 'Onboarding & Validation',
     icon: 'mdi-clipboard-check-outline',
-    color: '#2E7D32',
+    color: '#059669',
     duration: 'Months 1–2',
-    desc: 'Validate your business model with real customers. Participate in workshops, design sprints, and weekly mentor check-ins.',
+    desc: 'Validate your business model with real customers. Participate in workshops, design sprints, and mentor check-ins.',
+    expandDetail:
+      "Weekly structured sessions with mentors, plus access to NAVIGATÚ's customer discovery toolkit. Founders test assumptions before writing a single line of production code.",
     tags: ['Customer Discovery', 'MVP Testing', 'Workshops'],
+    img: '/images/facilities/FacilityB.jpg',
   },
   {
     phase: 'Development & Acceleration',
     icon: 'mdi-rocket-launch-outline',
-    color: '#E65100',
+    color: '#ea580c',
     duration: 'Months 3–5',
-    desc: 'Build, iterate, and accelerate. Access funding networks, legal support, and co-working facilities to develop your product.',
+    desc: 'Build, iterate, and accelerate. Access funding networks, legal support, and co-working facilities.',
+    expandDetail:
+      'Get paired with a technical mentor, tap into our investor network for pre-seed conversations, and use our 24/7 coworking space and premium software stack.',
     tags: ['Product Dev', 'Investor Intro', 'Legal Support'],
+    img: '/images/facilities/FacilityC.jpg',
   },
   {
     phase: 'Demo Day & Graduation',
     icon: 'mdi-trophy-outline',
-    color: '#6A1B9A',
+    color: '#7c3aed',
     duration: 'Month 6',
-    desc: 'Showcase your startup to investors, industry partners, and media at Navigatú Demo Day. Graduate and join our alumni network.',
+    desc: 'Showcase your startup to investors, industry partners, and media at Navigatú Demo Day.',
+    expandDetail:
+      'A high-profile public event attended by VCs, corporate partners, government agencies, and media. Graduates join the Alumni Network and stay connected to the Navigatú ecosystem.',
     tags: ['Demo Day', 'Alumni Network', 'Press Coverage'],
+    img: '/images/facilities/FacilityD.png',
   },
 ])
 
-// ── Services ──
 const activeSvc = ref(null)
 const navServices = ref([
   {
     title: 'Technical Support',
     icon: 'mdi-code-braces',
-    iconBg: '#E3F2FD',
+    iconBg: '#dbeafe',
     color: '#1565C0',
     items: ['Software Development', 'Cloud Infrastructure', 'Technical Mentorship', 'Code Reviews'],
     detail:
-      'Access hands-on technical guidance from senior engineers, cloud credits, and a dedicated technical helpdesk for your startup.',
+      'Access hands-on guidance from senior engineers, cloud credits, and a dedicated technical helpdesk.',
   },
   {
     title: 'Business Development',
     icon: 'mdi-chart-line',
-    iconBg: '#E8F5E9',
-    color: '#2E7D32',
+    iconBg: '#d1fae5',
+    color: '#059669',
     items: [
       'Business Model Design',
       'Market Validation',
@@ -1238,62 +1095,55 @@ const navServices = ref([
       'Sales Coaching',
     ],
     detail:
-      'Work with business development mentors to refine your go-to-market strategy and build a sustainable revenue model.',
+      'Work with mentors to refine your go-to-market strategy and build a sustainable revenue model.',
   },
   {
     title: 'Funding Access',
     icon: 'mdi-currency-php',
-    iconBg: '#FFF3E0',
-    color: '#E65100',
+    iconBg: '#ffedd5',
+    color: '#ea580c',
     items: ['Seed Funding', 'Investor Connections', 'Pitch Preparation', 'Grant Applications'],
     detail:
-      'Get introduced to angel investors, VCs, and government grant programs. Our pitch prep workshops have a 70% investment success rate.',
+      'Get introduced to angel investors, VCs, and government grant programs with a 70% success rate.',
   },
   {
     title: 'Workspace & Facilities',
     icon: 'mdi-domain',
-    iconBg: '#F3E5F5',
-    color: '#6A1B9A',
+    iconBg: '#ede9fe',
+    color: '#7c3aed',
     items: ['Co-working Space', 'Meeting Rooms', 'High Speed Internet', 'Development Tools'],
     detail:
-      'A 24/7 coworking space with private offices, conference rooms, gigabit internet, and access to premium software licenses.',
+      'A 24/7 coworking space with private offices, gigabit internet, and premium software licenses.',
   },
 ])
 
-// ── Mentors ──
-const activeMentor = ref(null)
 const mentors = ref([
   {
     name: 'Dr. Maria Santos',
-    initials: 'MS',
     role: 'AI & Deep Tech',
-    avatarBg: 'linear-gradient(135deg,#1565C0,#42A5F5)',
     expertise: ['Machine Learning', 'NLP'],
+    photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80',
   },
   {
     name: 'Engr. Rico Dela Cruz',
-    initials: 'RD',
     role: 'IoT & Hardware',
-    avatarBg: 'linear-gradient(135deg,#2E7D32,#66BB6A)',
     expertise: ['Embedded Systems', 'IoT'],
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
   },
   {
     name: 'Atty. Claire Reyes',
-    initials: 'CR',
     role: 'Startup Law & IP',
-    avatarBg: 'linear-gradient(135deg,#6A1B9A,#AB47BC)',
     expertise: ['IP Law', 'Incorporation'],
+    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80',
   },
   {
     name: 'Mr. Jose Tan',
-    initials: 'JT',
     role: 'Growth & Funding',
-    avatarBg: 'linear-gradient(135deg,#E65100,#FF8A65)',
     expertise: ['Venture Capital', 'Growth'],
+    photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&q=80',
   },
 ])
 
-// ── Stories ──
 const storyDialog = ref(false)
 const activeStory = ref(null)
 const activeStoryFilter = ref('All')
@@ -1302,44 +1152,47 @@ const successStories = ref([
   {
     name: 'Ascribo AI',
     initials: 'AI',
-    logoBg: '#1565C0',
+    logoBg: '#1d4ed8',
     status: 'Funded',
-    statusColor: 'success',
+    statusBg: '#dcfce7',
+    statusText: '#15803d',
     industry: 'Artificial Intelligence',
     funding: '₱4.2M',
     year: '2025',
     team: '8',
-    desc: 'A context-aware AI language translation platform delivering accurate, nuanced translations for law, medicine, and marketing.',
+    desc: 'A context-aware AI translation platform delivering precise results for law, medicine, and marketing.',
     fullDesc:
-      'Ascribo.AI solves the critical problem of inaccurate language translation in high-stakes fields. Their proprietary context engine ensures that legal, medical, and marketing documents are translated with precision and cultural nuance — reducing costly translation errors by over 90%.',
+      'Ascribo.AI solves the critical problem of inaccurate language translation in high-stakes fields. Their proprietary context engine reduces translation errors by over 90%.',
   },
   {
     name: 'BizNest',
     initials: 'BN',
-    logoBg: '#2E7D32',
+    logoBg: '#15803d',
     status: 'Scaling',
-    statusColor: 'primary',
+    statusBg: '#dbeafe',
+    statusText: '#1d4ed8',
     industry: 'Business Software',
     funding: '₱4.2M',
     year: '2025',
     team: '12',
-    desc: 'A smart business management platform for micro and small enterprises, integrating POS, inventory, finance, and CRM.',
+    desc: 'A smart business management platform for MSMEs integrating POS, inventory, finance, and CRM.',
     fullDesc:
-      'BizNest was built to solve the fragmented tools problem for MSMEs in the Philippines. By bringing POS, inventory, financial tracking, and CRM into one platform, BizNest has helped over 500 small businesses reduce operational overhead by 40%.',
+      'BizNest helps over 500 small businesses reduce operational overhead by 40% through a unified digital workspace.',
   },
   {
     name: 'MediLink PH',
     initials: 'ML',
-    logoBg: '#6A1B9A',
+    logoBg: '#7c3aed',
     status: 'MVP',
-    statusColor: 'warning',
+    statusBg: '#fef9c3',
+    statusText: '#a16207',
     industry: 'HealthTech',
     funding: '₱1.8M',
     year: '2024',
     team: '5',
-    desc: 'A telemedicine and patient records platform connecting rural communities in Caraga with licensed physicians nationwide.',
+    desc: 'A telemedicine platform connecting rural Caraga communities with licensed physicians nationwide.',
     fullDesc:
-      'MediLink PH addresses the healthcare access gap in underserved communities. Their platform enables real-time teleconsultations, digital prescriptions, and secure medical records — bringing quality healthcare to patients who previously had to travel hours to see a doctor.',
+      'MediLink PH enables real-time teleconsultations, digital prescriptions, and secure medical records for underserved areas.',
   },
 ])
 
@@ -1348,37 +1201,35 @@ const filteredStories = computed(() =>
     ? successStories.value
     : successStories.value.filter((s) => s.industry === activeStoryFilter.value),
 )
-
 function openStory(story) {
   activeStory.value = story
   storyDialog.value = true
 }
 
-// ── FAQs ──
+const openFaq = ref(null)
 const faqs = ref([
   {
     q: 'How long is the incubation program?',
-    a: 'The core incubation program runs for 6 months, with optional alumni support and mentorship continuing beyond graduation.',
+    a: 'The core program runs for 6 months, with optional alumni support and mentorship continuing beyond graduation.',
   },
   {
     q: 'Is there an equity or fee requirement?',
-    a: 'Navigatú TBI does not take equity from incubatees. Some programs may have a modest participation fee depending on the services availed.',
+    a: 'Navigatú TBI does not take equity. Some programs may have a modest participation fee depending on services availed.',
   },
   {
     q: 'Do I need a registered business to apply?',
-    a: 'No, you can apply as an individual or informal team. We can help with business registration and legal structuring as part of the program.',
+    a: 'No — you can apply as an individual or informal team. We assist with business registration as part of the program.',
   },
   {
     q: 'Can teams outside Butuan City apply?',
-    a: 'Yes! While our physical facilities are in Butuan City, we accept applications from startups across Caraga and beyond through our hybrid program.',
+    a: 'Yes! We accept applications across Caraga and beyond through our hybrid program.',
   },
   {
     q: 'What happens after the program ends?',
-    a: 'Graduates join the Navigatú Alumni Network, gaining access to continued mentorship, investor introductions, and co-investment opportunities.',
+    a: 'Graduates join the Navigatú Alumni Network with continued mentorship and investor introductions.',
   },
 ])
 
-// ── Apply ──
 const applyDialog = ref(false)
 const applyStep = ref(1)
 const applyForm = ref({ name: '', email: '', type: '', venture: '', category: '', pitch: '' })
@@ -1391,7 +1242,6 @@ function submitApplication() {
   applyForm.value = { name: '', email: '', type: '', venture: '', category: '', pitch: '' }
 }
 
-// ── Footer ──
 const newsletterEmail = ref('')
 const footerLinks = {
   programs: ['Incubation', 'Pre-incubation', 'Acceleration', 'Alumni Network'],
@@ -1403,13 +1253,16 @@ function subscribeNewsletter() {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=DM+Sans:wght@300;400;500;600&family=Montserrat:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,600&family=Sora:wght@300;400;500;600;700&display=swap');
 
+* {
+  box-sizing: border-box;
+}
 .v-application {
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Sora', sans-serif !important;
 }
 
-/* Navbar */
+/* ── NAVBAR ── */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -1418,107 +1271,333 @@ function subscribeNewsletter() {
   line-height: 1.1;
 }
 .nav-sub {
-  font-size: 0.6rem;
-  color: #9e9e9e;
-  letter-spacing: 0.5px;
+  font-size: 0.58rem;
+  color: #aaa;
+  letter-spacing: 0.4px;
 }
 .nav-link {
-  font-size: 0.875rem !important;
+  font-size: 0.85rem !important;
   font-weight: 500 !important;
-  color: #333 !important;
+  color: #444 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
 .nav-link--active {
   color: #1565c0 !important;
 }
-
-/* Section headers */
-.section-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
-  font-weight: 900;
-  color: #5f5f5f;
-  margin-bottom: 6px;
+.nav-apply-btn {
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 9px 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.35);
+  transition: all 0.2s;
 }
-.italic-accent {
+.nav-apply-btn:hover {
+  box-shadow: 0 6px 22px rgba(21, 101, 192, 0.5);
+  transform: translateY(-1px);
+}
+.w-full {
+  width: 100%;
+}
+
+/* ── BUTTON SYSTEM ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 30px;
+  cursor: pointer;
+  box-shadow: 0 6px 22px rgba(21, 101, 192, 0.38);
+  transition: all 0.22s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(21, 101, 192, 0.5);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: #1565c0;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1.5px solid rgba(21, 101, 192, 0.4);
+  border-radius: 50px;
+  padding: 13px 30px;
+  cursor: pointer;
+  transition: all 0.22s;
+}
+.btn-ghost:hover {
+  background: rgba(21, 101, 192, 0.06);
+  border-color: #1565c0;
+  transform: translateY(-2px);
+}
+
+.btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: #1565c0;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1.5px solid #1565c0;
+  border-radius: 50px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-outlined:hover {
+  background: #1565c0;
+  color: #fff;
+}
+
+.btn-micro {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid;
+  border-radius: 50px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: opacity 0.18s;
+}
+.btn-micro:hover {
+  opacity: 0.75;
+}
+
+.btn-card {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--c, #1565c0);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border: 1.5px solid var(--c, #1565c0);
+  border-radius: 50px;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-card:hover {
+  background: var(--c, #1565c0);
+  color: #fff;
+}
+
+/* ── SECTION HELPERS ── */
+.eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #1565c0;
+  margin-bottom: 10px;
+}
+.sec-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.18;
+  margin-bottom: 10px;
+}
+.sec-title em {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   color: #1565c0;
 }
-.section-subtitle {
-  font-size: 0.88rem;
-  color: #9e9e9e;
-  max-width: 560px;
+.sec-sub {
+  font-size: 0.86rem;
+  color: #94a3b8;
+  line-height: 1.8;
+  max-width: 500px;
   margin: 0 auto;
 }
+.sec-white {
+  background: #fff;
+}
+.sec-offwhite {
+  background: #f8faff;
+}
+.py-sec {
+  padding-top: 84px;
+  padding-bottom: 84px;
+}
 
-/* Hero */
+/* ── HERO ── */
 .hero-section {
-  background: #f0f3fa;
-  padding-top: 72px;
-  padding-bottom: 72px;
+  background: #f0f4ff;
+  background-image:
+    radial-gradient(ellipse at 68% 30%, rgba(37, 99, 235, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 18% 75%, rgba(124, 58, 237, 0.07) 0%, transparent 50%);
   position: relative;
   overflow: hidden;
+  padding-top: 84px;
+  padding-bottom: 64px;
 }
-.hero-bg-pattern {
+.hero-grid {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(circle at 80% 20%, rgba(21, 101, 192, 0.06) 0%, transparent 60%),
-    radial-gradient(circle at 20% 80%, rgba(249, 168, 37, 0.06) 0%, transparent 50%);
   pointer-events: none;
+  background-image:
+    linear-gradient(rgba(21, 101, 192, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 101, 192, 0.045) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner {
+  position: relative;
+}
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(21, 101, 192, 0.09);
+  border: 1px solid rgba(21, 101, 192, 0.22);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #1565c0;
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.28);
+  flex-shrink: 0;
 }
 .hero-title {
-  font-family: 'DM Sans', sans-serif;
-  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(2.1rem, 5vw, 3.5rem);
   font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.22;
+  color: #0a0f1e;
+  line-height: 1.13;
 }
-.hero-italic {
+.hero-title em {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   color: #1565c0;
-  font-weight: 600;
 }
 .hero-body {
-  font-size: 1rem;
-  color: #666;
-  line-height: 1.8;
-  max-width: 520px;
+  font-size: 0.98rem;
+  color: #5a6478;
+  line-height: 1.85;
+  max-width: 460px;
 }
-.hero-btn {
-  font-weight: 600 !important;
-  text-transform: none !important;
-  letter-spacing: 0.2px !important;
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
 }
-
-.stat-box {
-  text-align: center;
-  padding: 12px 8px;
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-.stat-num {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 900;
+.hero-stat-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
   color: #1565c0;
   line-height: 1;
 }
-.stat-label {
-  font-size: 0.72rem;
-  color: #9e9e9e;
+.hero-stat-label {
+  font-size: 0.68rem;
+  color: #999;
+}
+
+/* Hero collage */
+.hero-collage {
+  display: flex;
+  gap: 14px;
+  max-width: 460px;
+  margin-left: auto;
+}
+.collage-main {
+  flex: 1.7;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(21, 101, 192, 0.2);
+}
+.collage-img-main {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  display: block;
+}
+.collage-live-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.collage-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.collage-stat-card {
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  border-radius: 16px;
+  padding: 20px 16px;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(21, 101, 192, 0.32);
+}
+.collage-big {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.collage-sub {
+  font-size: 0.68rem;
+  opacity: 0.72;
   margin-top: 4px;
-  letter-spacing: 0.3px;
+}
+.collage-img-side {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 /* Tech cards */
-.tech-col {
+.tc {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(18px);
 }
-.tech-col.animate-in {
-  animation: fadeUp 0.5s ease forwards;
+.tc--in {
+  animation: fadeUp 0.48s ease forwards;
 }
 @keyframes fadeUp {
   to {
@@ -1528,343 +1607,809 @@ function subscribeNewsletter() {
 }
 .tech-card {
   background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  border: 1.5px solid #e5eaf5;
   cursor: pointer;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  border: 1.5px solid transparent;
+    transform 0.22s,
+    box-shadow 0.22s,
+    border-color 0.22s;
 }
 .tech-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 28px rgba(21, 101, 192, 0.12) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(21, 101, 192, 0.1);
+  border-color: #c4d5f7;
 }
-.tech-card--selected {
-  border-color: #1565c0 !important;
-  box-shadow: 0 8px 28px rgba(21, 101, 192, 0.15) !important;
+.tech-card--sel {
+  border-color: #1565c0;
+  box-shadow:
+    0 0 0 3px rgba(21, 101, 192, 0.1),
+    0 12px 32px rgba(21, 101, 192, 0.14);
 }
-.tech-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+.tech-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 14px;
 }
-.tech-card-title {
-  font-size: 0.92rem !important;
-  font-weight: 700 !important;
-  color: #1a1a1a;
-  white-space: normal !important;
-  line-height: 1.3 !important;
+.tech-title {
+  font-size: 0.87rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 5px;
+  line-height: 1.3;
 }
-.tech-card-text {
-  font-size: 0.78rem !important;
-  color: #888 !important;
-  line-height: 1.6 !important;
+.tech-desc {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  line-height: 1.65;
+}
+.tech-detail {
+  padding-top: 12px;
+}
+.tech-divider {
+  height: 1px;
+  background: #eee;
+  margin-bottom: 10px;
+}
+.tech-detail-text {
+  font-size: 0.73rem;
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 8px;
 }
 
-/* Apply cards */
-.apply-section {
-  background: #fff;
-}
+/* ── APPLY CARDS ── */
 .apply-card {
   position: relative;
   overflow: hidden;
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+  border-radius: 22px;
   cursor: pointer;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
 }
 .apply-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-5px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
 }
-.apply-card--students {
-  background: linear-gradient(145deg, #e8f0fe, #c5d8ff);
+.ac-inner {
+  position: relative;
+  z-index: 1;
+  padding: 32px;
 }
-.apply-card--faculty {
-  background: linear-gradient(145deg, #e8f5e9, #b8e6bc);
+.ac--students {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
 }
-.apply-card--startups {
-  background: linear-gradient(145deg, #fff3e0, #ffcc80);
+.ac--faculty {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
 }
-.apply-card--techpreneurs {
-  background: linear-gradient(145deg, #f3e5f5, #ce93d8);
+.ac--startups {
+  background: linear-gradient(135deg, #ffedd5, #fed7aa);
 }
-.apply-badge {
-  width: 56px;
-  height: 56px;
+.ac--techpreneurs {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+}
+.ac-badge {
+  width: 52px;
+  height: 52px;
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
-.apply-card-title {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
+.ac-title {
+  font-size: 1.1rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #0f172a;
 }
-.apply-card-body {
-  font-size: 0.87rem;
-  color: #444;
+.ac-body {
+  font-size: 0.82rem;
+  color: #475569;
   line-height: 1.75;
 }
-.apply-chip {
-  background: rgba(255, 255, 255, 0.65) !important;
-  color: #333 !important;
-  font-weight: 600 !important;
-  font-size: 0.72rem !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+.ac-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
-.apply-deco {
+.ac-chip {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 50px;
+  padding: 3px 12px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: #444;
+}
+.ac-deco {
   position: absolute;
-  top: 16px;
-  right: 24px;
+  top: 14px;
+  right: 20px;
   font-size: 3rem;
-  opacity: 0.15;
+  opacity: 0.11;
   pointer-events: none;
 }
 
-/* Timeline */
-.timeline-section {
-  background: #f7f9fc;
+/* ── JOURNEY SECTION ── */
+.journey-section {
+  background: #080d1c;
+  position: relative;
+  overflow: hidden;
+  padding-top: 84px;
+  padding-bottom: 84px;
 }
-.timeline-card {
-  background: #fff;
-  border: 0.5px solid rgba(0, 0, 0, 0.07);
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+.journey-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 12% 55%, rgba(37, 99, 235, 0.22) 0%, transparent 48%),
+    radial-gradient(ellipse at 88% 25%, rgba(124, 58, 237, 0.18) 0%, transparent 48%),
+    radial-gradient(ellipse at 50% 95%, rgba(234, 88, 12, 0.12) 0%, transparent 40%);
 }
-.timeline-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07) !important;
+.journey-desktop {
+  position: relative;
 }
-.timeline-card-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a1a1a;
+.journey-rail {
+  position: absolute;
+  top: 72px;
+  left: calc(12.5% + 24px);
+  right: calc(12.5% + 24px);
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb, #059669, #ea580c, #7c3aed);
+  opacity: 0.3;
 }
 
-/* Services */
-.services-section {
-  background: #f0f3fa;
+.jcard {
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 26px 20px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+.jcard:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-4px);
+}
+.jcard--open {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+.jcard-bubble {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+.jcard-num {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+  margin-bottom: 5px;
+}
+.jcard-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 7px;
+  line-height: 1.28;
+}
+.jcard-dur {
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.jcard-desc {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.75;
+  margin: 0;
+}
+.jcard-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.jtag {
+  font-size: 0.62rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 3px 10px;
+}
+.jcard-expand {
+  margin-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 14px;
+}
+.jcard-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.jcard-expand-text {
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* Journey mobile */
+.jmobile {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.jmobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+}
+.jbubble-sm {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.jmobile-num {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+}
+.jmobile-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #fff;
+}
+.jmobile-body {
+  padding: 16px 20px 20px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.jmobile-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+.jmobile-desc {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.75;
+}
+
+/* ── SERVICES ── */
+.svc-img-wrap {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  width: 100%;
+}
+.svc-img {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  object-fit: cover;
+  border-radius: 22px;
+}
+.svc-img-badge {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  padding: 9px 18px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 .svc-card {
   background: #fff;
+  border: 1.5px solid #e5eaf5;
+  border-radius: 18px;
+  padding: 22px;
   cursor: pointer;
+  height: 100%;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  border: 1.5px solid transparent;
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 .svc-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(21, 101, 192, 0.1) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(21, 101, 192, 0.09);
+  border-color: #c4d5f7;
 }
 .svc-card--active {
-  border-color: #1565c0 !important;
+  border-color: #1565c0;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
 }
-.svc-icon-wrap {
-  width: 44px;
-  height: 44px;
+.svc-icon {
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.svc-card-title {
-  font-size: 0.95rem;
+.svc-title {
+  font-size: 0.88rem;
   font-weight: 700;
 }
-.svc-item-text {
-  font-size: 0.8rem !important;
-  color: #555 !important;
+.svc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.svc-list li {
+  font-size: 0.77rem;
+  color: #64748b;
+  padding: 5px 0;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.svc-list li::before {
+  content: '›';
+  font-size: 1rem;
+  color: #cbd5e1;
+}
+.svc-list li:last-child {
+  border-bottom: none;
+}
+.svc-detail {
+  font-size: 0.73rem;
+  color: #777;
+  line-height: 1.7;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
 }
 
-/* Mentors */
-.mentors-section {
-  background: #fff;
-}
+/* ── MENTORS ── */
 .mentor-card {
-  cursor: pointer;
+  text-align: center;
+  background: #f8faff;
+  border-radius: 20px;
+  padding: 28px 20px;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-  background: #f7f9fc;
 }
 .mentor-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.07);
 }
-.mentor-avatar {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+.mentor-photo-wrap {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 3px solid #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
-.mentor-initials {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #fff;
-}
-.mentor-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-.mentor-role {
-  color: #888;
-}
-
-/* Stories */
-.stories-section {
-  background: #f7f9fc;
-}
-.story-card {
-  background: #f5f6f8;
-  cursor: pointer;
-  transition:
-    box-shadow 0.22s ease,
-    transform 0.22s ease;
-}
-.story-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.09) !important;
-}
-.story-logo-box {
+.mentor-photo {
   width: 100%;
   height: 100%;
-  min-height: 200px;
+  object-fit: cover;
+}
+.mentor-name {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.mentor-role {
+  font-size: 0.73rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+.mentor-chip {
+  background: #ede9fe;
+  color: #6d28d9;
+  font-size: 0.64rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 3px 10px;
+}
+
+/* ── STORIES ── */
+.story-card {
+  display: flex;
+  align-items: stretch;
   background: #fff;
-  border-radius: 16px 0 0 16px;
+  border: 1.5px solid #e5eaf5;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.22s,
+    box-shadow 0.22s,
+    border-color 0.22s;
+}
+.story-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+  border-color: #c4d5f7;
+}
+.story-logo {
+  width: 120px;
+  min-width: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  font-family: 'Sora', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.88);
+}
+.story-body {
+  padding: 24px 28px;
+  flex: 1;
 }
 .story-name {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #0f172a;
+}
+.story-pill {
+  font-size: 0.66rem;
+  font-weight: 700;
+  border-radius: 50px;
+  padding: 3px 12px;
 }
 .story-desc {
-  font-size: 0.84rem;
-  color: #666;
+  font-size: 0.79rem;
+  color: #64748b;
   line-height: 1.8;
-  margin: 0;
 }
-.story-meta-item {
-  display: inline-flex;
+.story-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.sm-item {
+  display: flex;
   align-items: center;
-  font-size: 0.8rem;
-  color: #888;
+  font-size: 0.76rem;
+  color: #94a3b8;
+  font-weight: 500;
 }
-.story-meta-label {
-  margin-right: 2px;
+.sm-item span {
+  color: #1e293b;
+  font-weight: 600;
 }
-.story-meta-value {
+.story-dialog-logo {
+  width: 62px;
+  height: 62px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: #1a1a1a;
-}
-.more-btn {
-  text-transform: none !important;
-  font-weight: 600 !important;
+  color: #fff;
+  flex-shrink: 0;
 }
 
-/* FAQ */
-.faq-section {
-  background: #fff;
+/* Filter pills */
+.filter-pill {
+  background: transparent;
+  border: 1.5px solid #dde3f0;
+  border-radius: 50px;
+  padding: 7px 18px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.18s;
 }
-.faq-panels {
-  border: 0.5px solid rgba(0, 0, 0, 0.07);
-  border-radius: 16px;
+.filter-pill:hover {
+  border-color: #1565c0;
+  color: #1565c0;
+}
+.filter-pill--on {
+  background: #1565c0;
+  border-color: #1565c0;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.32);
+}
+
+/* ── FAQ ── */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.faq-item {
+  border: 1.5px solid #e5eaf5;
+  border-radius: 14px;
   overflow: hidden;
+  transition: border-color 0.2s;
 }
-.faq-question {
-  font-weight: 600 !important;
-  font-size: 0.92rem !important;
+.faq-item--open {
+  border-color: #c4d5f7;
 }
-.faq-answer {
-  font-size: 0.85rem;
-  color: #666;
+.faq-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  cursor: pointer;
+  gap: 14px;
+}
+.faq-q {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.4;
+}
+.faq-icon {
+  flex-shrink: 0;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+.faq-item--open .faq-icon {
+  color: #1565c0;
+}
+.faq-ans {
+  padding: 0 22px 18px;
+  font-size: 0.81rem;
+  color: #64748b;
   line-height: 1.8;
 }
 
-/* CTA */
+/* ── CTA ── */
 .cta-section {
-  background: #f0f3fa;
+  background: #080d1c;
+  position: relative;
+  overflow: hidden;
+  padding-top: 84px;
+  padding-bottom: 84px;
 }
-.cta-card {
-  background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #42a5f5 100%);
+.cta-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(37, 99, 235, 0.28) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 45%, rgba(124, 58, 237, 0.22) 0%, transparent 50%);
+}
+.cta-icon-ring {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.09);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 0 0 16px rgba(255, 255, 255, 0.04);
 }
 .cta-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 900;
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+  font-weight: 700;
   color: #fff;
 }
 .cta-sub {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 480px;
-  margin: 0 auto;
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.85;
+  max-width: 460px;
 }
-.cta-btn-primary {
-  color: #1565c0 !important;
-  font-weight: 700 !important;
-  text-transform: none !important;
+.btn-cta-solid {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #2563eb, #1565c0);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 32px;
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.45);
+  transition: all 0.22s;
 }
-.cta-btn-secondary {
-  text-transform: none !important;
-  font-weight: 600 !important;
+.btn-cta-solid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 38px rgba(37, 99, 235, 0.58);
+}
+.btn-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.82);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50px;
+  padding: 14px 32px;
+  cursor: pointer;
+  transition: all 0.22s;
+}
+.btn-cta-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: translateY(-2px);
 }
 
-/* Footer */
-.footer-logo {
+/* ── FOOTER ── */
+.footer-section {
+  background: #06080f;
+}
+.footer-brand {
   font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 700;
   color: #fff;
   letter-spacing: 2px;
   font-style: italic;
 }
-.footer-tagline {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 1px;
+.footer-tag {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 0;
+}
+.footer-desc {
+  font-size: 0.77rem;
+  color: rgba(255, 255, 255, 0.38);
+  line-height: 1.8;
 }
 .footer-col-title {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.32);
+  letter-spacing: 2.5px;
   text-transform: uppercase;
 }
 .footer-link {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.79rem;
+  color: rgba(255, 255, 255, 0.48);
   cursor: pointer;
   transition: color 0.15s;
 }
 .footer-link:hover {
   color: #fff;
 }
+.social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.social-btn:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: #fff;
+}
+.footer-hr {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin-top: 32px;
+}
 .footer-copy {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.22);
   margin: 0;
 }
-
-/* Search field */
-.search-field :deep(.v-field__outline) {
-  border-radius: 12px !important;
+.newsletter {
+  display: flex;
+  gap: 8px;
+}
+.nl-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  outline: none;
+}
+.nl-input::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+.nl-input:focus {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.nl-btn {
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.4);
+  transition: all 0.18s;
+}
+.nl-btn:hover {
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.55);
+  transform: translateY(-1px);
 }
 
+/* ── TRANSITIONS ── */
+.fx-enter-active,
+.fx-leave-active {
+  transition:
+    opacity 0.24s,
+    transform 0.24s;
+}
+.fx-enter-from,
+.fx-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Mobile */
 @media (max-width: 599px) {
-  .story-logo-box {
-    border-radius: 16px 16px 0 0;
-    min-height: 140px;
+  .story-card {
+    flex-direction: column;
+  }
+  .story-logo {
+    width: 100%;
+    min-width: unset;
+    min-height: 72px;
+    justify-content: flex-start;
+    padding: 16px 20px;
+    gap: 14px;
+    flex-direction: row;
   }
 }
 </style>
