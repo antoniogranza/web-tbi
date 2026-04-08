@@ -755,6 +755,7 @@ const getActiveTags = computed(() => {
 const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
 const testimonialIndex = ref(0)
 const enableTrackTransition = ref(true)
+const TESTIMONIAL_AUTOPLAY_MS = 3000
 let testimonialsAutoplayTimer = null
 
 const shouldUseTestimonialsCarousel = computed(() => {
@@ -812,7 +813,7 @@ function stopTestimonialsAutoplay() {
 function startTestimonialsAutoplay() {
   stopTestimonialsAutoplay()
   if (!shouldUseTestimonialsCarousel.value) return
-  testimonialsAutoplayTimer = window.setInterval(moveToNextTestimonial, 5000)
+  testimonialsAutoplayTimer = window.setInterval(moveToNextTestimonial, TESTIMONIAL_AUTOPLAY_MS)
 }
 
 function handleViewportResize() {
