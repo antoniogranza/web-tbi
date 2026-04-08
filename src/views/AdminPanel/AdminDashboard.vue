@@ -2519,6 +2519,15 @@ const newsImageFileInput = ref(null)
 async function uploadToSupabase(file, bucket, folder, progressKey) {
   if (!file) return null
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  if (!session) {
+    formError.value = 'Your session expired. Please log in again before uploading files.'
+    uploadProgress[progressKey] = 0
+    return null
+  }
+
   // Validate file size (max 5MB)
   const MAX_SIZE = 5 * 1024 * 1024
   if (file.size > MAX_SIZE) {
@@ -2542,11 +2551,13 @@ async function uploadToSupabase(file, bucket, folder, progressKey) {
 
   if (error) {
     console.error('Supabase upload error:', error)
-    const policyHint =
+    const deniedByPolicy =
       error.message?.toLowerCase().includes('row-level security') ||
-      error.message?.toLowerCase().includes('not allowed')
-        ? ' Check your Supabase Storage bucket policies for INSERT access.'
-        : ''
+      error.message?.toLowerCase().includes('not allowed') ||
+      error.statusCode === '403'
+    const policyHint = deniedByPolicy
+      ? ` Check Supabase Storage INSERT policy for bucket "${bucket}" and path "${folder}/*".`
+      : ''
     formError.value = `Upload failed: ${error.message}${policyHint}`
     uploadProgress[progressKey] = 0
     return null
