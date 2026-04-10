@@ -1215,7 +1215,7 @@ onUnmounted(() => {
   background: #ffffff;
   border-bottom: 2px solid #eef0f5;
   position: sticky;
-  top: 0px;
+  top: 45px;
   z-index: 10;
   padding: 0;
 }
