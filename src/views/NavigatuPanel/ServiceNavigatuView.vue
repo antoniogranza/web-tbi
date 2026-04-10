@@ -24,9 +24,17 @@
           <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
           <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
           <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <v-btn variant="text" icon size="small" @click="searchDialog = true">
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
+          <div class="nav-search-hover">
+            <input
+              v-model="searchQuery"
+              class="nav-search-field"
+              type="text"
+              placeholder="Search..."
+            />
+            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+          </div>
           <button class="nav-apply-btn ml-2" @click="applyDialog = true">Apply Now</button>
         </div>
         <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
@@ -69,54 +77,6 @@
         </div>
       </template>
     </v-navigation-drawer>
-
-    <!-- SEARCH DIALOG -->
-    <v-dialog v-model="searchDialog" max-width="560" transition="dialog-top-transition">
-      <v-card rounded="xl" class="pa-2">
-        <v-text-field
-          v-model="searchQuery"
-          autofocus
-          placeholder="Search programs, events, startups…"
-          prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          rounded="lg"
-          hide-details
-          @keyup.esc="searchDialog = false"
-        />
-        <div v-if="!searchQuery" class="pa-4 pb-2">
-          <p class="text-caption text-medium-emphasis mb-3 font-weight-medium">Quick Links</p>
-          <div class="d-flex flex-wrap gap-2">
-            <v-chip
-              v-for="tag in searchTags"
-              :key="tag"
-              size="small"
-              label
-              variant="tonal"
-              color="primary"
-              class="cursor-pointer"
-              @click="searchQuery = tag"
-              >{{ tag }}</v-chip
-            >
-          </div>
-        </div>
-        <div v-else class="pa-3 pt-1">
-          <v-list density="compact">
-            <v-list-item
-              v-for="r in filteredResults"
-              :key="r"
-              :title="r"
-              prepend-icon="mdi-arrow-top-right"
-              rounded="lg"
-            />
-            <v-list-item
-              v-if="filteredResults.length === 0"
-              title="No results found"
-              prepend-icon="mdi-magnify-remove-outline"
-            />
-          </v-list>
-        </div>
-      </v-card>
-    </v-dialog>
 
     <v-main>
       <!-- ===== HERO ===== -->
@@ -848,21 +808,7 @@ onMounted(() => window.addEventListener('scroll', onScroll))
 onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 const drawer = ref(false)
-const searchDialog = ref(false)
 const searchQuery = ref('')
-const searchTags = ['Apply Now', 'Coworking Space', 'AI Programs', 'Funding', 'Events 2025']
-const allSearchResults = [
-  'Apply to Navigatú',
-  'Coworking Space Tour',
-  'AI Incubation Program',
-  'Seed Funding Access',
-  'Upcoming Events',
-  'Meet our Mentors',
-  'Success Stories',
-]
-const filteredResults = computed(() =>
-  allSearchResults.filter((r) => r.toLowerCase().includes(searchQuery.value.toLowerCase())),
-)
 
 const animatedCards = ref(false)
 onMounted(() =>
@@ -1281,6 +1227,36 @@ function subscribeNewsletter() {
   color: #333 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
+}
+
+.nav-search-hover {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-search-field {
+  width: 0;
+  opacity: 0;
+  border: 1px solid #d9e2f1;
+  border-radius: 20px;
+  padding: 0;
+  font-size: 0.8rem;
+  outline: none;
+  transition: all 0.22s ease;
+  pointer-events: none;
+}
+
+.nav-search-hover:hover .nav-search-field,
+.nav-search-field:focus {
+  width: 170px;
+  opacity: 1;
+  padding: 6px 12px;
+  pointer-events: auto;
+}
+
+.nav-search-icon-btn {
+  color: #3f4e63 !important;
 }
 
 .nav-apply-btn {

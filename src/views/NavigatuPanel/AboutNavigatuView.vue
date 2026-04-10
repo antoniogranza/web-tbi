@@ -19,9 +19,17 @@
           <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
           <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
           <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <v-btn variant="text" icon size="small">
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
+          <div class="nav-search-hover">
+            <input
+              v-model="navSearchQuery"
+              class="nav-search-field"
+              type="text"
+              placeholder="Search..."
+            />
+            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+          </div>
           <button class="nav-apply-btn ml-2">Apply Now</button>
         </div>
 
@@ -353,6 +361,7 @@ import { supabase } from '@/utils/supabase'
 
 // ── Mobile drawer state ──────────────────────────────────────────────────────
 const drawer = ref(false)
+const navSearchQuery = ref('')
 
 // ── Services data ────────────────────────────────────────────────────────────
 const services = ref([
@@ -515,6 +524,36 @@ const leaders = ref([
   font-weight: 500 !important;
   color: #333 !important;
   letter-spacing: 0 !important;
+}
+
+.nav-search-hover {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-search-field {
+  width: 0;
+  opacity: 0;
+  border: 1px solid #d9e2f1;
+  border-radius: 20px;
+  padding: 0;
+  font-size: 0.8rem;
+  outline: none;
+  transition: all 0.22s ease;
+  pointer-events: none;
+}
+
+.nav-search-hover:hover .nav-search-field,
+.nav-search-field:focus {
+  width: 170px;
+  opacity: 1;
+  padding: 6px 12px;
+  pointer-events: auto;
+}
+
+.nav-search-icon-btn {
+  color: #3f4e63 !important;
 }
 
 .nav-apply-btn {
