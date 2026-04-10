@@ -715,8 +715,8 @@ function loadMore() {
   overflow: hidden;
 }
 .featured-card:hover {
-  box-shadow: 0 16px 48px rgba(21, 101, 192, 0.14) !important;
-  transform: translateY(-3px);
+  box-shadow: 0 0px 0px rgba(21, 101, 192, 0.14) !important;
+  transform: translateY(-0px);
 }
 .featured-img-wrap {
   position: relative;
