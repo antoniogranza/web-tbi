@@ -3455,17 +3455,6 @@ async function confirmPublishSubmit() {
   if (result.success) {
     publishDialog.value = false
     formDialog.value = false
-
-    if (activeSection.value === 'mentors') {
-      const routeByPortal = {
-        navigatu: '/services-navigatu',
-        tara: '/services-tara',
-      }
-      const targetRoute = routeByPortal[form.tbi_id]
-      if (targetRoute) {
-        router.push(targetRoute)
-      }
-    }
   } else {
     formError.value = result.error?.message || 'Failed to save. Please try again.'
   }

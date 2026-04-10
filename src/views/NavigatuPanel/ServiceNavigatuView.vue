@@ -1039,7 +1039,7 @@ async function fetchMentors() {
     .select('name, role, photo, tbi_id, status, created_at')
     .eq('tbi_id', 'navigatu')
     .eq('status', 'active')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
 
   if (error) {
     console.error('[ServiceNavigatuView] fetchMentors error', error)
