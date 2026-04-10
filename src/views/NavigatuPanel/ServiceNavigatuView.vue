@@ -2,12 +2,15 @@
   <v-app>
     <!-- ===================== NAVIGATION BAR ===================== -->
     <v-app-bar
+      app
+      fixed
+      location="top"
       flat
       color="white"
       border="b"
       height="64"
       :elevation="scrolled ? 3 : 0"
-      style="transition: box-shadow 0.3s"
+      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
     >
       <v-container class="d-flex align-center pa-0" fluid>
         <div class="d-flex align-center ml-4 ml-md-8">
