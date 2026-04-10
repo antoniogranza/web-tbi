@@ -292,30 +292,6 @@
         </v-container>
       </v-container>
 
-      <!-- ===== LEADERSHIP SECTION ===== -->
-      <v-container fluid class="leadership-section py-14">
-        <v-container>
-          <h2 class="section-title text-center">
-            Leadership <span class="italic-accent">Team</span>
-          </h2>
-          <p class="section-subtitle text-center mb-10">Meet the team driving Navigatú TBI</p>
-
-          <v-row>
-            <v-col v-for="leader in leaders" :key="leader.name" cols="12" sm="6" md="3">
-              <v-card rounded="xl" elevation="1" class="leader-card" hover>
-                <div class="leader-photo d-flex align-center justify-center">
-                  <v-img :src="leader.photo" height="320" cover class="leader-img" />
-                </div>
-                <v-card-item class="text-center pb-4">
-                  <v-card-title class="leader-name">{{ leader.name }}</v-card-title>
-                  <v-card-subtitle class="leader-role">{{ leader.role }}</v-card-subtitle>
-                </v-card-item>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-container>
-
       <!-- ===== FAQ ===== -->
       <div class="sec-white py-sec">
         <v-container>
@@ -517,30 +493,6 @@ async function fetchIncubatees() {
 }
 
 onMounted(fetchIncubatees)
-
-// ── Leadership data ───────────────────────────────────────────────────────────
-const leaders = ref([
-  {
-    name: 'Dr. Riah E. Encarnacion',
-    photo: '/images/leaders/TbiDirector.jpg',
-    role: 'TBI Director',
-  },
-  {
-    name: 'John Mark B. Correa',
-    photo: '/images/leaders/JohnMarkCorrea.jpg',
-    role: 'TBI Project Head',
-  },
-  {
-    name: 'Mary Pilar J. Barber',
-    photo: '/images/leaders/MaryPilarBarber.jpg',
-    role: 'Community Development Project Head',
-  },
-  { name: 'Mr. Ben Lim', role: 'Tech Advisor' },
-  { name: 'Dr. Carlos Tan', role: 'Innovation Head' },
-  { name: 'Ms. Liza Dela Cruz', role: 'Finance Officer' },
-  { name: 'Mr. Rico Perez', role: 'Startup Mentor' },
-  { name: 'Ms. Grace Uy', role: 'Communications' },
-])
 
 const openFaq = ref(null)
 const faqs = ref([
@@ -998,34 +950,6 @@ const faqs = ref([
   text-overflow: ellipsis;
   letter-spacing: 0.3px;
   text-align: center;
-}
-
-/* ── Leadership ────────────────────────────────────────────────────────────────── */
-.leadership-section {
-  background: #ffffff;
-}
-.leader-card {
-  overflow: hidden;
-  transition: transform 0.2s ease;
-  /*height: 320px;*/
-}
-.leader-card:hover {
-  transform: translateY(-4px);
-}
-.leader-photo {
-  /*padding: 24px 0 16px; */
-  background: #eef2fa;
-}
-.leader-name {
-  font-size: 0.9rem !important;
-  font-weight: 700 !important;
-  color: #1a1a1a;
-  white-space: normal !important;
-  line-height: 1.3 !important;
-}
-.leader-role {
-  font-size: 0.78rem !important;
-  color: #888 !important;
 }
 
 /* ── FAQ Section Helpers (from Service style) ── */

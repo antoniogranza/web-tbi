@@ -426,19 +426,16 @@
             <p class="sec-sub">Industry experts and seasoned entrepreneurs guiding your journey</p>
           </div>
           <v-row justify="center">
-            <v-col v-for="mentor in mentors" :key="mentor.name" cols="12" sm="6" md="3">
-              <div class="mentor-card">
-                <div class="mentor-photo-wrap">
-                  <img :src="mentor.photo" :alt="mentor.name" class="mentor-photo" />
+            <v-col v-for="leader in leaders" :key="leader.name" cols="12" sm="6" md="3">
+              <v-card rounded="xl" elevation="1" class="leader-card" hover>
+                <div class="leader-photo d-flex align-center justify-center">
+                  <v-img :src="leader.photo" height="320" cover class="leader-img" />
                 </div>
-                <h4 class="mentor-name mt-4">{{ mentor.name }}</h4>
-                <p class="mentor-role">{{ mentor.role }}</p>
-                <div class="d-flex justify-center flex-wrap gap-1 mt-3">
-                  <span v-for="tag in mentor.expertise" :key="tag" class="mentor-chip">{{
-                    tag
-                  }}</span>
-                </div>
-              </div>
+                <v-card-item class="text-center pb-4">
+                  <v-card-title class="leader-name">{{ leader.name }}</v-card-title>
+                  <v-card-subtitle class="leader-role">{{ leader.role }}</v-card-subtitle>
+                </v-card-item>
+              </v-card>
             </v-col>
           </v-row>
         </v-container>
@@ -1033,30 +1030,46 @@ const navServices = ref([
   },
 ])
 
-const mentors = ref([
+const leaders = ref([
   {
-    name: 'Dr. Maria Santos',
-    role: 'AI & Deep Tech',
-    expertise: ['Machine Learning', 'NLP'],
-    photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80',
+    name: 'Dr. Riah E. Encarnacion',
+    photo: '/images/leaders/TbiDirector.jpg',
+    role: 'TBI Director',
   },
   {
-    name: 'Engr. Rico Dela Cruz',
-    role: 'IoT & Hardware',
-    expertise: ['Embedded Systems', 'IoT'],
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
+    name: 'John Mark B. Correa',
+    photo: '/images/leaders/JohnMarkCorrea.jpg',
+    role: 'TBI Project Head',
   },
   {
-    name: 'Atty. Claire Reyes',
-    role: 'Startup Law & IP',
-    expertise: ['IP Law', 'Incorporation'],
-    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80',
+    name: 'Mary Pilar J. Barber',
+    photo: '/images/leaders/MaryPilarBarber.jpg',
+    role: 'Community Development Project Head',
   },
   {
-    name: 'Mr. Jose Tan',
-    role: 'Growth & Funding',
-    expertise: ['Venture Capital', 'Growth'],
-    photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&q=80',
+    name: 'Mr. Ben Lim',
+    photo: '/images/leaders/TbiDirector.jpg',
+    role: 'Tech Advisor',
+  },
+  {
+    name: 'Dr. Carlos Tan',
+    photo: '/images/leaders/JohnMarkCorrea.jpg',
+    role: 'Innovation Head',
+  },
+  {
+    name: 'Ms. Liza Dela Cruz',
+    photo: '/images/leaders/MaryPilarBarber.jpg',
+    role: 'Finance Officer',
+  },
+  {
+    name: 'Mr. Rico Perez',
+    photo: '/images/leaders/TbiDirector.jpg',
+    role: 'Startup Mentor',
+  },
+  {
+    name: 'Ms. Grace Uy',
+    photo: '/images/leaders/JohnMarkCorrea.jpg',
+    role: 'Communications',
   },
 ])
 
@@ -1924,51 +1937,27 @@ function subscribeNewsletter() {
   padding-top: 12px;
 }
 
-/* ── MENTORS ── */
-.mentor-card {
-  text-align: center;
-  background: #f8faff;
-  border-radius: 20px;
-  padding: 28px 20px;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-}
-.mentor-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.07);
-}
-.mentor-photo-wrap {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
+/* ── LEADERSHIP CARDS (from About style) ── */
+.leader-card {
   overflow: hidden;
-  margin: 0 auto;
-  border: 3px solid #fff;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
 }
-.mentor-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.leader-card:hover {
+  transform: translateY(-4px);
 }
-.mentor-name {
-  font-size: 0.94rem;
+.leader-photo {
+  background: #eef2fa;
+}
+.leader-name {
+  font-size: 0.9rem !important;
   font-weight: 700;
-  color: #0f172a;
+  color: #1a1a1a;
+  white-space: normal !important;
+  line-height: 1.3 !important;
 }
-.mentor-role {
-  font-size: 0.73rem;
-  color: #94a3b8;
-  margin-top: 2px;
-}
-.mentor-chip {
-  background: #ede9fe;
-  color: #6d28d9;
-  font-size: 0.64rem;
-  font-weight: 600;
-  border-radius: 50px;
-  padding: 3px 10px;
+.leader-role {
+  font-size: 0.78rem !important;
+  color: #888 !important;
 }
 
 /* ── STORIES ── */
