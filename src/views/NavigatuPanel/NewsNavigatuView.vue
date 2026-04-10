@@ -17,7 +17,7 @@
           <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
           <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
           <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link nav-link--active" to="/news-navigatu">News</v-btn>
+          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
           <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
           <v-btn variant="text" icon size="small">
             <v-icon>mdi-magnify</v-icon>
@@ -517,10 +517,6 @@ function loadMore() {
   color: #333 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-}
-.nav-link--active {
-  color: #1565c0 !important;
-  font-weight: 700 !important;
 }
 
 .nav-apply-btn {

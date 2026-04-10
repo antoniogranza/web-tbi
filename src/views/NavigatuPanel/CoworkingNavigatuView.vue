@@ -16,9 +16,7 @@
         <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
           <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
           <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link nav-link--active" to="/coworking-navigatu"
-            >Coworking</v-btn
-          >
+          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
           <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
           <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
           <v-btn variant="text" icon size="small">
@@ -387,10 +385,6 @@ const testimonials = ref([
   color: #333 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-}
-
-.nav-link--active {
-  color: #1565c0 !important;
 }
 
 .nav-apply-btn {
