@@ -766,6 +766,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { supabase } from '@/utils/supabase'
 
 const scrolled = ref(false)
 const onScroll = () => {
@@ -1072,6 +1073,30 @@ const leaders = ref([
     role: 'Communications',
   },
 ])
+
+async function fetchMentors() {
+  const { data, error } = await supabase
+    .from('mentors')
+    .select('name, role, photo, tbi_id, status, created_at')
+    .eq('tbi_id', 'navigatu')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[ServiceNavigatuView] fetchMentors error', error)
+    return
+  }
+
+  if (!data || data.length === 0) return
+
+  leaders.value = data.map((mentor) => ({
+    name: mentor.name,
+    role: mentor.role,
+    photo: mentor.photo,
+  }))
+}
+
+onMounted(fetchMentors)
 
 const storyDialog = ref(false)
 const activeStory = ref(null)

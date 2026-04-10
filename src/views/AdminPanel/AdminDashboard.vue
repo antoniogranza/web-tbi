@@ -314,7 +314,11 @@
 
               <template #[`item.thumb`]="{ item }">
                 <v-avatar size="34" rounded="lg" color="#f5f7fb">
-                  <v-img v-if="item.logo || item.image" :src="item.logo || item.image" cover />
+                  <v-img
+                    v-if="item.logo || item.image || item.photo"
+                    :src="item.logo || item.image || item.photo"
+                    cover
+                  />
                   <v-icon v-else icon="mdi-image-outline" size="16" color="#ccc" />
                 </v-avatar>
               </template>
@@ -338,6 +342,14 @@
                     variant="text"
                     color="#C62828"
                     @click="openDeleteDialog(item)"
+                  />
+                  <v-btn
+                    v-if="activeSection === 'mentors' && item.status !== 'archived'"
+                    icon="mdi-archive-outline"
+                    size="x-small"
+                    variant="text"
+                    color="#6A1B9A"
+                    @click="archiveMentor(item)"
                   />
                 </div>
               </template>
@@ -2067,6 +2079,72 @@
               </v-row>
             </template>
 
+            <!-- MENTORS FIELDS -->
+            <template v-else-if="activeSection === 'mentors'">
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Mentor Name *</div>
+                  <v-text-field
+                    v-model="form.name"
+                    placeholder="e.g. Dr. Maria Santos"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Role / Specialization *</div>
+                  <v-text-field
+                    v-model="form.role"
+                    placeholder="e.g. AI & Deep Tech"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Photo URL *</div>
+                  <v-text-field
+                    v-model="form.photo"
+                    placeholder="https://..."
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">
+                    Expertise Tags <span class="hint-text">(comma-separated)</span>
+                  </div>
+                  <v-text-field
+                    v-model="form.expertise_raw"
+                    placeholder="e.g. Machine Learning, NLP"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['active', 'draft', 'archived']"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+              </v-row>
+            </template>
+
             <v-divider class="my-5" />
             <div class="d-flex justify-end" style="gap: 10px">
               <v-btn variant="outlined" rounded="lg" @click="formDialog = false">Cancel</v-btn>
@@ -2225,11 +2303,13 @@ const logoutDialog = ref(false)
 const incubateesTable = useAdminTable('incubatees')
 const newsTable = useAdminTable('news')
 const eventsTable = useAdminTable('events')
+const mentorsTable = useAdminTable('mentors')
 
 const tableMap = {
   incubatees: incubateesTable,
   news: newsTable,
   events: eventsTable,
+  mentors: mentorsTable,
 }
 const activeTable = computed(() => tableMap[activeSection.value] || incubateesTable)
 
@@ -2286,6 +2366,15 @@ const categories = [
     btnColor: 'warning',
     desc: 'Create events and assign them to the correct TBI portal for display.',
   },
+  {
+    id: 'mentors',
+    name: 'Mentors',
+    singular: 'Mentor',
+    icon: 'mdi-account-tie-outline',
+    color: '#6A1B9A',
+    btnColor: 'secondary',
+    desc: 'Add, edit, archive, and delete mentor profiles for each TBI portal.',
+  },
 ]
 
 // ── Computed active category meta ─────────────────────────────────────────────
@@ -2335,6 +2424,14 @@ const dashStats = computed(() => [
     iconBg: '#EDE7F6',
     section: null,
   },
+  {
+    label: 'Active Mentors',
+    value: mentorsTable.records.value.filter((m) => m.status === 'active').length || '—',
+    icon: 'mdi-account-tie-outline',
+    color: '#6A1B9A',
+    iconBg: '#F3E5F5',
+    section: 'mentors',
+  },
 ])
 
 const todayLabel = computed(() =>
@@ -2354,6 +2451,7 @@ const statusFilter = ref('All')
 const activeStatusItems = computed(() => {
   if (activeSection.value === 'events') return ['All', 'upcoming', 'past', 'draft']
   if (activeSection.value === 'incubatees') return ['All', 'active', 'draft', 'graduated']
+  if (activeSection.value === 'mentors') return ['All', 'active', 'draft', 'archived']
   return ['All', 'active', 'draft']
 })
 
@@ -2384,6 +2482,15 @@ const activeHeaders = computed(() => {
       { title: 'Category', key: 'category', sortable: true },
       { title: 'Date', key: 'date', sortable: true },
       { title: 'Author', key: 'author', sortable: false },
+      { title: 'Status', key: 'status', sortable: true },
+      { title: 'Actions', key: 'actions', sortable: false },
+    ]
+  if (activeSection.value === 'mentors')
+    return [
+      { title: '', key: 'thumb', sortable: false, width: '52px' },
+      { title: 'Mentor Name', key: 'name', sortable: true },
+      { title: 'TBI', key: 'tbi_id', sortable: true },
+      { title: 'Role', key: 'role', sortable: true },
       { title: 'Status', key: 'status', sortable: true },
       { title: 'Actions', key: 'actions', sortable: false },
     ]
@@ -2457,6 +2564,7 @@ const statusChipColor = (s) =>
     graduated: 'info',
     upcoming: 'success',
     past: 'secondary',
+    archived: 'secondary',
   })[s] || 'default'
 
 // ── Section switching ─────────────────────────────────────────────────────────
@@ -2917,6 +3025,11 @@ const blankForm = () => ({
   eventImagePreview: null,
   event_gallery: [],
   tags_raw_event: '',
+
+  // mentors
+  role: '',
+  photo: '',
+  expertise_raw: '',
 })
 
 const form = reactive(blankForm())
@@ -3027,6 +3140,7 @@ function openAddDialog() {
   eventDatePicker.value = null
   if (tbiFilter.value) form.tbi_id = tbiFilter.value
   if (activeSection.value === 'events') form.status = 'upcoming'
+  if (activeSection.value === 'mentors') form.status = 'active'
   formDialog.value = true
 }
 
@@ -3052,6 +3166,9 @@ function openEditDialog(item) {
     eventImagePreview: null,
     event_gallery:
       activeSection.value === 'events' ? normalizeDetailGalleryItems(item.gallery_items) : [],
+    role: item.role || '',
+    photo: item.photo || '',
+    expertise_raw: Array.isArray(item.expertise) ? item.expertise.join(', ') : '',
     descriptionLong: item.description_long || '',
     descriptionExtra: item.description_extra || '',
     yearFounded: item.year_founded || '',
@@ -3100,6 +3217,23 @@ function openDeleteDialog(item) {
 
 // ── Build Supabase payload ────────────────────────────────────────────────────
 function buildPayload() {
+  if (activeSection.value === 'mentors') {
+    const expertise = form.expertise_raw
+      ? form.expertise_raw
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : []
+    return {
+      tbi_id: form.tbi_id,
+      name: form.name,
+      role: form.role,
+      photo: form.photo,
+      expertise,
+      status: form.status || 'active',
+    }
+  }
+
   if (activeSection.value === 'incubatees') {
     const tags = form.tags_raw
       ? form.tags_raw
@@ -3257,6 +3391,13 @@ async function confirmDelete() {
   if (result.success) deleteDialog.value = false
 }
 
+async function archiveMentor(item) {
+  const result = await mentorsTable.updateRecord(item.id, { status: 'archived' })
+  if (!result.success) {
+    formError.value = result.error?.message || 'Failed to archive mentor.'
+  }
+}
+
 // ── Logout ────────────────────────────────────────────────────────────────────
 async function confirmLogout() {
   try {
@@ -3274,7 +3415,12 @@ onMounted(async () => {
     data: { user },
   } = await auth.getCurrentUser()
   currentUser.value = user
-  await Promise.all([incubateesTable.fetchAll(), newsTable.fetchAll(), eventsTable.fetchAll()])
+  await Promise.all([
+    incubateesTable.fetchAll(),
+    newsTable.fetchAll(),
+    eventsTable.fetchAll(),
+    mentorsTable.fetchAll(),
+  ])
 })
 </script>
 
