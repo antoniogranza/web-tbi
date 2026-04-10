@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- ===================== NAVIGATION BAR ===================== -->
-    <v-app-bar flat color="white" border="b" height="64">
+    <v-app-bar flat color="white" border="b" height="64" style="transition: box-shadow 0.3s">
       <v-container class="d-flex align-center pa-0" fluid>
         <div class="d-flex align-center ml-4 ml-md-8">
           <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
@@ -13,26 +13,69 @@
 
         <v-spacer />
 
-        <div class="d-none d-md-flex align-center mr-6">
+        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
           <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
           <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link nav-link--active" to="/news-navigatu">News</v-btn>
+          <v-btn variant="text" class="nav-link nav-link--active" to="/coworking-navigatu"
+            >Coworking</v-btn
+          >
+          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
           <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <v-btn variant="text" icon="mdi-magnify" size="small" />
+          <v-btn variant="text" icon size="small">
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn>
+          <button class="nav-apply-btn ml-2">Apply Now</button>
         </div>
 
-        <v-app-bar-nav-icon class="d-flex d-md-none" @click="drawer = !drawer" />
+        <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
       </v-container>
     </v-app-bar>
 
     <!-- Mobile Drawer -->
-    <v-navigation-drawer v-model="drawer" temporary location="right">
-      <v-list nav>
-        <v-list-item title="About" prepend-icon="mdi-information-outline" />
-        <v-list-item title="Services" prepend-icon="mdi-briefcase-outline" />
-        <v-list-item title="Coworking" prepend-icon="mdi-office-building-outline" />
+    <v-navigation-drawer v-model="drawer" temporary location="right" width="260">
+      <v-list nav class="pt-4">
+        <v-list-item
+          title="About"
+          prepend-icon="mdi-information-outline"
+          rounded="lg"
+          class="mb-1"
+          to="/about-navigatu"
+        />
+        <v-list-item
+          title="Services"
+          prepend-icon="mdi-briefcase-outline"
+          rounded="lg"
+          class="mb-1"
+          to="/services-navigatu"
+        />
+        <v-list-item
+          title="Coworking"
+          prepend-icon="mdi-office-building-outline"
+          rounded="lg"
+          class="mb-1"
+          to="/coworking-navigatu"
+          active
+        />
+        <v-list-item
+          title="News"
+          prepend-icon="mdi-newspaper-variant-outline"
+          rounded="lg"
+          class="mb-1"
+          to="/news-navigatu"
+        />
+        <v-list-item
+          title="Events"
+          prepend-icon="mdi-calendar-outline"
+          rounded="lg"
+          class="mb-1"
+          to="/events-navigatu"
+        />
       </v-list>
+      <template #append>
+        <div class="pa-4">
+          <button class="nav-apply-btn" style="width: 100%">Apply Now</button>
+        </div>
+      </template>
     </v-navigation-drawer>
 
     <!-- ===================== MAIN CONTENT ===================== -->
@@ -198,15 +241,53 @@
       </v-container>
     </v-main>
 
-    <!-- ===================== FOOTER ===================== -->
-    <v-footer color="grey-darken-4" class="pa-0">
-      <v-container class="py-8 text-center">
-        <div class="footer-logo mb-1">NAVIGATÚ</div>
-        <p class="footer-tagline">Technology Business Incubator</p>
-        <v-divider color="white" opacity="0.15" class="my-4" />
-        <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
+    <!-- FOOTER -->
+    <footer class="footer-section">
+      <v-container class="py-12">
+        <v-row>
+          <v-col cols="12" md="4" class="mb-8">
+            <div class="footer-brand mb-1">NAVIGATÚ</div>
+            <p class="footer-tag mb-4">Technology Business Incubator</p>
+            <p class="footer-desc">
+              Empowering the next generation of Filipino tech founders through mentorship,
+              innovation, and community.
+            </p>
+            <div class="d-flex" style="gap: 12px">
+              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
+              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
+              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
+            </div>
+          </v-col>
+          <v-col cols="6" md="2" class="mb-8">
+            <div class="footer-col-title mb-4">Programs</div>
+            <div class="footer-link mb-3">Incubation</div>
+            <div class="footer-link mb-3">Mentorship</div>
+            <div class="footer-link mb-3">Funding Access</div>
+          </v-col>
+          <v-col cols="6" md="2" class="mb-8">
+            <div class="footer-col-title mb-4">Company</div>
+            <div class="footer-link mb-3">About</div>
+            <div class="footer-link mb-3">Services</div>
+            <div class="footer-link mb-3">Events</div>
+          </v-col>
+          <v-col cols="12" md="4" class="mb-8">
+            <div class="footer-col-title mb-4">Newsletter</div>
+            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
+            <div class="newsletter">
+              <input class="nl-input" placeholder="your@email.com" />
+              <button class="nl-btn">
+                <v-icon size="17">mdi-send</v-icon>
+              </button>
+            </div>
+          </v-col>
+        </v-row>
+        <div class="footer-hr" />
+        <div class="d-flex flex-wrap justify-space-between align-center pt-6" style="gap: 8px">
+          <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
+          <p class="footer-copy">Empowering startups. Building futures.</p>
+        </div>
       </v-container>
-    </v-footer>
+    </footer>
   </v-app>
 </template>
 
@@ -306,6 +387,28 @@ const testimonials = ref([
   color: #333 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
+}
+
+.nav-link--active {
+  color: #1565c0 !important;
+}
+
+.nav-apply-btn {
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 9px 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.35);
+  transition: all 0.2s;
+}
+
+.nav-apply-btn:hover {
+  box-shadow: 0 6px 22px rgba(21, 101, 192, 0.5);
+  transform: translateY(-1px);
 }
 
 /* ── Shared ──────────────────────────────────────────────────────────────────── */
@@ -587,23 +690,118 @@ const testimonials = ref([
   color: #888;
 }
 
-/* ── FOOTER ──────────────────────────────────────────────────────────────────── */
-.footer-logo {
+/* ── FOOTER ── */
+.footer-section {
+  background: #06080f;
+}
+
+.footer-brand {
   font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #fff;
   letter-spacing: 2px;
+  font-style: italic;
 }
-.footer-tagline {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 1px;
+
+.footer-tag {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   margin: 0;
 }
+
+.footer-desc {
+  font-size: 0.77rem;
+  color: rgba(255, 255, 255, 0.38);
+  line-height: 1.8;
+}
+
+.footer-col-title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.32);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.footer-link {
+  font-size: 0.79rem;
+  color: rgba(255, 255, 255, 0.48);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.footer-link:hover {
+  color: #fff;
+}
+
+.social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.social-btn:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: #fff;
+}
+
+.footer-hr {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin-top: 32px;
+}
+
 .footer-copy {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.22);
   margin: 0;
+}
+
+.newsletter {
+  display: flex;
+  gap: 8px;
+}
+
+.nl-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+}
+
+.nl-input::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.nl-input:focus {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.nl-btn {
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  width: 42px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
