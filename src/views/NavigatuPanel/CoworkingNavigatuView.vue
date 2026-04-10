@@ -87,45 +87,74 @@
     <!-- ===================== MAIN CONTENT ===================== -->
     <v-main>
       <!-- ===== HERO SECTION ===== -->
-      <v-container fluid class="hero-section py-10 py-md-16">
-        <v-container>
+      <section class="hero-section">
+        <div class="hero-noise" />
+        <div class="hero-grid-pattern" />
+        <div class="hero-glow-left" />
+        <div class="hero-glow-right" />
+
+        <v-container class="hero-inner">
           <v-row align="center" justify="center">
             <!-- Left: Text -->
-            <v-col cols="12" md="5">
-              <p class="hero-eyebrow mb-1">
-                NAVIGATÚ <span class="hero-eyebrow-italic">Facility</span>
+            <v-col cols="12" md="5" class="hero-left-col">
+              <div class="hero-badge mb-5">
+                <span class="hero-badge-dot" />
+                <span>Butuan City, Caraga Region</span>
+              </div>
+              <h1 class="hero-title">
+                NAVIGATÚ
+                <span class="hero-title-em">Facility</span>
+              </h1>
+              <p class="hero-body mt-4 mb-8">
+                The Innovation and Technopreneurship Hub (iTecH) of Caraga State University — where
+                ideas become ventures and ventures become legacies.
               </p>
-              <p class="hero-body mt-4 mb-6">
-                The Innovation and Technopreneurship Hub (iTecH) of Caraga State University
-              </p>
-              <v-btn
-                variant="outlined"
-                color="primary"
-                rounded="lg"
-                append-icon="mdi-arrow-right"
-                class="hero-btn"
-              >
-                Get Started
-              </v-btn>
+              <div class="d-flex flex-wrap" style="gap: 14px">
+                <button class="btn-primary-hero">
+                  <v-icon size="16" class="mr-2">mdi-rocket-launch-outline</v-icon>
+                  Get Started
+                </button>
+                <button class="btn-ghost-hero">
+                  <v-icon size="16" class="mr-2">mdi-play-circle-outline</v-icon>
+                  Take a Tour
+                </button>
+              </div>
+
+              <!-- Quick stats row -->
+              <div class="hero-stats-row mt-10">
+                <div v-for="stat in heroStats" :key="stat.label" class="hero-stat-item">
+                  <div class="hero-stat-num">{{ stat.num }}</div>
+                  <div class="hero-stat-label">{{ stat.label }}</div>
+                </div>
+              </div>
             </v-col>
 
             <!-- Right: Image collage -->
-            <!-- FIX: All heights are explicit pixel values, never "100%" -->
             <v-col cols="12" md="7">
               <div class="hero-collage">
-                <!-- Main large image -->
                 <div class="hero-collage-main">
                   <v-img
                     src="/images/collage/CollageImg1.jpg"
-                    height="260"
+                    height="280"
                     cover
-                    rounded="lg"
                     class="collage-main-img"
                   />
+                  <div class="collage-live-badge">
+                    <span class="badge-dot-green" />
+                    Live Workspace
+                  </div>
                 </div>
-
-                <!-- Two stacked small images -->
                 <div class="hero-collage-grid">
+                  <div class="collage-stat-card">
+                    <div class="csc-num">60+</div>
+                    <div class="csc-label">Startups Launched</div>
+                    <v-icon
+                      icon="mdi-rocket-launch"
+                      size="28"
+                      color="rgba(255,255,255,0.2)"
+                      class="csc-deco"
+                    />
+                  </div>
                   <v-img
                     src="/images/collage/CollageImg2.JPG"
                     height="125"
@@ -135,7 +164,7 @@
                   />
                   <v-img
                     src="/images/collage/CollageImg3.JPG"
-                    height="125"
+                    height="105"
                     cover
                     rounded="lg"
                     class="collage-sm-img"
@@ -145,106 +174,371 @@
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </section>
+
+      <!-- ===== AMBIENT DIVIDER ===== -->
+      <div class="ambient-divider">
+        <div v-for="tag in ambientTags" :key="tag" class="ambient-tag">{{ tag }}</div>
+      </div>
 
       <!-- ===== FACILITY OFFERED SECTION ===== -->
-      <v-container fluid class="facility-section py-14">
+      <section class="facility-section py-16">
         <v-container>
-          <h2 class="section-title text-center">Facility Offered</h2>
-          <p class="section-subtitle text-center mb-12">
-            Our facility to offer to activities such as
-            <strong>Pitching Competition</strong>, <strong>Startup Incubation</strong>, and
-            <strong>Workshop</strong>
-          </p>
+          <div class="text-center mb-4">
+            <div class="eyebrow-label">Our Spaces</div>
+            <h2 class="section-title">Facility <span class="section-title-em">Offered</span></h2>
+            <p class="section-sub mt-3">
+              Purpose-built spaces for <strong>Pitching Competitions</strong>,
+              <strong>Startup Incubation</strong>, and <strong>Workshops</strong>
+            </p>
+          </div>
+
+          <!-- Tab filter -->
+          <div class="facility-filter-row mb-10">
+            <button
+              v-for="f in facilityFilters"
+              :key="f.key"
+              class="fac-filter-pill"
+              :class="{ 'fac-filter-pill--on': activeFacilityFilter === f.key }"
+              @click="activeFacilityFilter = f.key"
+            >
+              <v-icon :icon="f.icon" size="14" class="mr-1" />
+              {{ f.label }}
+            </button>
+          </div>
 
           <v-row>
             <v-col
-              v-for="facility in facilities"
+              v-for="(facility, idx) in filteredFacilities"
               :key="facility.name"
               cols="12"
               sm="6"
-              class="mb-2"
+              class="mb-4"
             >
-              <!-- FIX: facility-card wraps v-img directly; overlay sits on top via position:absolute -->
               <div
                 class="facility-card"
-                @mouseenter="facility.hovered = true"
-                @mouseleave="facility.hovered = false"
+                :class="{ 'facility-card--active': activeFacility === idx }"
+                @mouseenter="activeFacility = idx"
+                @mouseleave="activeFacility = null"
+                @click="openFacilityDetail(facility)"
               >
-                <!-- Image — explicit 280px height -->
-                <v-img :src="facility.photo" height="280" cover class="facility-base-img" />
+                <!-- Image -->
+                <v-img :src="facility.photo" height="300" cover class="facility-base-img" />
+
+                <!-- Gradient overlay always present -->
+                <div class="facility-gradient" />
 
                 <!-- Hover overlay -->
                 <div
                   class="facility-overlay"
-                  :class="{ 'facility-overlay--visible': facility.hovered }"
+                  :class="{ 'facility-overlay--visible': activeFacility === idx }"
                 >
-                  <v-icon :icon="facility.icon" size="36" color="white" class="mb-2" />
+                  <div class="fac-overlay-icon">
+                    <v-icon :icon="facility.icon" size="28" color="white" />
+                  </div>
                   <h3 class="facility-overlay-name">{{ facility.name }}</h3>
                   <p class="facility-overlay-desc">{{ facility.desc }}</p>
+                  <div class="fac-chips mt-3">
+                    <span v-for="tag in facility.tags" :key="tag" class="fac-chip">{{ tag }}</span>
+                  </div>
+                  <button class="fac-overlay-btn mt-4">
+                    View Details <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
+                  </button>
                 </div>
 
-                <!-- Bottom pill label — always visible, hides on hover -->
-                <div class="facility-label" :class="{ 'facility-label--hidden': facility.hovered }">
-                  <v-icon :icon="facility.icon" size="16" color="white" class="mr-1" />
-                  {{ facility.name }}
+                <!-- Bottom label always visible -->
+                <div
+                  class="facility-label"
+                  :class="{ 'facility-label--hidden': activeFacility === idx }"
+                >
+                  <div class="fac-label-icon">
+                    <v-icon :icon="facility.icon" size="14" color="white" />
+                  </div>
+                  <span>{{ facility.name }}</span>
+                  <span class="fac-label-cap ml-2">{{ facility.capacity }}</span>
                 </div>
               </div>
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </section>
 
-      <!-- ===== STAFF TESTIMONIALS CAROUSEL ===== -->
-      <v-container fluid class="testimonials-section py-14">
-        <v-container>
-          <h2 class="section-title text-center">
-            <span class="testimonial-title-bold">NAVIGATÚ</span>
-            <span class="testimonial-title-italic"> Staff Testimonials</span>
-          </h2>
+      <!-- Facility Detail Dialog -->
+      <v-dialog v-model="facilityDialog" max-width="580" transition="dialog-bottom-transition">
+        <v-card
+          v-if="activeFacilityDetail"
+          rounded="xl"
+          class="overflow-hidden facility-dialog-card"
+        >
+          <v-img :src="activeFacilityDetail.photo" height="220" cover>
+            <div class="fac-dialog-overlay pa-6 d-flex align-end" style="height: 100%">
+              <div>
+                <div class="fac-dialog-badge mb-2">
+                  <v-icon :icon="activeFacilityDetail.icon" size="14" class="mr-1" color="white" />
+                  {{ activeFacilityDetail.capacity }}
+                </div>
+                <h3 class="fac-dialog-title">{{ activeFacilityDetail.name }}</h3>
+              </div>
+              <v-spacer />
+              <v-btn icon variant="text" color="white" @click="facilityDialog = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </div>
+          </v-img>
+          <div class="pa-6">
+            <p class="fac-dialog-desc mb-5">{{ activeFacilityDetail.fullDesc }}</p>
+            <v-divider class="mb-4" />
+            <div class="fac-dialog-features">
+              <div v-for="feat in activeFacilityDetail.features" :key="feat" class="fac-feat-item">
+                <v-icon icon="mdi-check-circle" size="16" color="#1565C0" class="mr-2" />
+                <span>{{ feat }}</span>
+              </div>
+            </div>
+            <button class="btn-primary-hero mt-6" style="width: 100%; justify-content: center">
+              Book This Space
+            </button>
+          </div>
+        </v-card>
+      </v-dialog>
 
-          <v-row justify="center" class="mt-10 pb-12">
-            <v-col cols="12" md="10">
-              <v-carousel
-                v-model="activeTestimonial"
-                hide-delimiter-background
-                :show-arrows="false"
-                delimiter-icon="mdi-circle"
-                height="auto"
-                class="testimonial-carousel"
+      <!-- ===== COWORKING PERKS ===== -->
+      <section class="perks-section py-16">
+        <div class="perks-bg-orb perks-orb-1" />
+        <div class="perks-bg-orb perks-orb-2" />
+        <v-container class="position-relative">
+          <div class="text-center mb-14">
+            <div class="eyebrow-label" style="color: #f97316">Why Choose Us</div>
+            <h2 class="section-title" style="color: #fff">
+              Why Work at <span class="section-title-em" style="color: #f97316">iTecH</span>
+            </h2>
+            <p class="section-sub mt-3" style="color: rgba(255, 255, 255, 0.45)">
+              Everything you need to build, collaborate, and grow
+            </p>
+          </div>
+          <v-row>
+            <v-col v-for="(perk, i) in perks" :key="perk.title" cols="12" sm="6" md="3">
+              <div
+                class="perk-card"
+                :class="{ 'perk-card--open': activePerk === i }"
+                @click="activePerk = activePerk === i ? null : i"
               >
-                <v-carousel-item v-for="(testimonial, i) in testimonials" :key="i">
-                  <v-card class="testimonial-card" flat rounded="xl">
-                    <v-row no-gutters align="stretch">
-                      <!-- Left: Photo — explicit 280px height -->
-                      <v-col cols="12" sm="4">
-                        <v-img
-                          :src="testimonial.photo"
-                          height="280"
-                          cover
-                          class="testimonial-photo-img"
-                        />
-                      </v-col>
-
-                      <!-- Right: Quote content -->
-                      <v-col cols="12" sm="8">
-                        <div class="testimonial-content pa-8 pa-md-10">
-                          <div class="quote-mark">"</div>
-                          <p class="testimonial-text mt-2">{{ testimonial.quote }}</p>
-                          <div class="testimonial-author mt-6">
-                            <span class="author-name">{{ testimonial.name }}</span>
-                            <span class="author-role">{{ testimonial.role }}</span>
-                          </div>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </v-carousel-item>
-              </v-carousel>
+                <div class="perk-icon-wrap" :style="{ background: perk.iconBg }">
+                  <v-icon :icon="perk.icon" :color="perk.color" size="22" />
+                </div>
+                <h4 class="perk-title mt-4 mb-2">{{ perk.title }}</h4>
+                <p class="perk-desc">{{ perk.desc }}</p>
+                <transition name="fx">
+                  <div v-if="activePerk === i" class="perk-detail mt-3">
+                    <div class="perk-divider mb-3" />
+                    <p class="perk-detail-text">{{ perk.detail }}</p>
+                  </div>
+                </transition>
+                <div class="perk-card-footer mt-4">
+                  <span class="perk-value" :style="{ color: perk.color }">{{ perk.value }}</span>
+                  <v-icon
+                    :icon="activePerk === i ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                    size="16"
+                    color="rgba(255,255,255,0.3)"
+                  />
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
-      </v-container>
+      </section>
+
+      <!-- ===== AVAILABILITY / BOOKING CTA ===== -->
+      <section class="booking-section py-14">
+        <v-container>
+          <v-row align="center" justify="center">
+            <v-col cols="12" md="8">
+              <div class="booking-card">
+                <div class="booking-left">
+                  <div class="booking-live-row mb-3">
+                    <span class="booking-live-dot" />
+                    <span class="booking-live-text">Available Now</span>
+                  </div>
+                  <h3 class="booking-title">Reserve Your Spot at iTecH</h3>
+                  <p class="booking-sub mt-2 mb-6">
+                    Flexible plans for individuals, startups, and teams. No long-term lock-in
+                    required.
+                  </p>
+                  <div class="booking-plans">
+                    <div
+                      v-for="plan in bookingPlans"
+                      :key="plan.name"
+                      class="booking-plan"
+                      :class="{ 'booking-plan--sel': selectedPlan === plan.name }"
+                      @click="selectedPlan = plan.name"
+                    >
+                      <div class="bp-radio">
+                        <div class="bp-radio-inner" v-if="selectedPlan === plan.name" />
+                      </div>
+                      <div class="bp-info">
+                        <div class="bp-name">{{ plan.name }}</div>
+                        <div class="bp-sub">{{ plan.desc }}</div>
+                      </div>
+                      <div class="bp-price">{{ plan.price }}</div>
+                    </div>
+                  </div>
+                  <button class="btn-primary-hero mt-6">
+                    <v-icon size="16" class="mr-2">mdi-calendar-check-outline</v-icon>
+                    Book a Tour
+                  </button>
+                </div>
+                <div class="booking-right d-none d-md-flex">
+                  <div class="booking-img-wrap">
+                    <v-img
+                      src="/images/facilities/FacilityA.JPG"
+                      height="340"
+                      cover
+                      class="booking-img"
+                    />
+                    <div class="booking-img-badge">
+                      <v-icon icon="mdi-shield-check" size="14" color="#1565C0" class="mr-1" />
+                      Verified Facility
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </section>
+
+      <!-- ===== STAFF TESTIMONIALS ===== -->
+      <section class="testimonials-section py-16">
+        <v-container>
+          <div class="text-center mb-4">
+            <div class="eyebrow-label" style="color: #7c3aed">People & Culture</div>
+            <h2 class="section-title">
+              <span class="testimonial-bold">NAVIGATÚ</span>
+              <span class="testimonial-italic"> Staff Voices</span>
+            </h2>
+            <p class="section-sub mt-3">Stories from the people who make iTecH extraordinary</p>
+          </div>
+
+          <!-- Testimonial tabs -->
+          <div class="testi-selector mb-10">
+            <div
+              v-for="(t, i) in testimonials"
+              :key="i"
+              class="testi-avatar-btn"
+              :class="{ 'testi-avatar-btn--active': activeTestimonial === i }"
+              @click="activeTestimonial = i"
+            >
+              <v-img :src="t.photo" width="52" height="52" cover rounded="circle" />
+              <span class="testi-avatar-name">{{ t.name }}</span>
+            </div>
+          </div>
+
+          <v-row justify="center">
+            <v-col cols="12" md="10">
+              <transition name="testi-fade" mode="out-in">
+                <div :key="activeTestimonial" class="testimonial-panel">
+                  <v-row no-gutters align="stretch">
+                    <v-col cols="12" sm="4">
+                      <div class="testi-photo-col">
+                        <v-img
+                          :src="testimonials[activeTestimonial].photo"
+                          height="300"
+                          cover
+                          class="testi-photo"
+                        />
+                        <div class="testi-photo-overlay" />
+                        <div class="testi-role-badge">
+                          <v-icon icon="mdi-briefcase-outline" size="12" class="mr-1" />
+                          {{ testimonials[activeTestimonial].role }}
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" sm="8">
+                      <div class="testi-content pa-8 pa-md-10">
+                        <div class="testi-quote-mark">"</div>
+                        <p class="testi-text mt-2">{{ testimonials[activeTestimonial].quote }}</p>
+                        <div class="testi-author mt-6">
+                          <span class="author-name">{{
+                            testimonials[activeTestimonial].name
+                          }}</span>
+                          <span class="author-role">{{
+                            testimonials[activeTestimonial].role
+                          }}</span>
+                        </div>
+                        <div class="testi-stars mt-4">
+                          <v-icon
+                            v-for="n in 5"
+                            :key="n"
+                            icon="mdi-star"
+                            size="14"
+                            color="#f59e0b"
+                          />
+                        </div>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </div>
+              </transition>
+            </v-col>
+          </v-row>
+
+          <!-- Nav dots -->
+          <div class="testi-dots mt-8">
+            <button
+              v-for="(t, i) in testimonials"
+              :key="i"
+              class="testi-dot"
+              :class="{ 'testi-dot--active': activeTestimonial === i }"
+              @click="activeTestimonial = i"
+            />
+          </div>
+        </v-container>
+      </section>
+
+      <!-- ===== GALLERY STRIP ===== -->
+      <section class="gallery-section py-14">
+        <v-container>
+          <div class="text-center mb-10">
+            <div class="eyebrow-label">Inside iTecH</div>
+            <h2 class="section-title">
+              A Glimpse of <span class="section-title-em">Our Space</span>
+            </h2>
+          </div>
+          <div class="gallery-grid">
+            <div v-for="(img, i) in galleryImages" :key="i" class="gallery-item" :class="img.span">
+              <v-img :src="img.src" cover class="gallery-img" :height="img.h" />
+              <div class="gallery-hover">
+                <v-icon icon="mdi-magnify-plus-outline" size="28" color="white" />
+              </div>
+            </div>
+          </div>
+        </v-container>
+      </section>
+
+      <!-- ===== CTA BANNER ===== -->
+      <section class="cta-section">
+        <div class="cta-noise" />
+        <div class="cta-glow" />
+        <v-container class="text-center position-relative py-16">
+          <div class="cta-icon-ring mb-6">
+            <v-icon icon="mdi-office-building-outline" size="32" color="white" />
+          </div>
+          <h2 class="cta-title mb-4">Ready to Work from iTecH?</h2>
+          <p class="cta-sub mb-10 mx-auto">
+            Join a growing community of founders, researchers, and innovators at Caraga's premier
+            tech hub.
+          </p>
+          <div class="d-flex justify-center flex-wrap" style="gap: 16px">
+            <button class="btn-cta-solid">
+              <v-icon size="16" class="mr-2">mdi-calendar-plus-outline</v-icon>
+              Book a Tour
+            </button>
+            <button class="btn-cta-ghost">
+              <v-icon size="16" class="mr-2">mdi-phone-outline</v-icon>
+              Contact Us
+            </button>
+          </div>
+        </v-container>
+      </section>
     </v-main>
 
     <!-- FOOTER -->
@@ -298,84 +592,232 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-// ── Mobile drawer ────────────────────────────────────────────────────────────
 const drawer = ref(false)
 const navSearchQuery = ref('')
-
-// ── Active testimonial index ─────────────────────────────────────────────────
 const activeTestimonial = ref(0)
+const activeFacility = ref(null)
+const activeFacilityFilter = ref('all')
+const activePerk = ref(null)
+const facilityDialog = ref(false)
+const activeFacilityDetail = ref(null)
+const selectedPlan = ref('Day Pass')
 
-// ── Facility cards ───────────────────────────────────────────────────────────
-// FIX: hovered is a plain boolean inside a ref([]) array.
-// @mouseenter/@mouseleave toggle it directly on each object.
+const heroStats = ref([
+  { num: '60+', label: 'Startups' },
+  { num: '₱80M+', label: 'Funds Raised' },
+  { num: '15+', label: 'Mentors' },
+  { num: '95%', label: 'Success Rate' },
+])
+
+const ambientTags = [
+  'Co-Working',
+  'Innovation Lab',
+  'Startup Incubation',
+  'Pitching Events',
+  'Design Sprints',
+  'Tech Mentorship',
+  'Open Collaboration',
+  'iTecH Hub',
+  'Caraga Region',
+  'Demo Days',
+  'CSU Research',
+  'Growth Programs',
+]
+
+const facilityFilters = [
+  { key: 'all', label: 'All Spaces', icon: 'mdi-apps' },
+  { key: 'work', label: 'Workspaces', icon: 'mdi-laptop' },
+  { key: 'lounge', label: 'Lounge', icon: 'mdi-sofa-outline' },
+  { key: 'lab', label: 'Labs', icon: 'mdi-test-tube' },
+]
+
 const facilities = ref([
   {
     name: 'Co-Working Space',
     desc: 'A vibrant open-floor workspace designed to foster collaboration and creativity among startup teams and entrepreneurs.',
+    fullDesc:
+      'Our flagship co-working space features ergonomic workstations, standing desks, high-speed fiber internet, and multiple collaboration zones. The open-floor design encourages spontaneous connections between founders, developers, and designers working on the next big idea.',
     icon: 'mdi-laptop',
     photo: '/images/facilities/FacilityA.JPG',
-    hovered: false,
+    capacity: 'Up to 40 seats',
+    category: 'work',
+    tags: ['High-Speed WiFi', 'Standing Desks', '24/7 Access'],
+    features: [
+      'High-speed fiber internet (1 Gbps)',
+      'Ergonomic chairs & standing desks',
+      'Dedicated lockers',
+      'Printing & scanning',
+      'Coffee & refreshments',
+      'Air conditioning',
+    ],
   },
   {
     name: 'Lounge & Breakout Area',
     desc: 'Comfortable seating and relaxed zones where teams can brainstorm, hold informal discussions, and recharge.',
+    fullDesc:
+      "The lounge is the social heartbeat of iTecH. With curated reading material, bean bags, modular sofas, and a refreshment station, it's the perfect spot to decompress, ideate, or host informal investor chats.",
     icon: 'mdi-sofa-outline',
     photo: '/images/facilities/FacilityB.jpg',
-    hovered: false,
+    capacity: 'Up to 20 guests',
+    category: 'lounge',
+    tags: ['Relaxed Zones', 'Refreshments', 'Informal Meetings'],
+    features: [
+      'Modular seating arrangements',
+      'Snack & coffee bar',
+      'Ambient music system',
+      'Natural lighting',
+      'Whiteboards',
+      'TV screen for presentations',
+    ],
   },
   {
     name: 'Open Innovation Lab',
     desc: 'A fully-equipped lab for prototyping and development, complete with workstations, tools, and ping-pong for breaks.',
+    fullDesc:
+      'Where ideas meet execution. The Innovation Lab houses dedicated hardware prototyping stations, 3D printing access, IoT development kits, and dual-monitor workstations — everything a deep-tech startup needs to move from sketch to working prototype.',
     icon: 'mdi-test-tube',
     photo: '/images/facilities/FacilityC.jpg',
-    hovered: false,
+    capacity: '16 workstations',
+    category: 'lab',
+    tags: ['Prototyping', 'IoT Kits', 'Dual Monitors'],
+    features: [
+      'Dual-monitor developer setups',
+      '3D printing access',
+      'IoT development kits',
+      'Electronics workbench',
+      'Software licenses (Adobe, Figma, GitHub Pro)',
+      'Ping-pong table',
+    ],
   },
   {
     name: 'Inspiration Wall — iTecH',
     desc: 'The iconic "Embark on a Voyage of Innovation" mural — the heart and soul of the Navigatú spirit.',
+    fullDesc:
+      "More than a mural, the Inspiration Wall is iTecH's manifesto made visual. Founders, mentors, and visiting partners have left their mark here — post-its, signatures, milestones celebrated. It's a living artifact of every breakthrough made within these walls.",
     icon: 'mdi-wall',
     photo: '/images/facilities/FacilityD.png',
-    hovered: false,
+    capacity: 'Shared space',
+    category: 'lounge',
+    tags: ['Iconic Landmark', 'Photo Spot', 'Community'],
+    features: [
+      'Curated mural by local artists',
+      'Interactive milestone board',
+      "Founders' signature wall",
+      'Ideal photo backdrop',
+      'Vision & mission display',
+    ],
   },
 ])
 
-// ── Testimonials ─────────────────────────────────────────────────────────────
+const filteredFacilities = computed(() =>
+  activeFacilityFilter.value === 'all'
+    ? facilities.value
+    : facilities.value.filter((f) => f.category === activeFacilityFilter.value),
+)
+
+function openFacilityDetail(facility) {
+  activeFacilityDetail.value = facility
+  facilityDialog.value = true
+}
+
+const perks = ref([
+  {
+    title: 'Lightning-Fast WiFi',
+    desc: 'Symmetric 1 Gbps fiber for seamless video calls, cloud uploads, and dev work.',
+    detail:
+      'Our dedicated 1 Gbps symmetric fiber is shared across a managed network with QoS policies ensuring every seat gets consistent speeds — even during events.',
+    icon: 'mdi-wifi',
+    color: '#2563eb',
+    iconBg: 'rgba(37,99,235,0.15)',
+    value: '1 Gbps Fiber',
+  },
+  {
+    title: 'Flexible Hours',
+    desc: "24/7 access for members — work when you're most productive, day or night.",
+    detail:
+      'Key-card access for members provides entry anytime. The facility is staffed during business hours (8AM–6PM) and accessible via smart lock after hours.',
+    icon: 'mdi-clock-outline',
+    color: '#059669',
+    iconBg: 'rgba(5,150,105,0.15)',
+    value: '24/7 Access',
+  },
+  {
+    title: 'Expert Mentorship',
+    desc: 'Scheduled 1:1 sessions with industry mentors, investors, and technical advisors.',
+    detail:
+      'Members get 4 guaranteed mentorship hours per month, plus access to our mentor marketplace to request specialist sessions in legal, tech, finance, and growth.',
+    icon: 'mdi-account-group-outline',
+    color: '#7c3aed',
+    iconBg: 'rgba(124,58,237,0.15)',
+    value: '15+ Mentors',
+  },
+  {
+    title: 'Meeting & Event Rooms',
+    desc: 'Bookable private rooms for investor calls, team syncs, and workshop facilitation.',
+    detail:
+      'Two private meeting rooms (8-person and 4-person) plus a 50-person event hall — all bookable through the member portal with AV equipment included.',
+    icon: 'mdi-presentation',
+    color: '#ea580c',
+    iconBg: 'rgba(234,88,12,0.15)',
+    value: '3 Rooms',
+  },
+])
+
+const bookingPlans = ref([
+  { name: 'Day Pass', desc: 'Drop-in access for a single day', price: '₱299/day' },
+  { name: 'Monthly Hot Desk', desc: 'Flexible desk, unlimited access', price: '₱2,500/mo' },
+  { name: 'Dedicated Desk', desc: 'Your own permanent workstation', price: '₱4,500/mo' },
+  { name: 'Team Suite', desc: 'Private office for 3–6 members', price: '₱12,000/mo' },
+])
+
 const testimonials = ref([
   {
     quote:
-      'Working at Navigatu TBI provides a warm and inspiring atmosphere, enhanced by the open-space concept design, which truly elevates our productivity and creativity.',
+      'Working at Navigatu TBI provides a warm and inspiring atmosphere, enhanced by the open-space concept design, which truly elevates our productivity and creativity. Every morning I walk in feeling genuinely excited to build.',
     name: 'Riah',
     role: 'Director, TBI',
     photo: '/images/testimonials/TestimonialA.jpg',
   },
   {
     quote:
-      'Being part of Navigatú has transformed how I see entrepreneurship. The mentorship, the community, and the facilities here are second to none in the region.',
+      "Being part of Navigatú has transformed how I see entrepreneurship. The mentorship, the community, and the facilities here are second to none in the region. iTecH isn't just a workspace — it's a launchpad.",
     name: 'Marco',
     role: 'Program Manager, TBI',
     photo: '/images/testimonials/TestimonialB.png',
   },
   {
     quote:
-      'The energy inside iTecH is contagious. Every day I walk in, I am reminded of the mission we share — to cultivate the next generation of Filipino innovators.',
+      'The energy inside iTecH is contagious. Every day I walk in, I am reminded of the mission we share — to cultivate the next generation of Filipino innovators. The space makes that mission feel real and achievable.',
     name: 'Carla',
     role: 'Innovation Lead, TBI',
     photo: '/images/testimonials/TestimonialC.jpg',
   },
 ])
+
+const galleryImages = ref([
+  { src: '/images/facilities/FacilityA.JPG', span: 'gallery-wide', h: '260' },
+  { src: '/images/facilities/FacilityB.jpg', span: '', h: '260' },
+  { src: '/images/facilities/FacilityC.jpg', span: '', h: '260' },
+  { src: '/images/facilities/FacilityD.png', span: 'gallery-wide', h: '260' },
+  { src: '/images/collage/CollageImg1.jpg', span: '', h: '260' },
+  { src: '/images/collage/CollageImg2.JPG', span: '', h: '260' },
+])
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Sora:wght@300;400;500;600;700&display=swap');
 
-/* ── Global ──────────────────────────────────────────────────────────────────── */
+/* ── RESET / BASE ─────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
 .v-application {
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Sora', sans-serif !important;
 }
 
-/* ── Navbar ──────────────────────────────────────────────────────────────────── */
+/* ── NAVBAR (unchanged) ────────────────────────────────────────────── */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -395,13 +837,11 @@ const testimonials = ref([
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
-
 .nav-search-hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-
 .nav-search-field {
   width: 0;
   opacity: 0;
@@ -413,7 +853,6 @@ const testimonials = ref([
   transition: all 0.22s ease;
   pointer-events: none;
 }
-
 .nav-search-hover:hover .nav-search-field,
 .nav-search-field:focus {
   width: 170px;
@@ -421,11 +860,9 @@ const testimonials = ref([
   padding: 6px 12px;
   pointer-events: auto;
 }
-
 .nav-search-icon-btn {
   color: #3f4e63 !important;
 }
-
 .nav-apply-btn {
   background: linear-gradient(135deg, #1565c0, #2563eb);
   color: #fff;
@@ -438,211 +875,793 @@ const testimonials = ref([
   box-shadow: 0 4px 16px rgba(21, 101, 192, 0.35);
   transition: all 0.2s;
 }
-
 .nav-apply-btn:hover {
   box-shadow: 0 6px 22px rgba(21, 101, 192, 0.5);
   transform: translateY(-1px);
 }
 
-/* ── Shared ──────────────────────────────────────────────────────────────────── */
+/* ── SHARED HELPERS ───────────────────────────────────────────────── */
+.eyebrow-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #1565c0;
+  margin-bottom: 10px;
+}
 .section-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
-  font-weight: 900;
-  color: #5f5f5f;
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.18;
   margin-bottom: 6px;
 }
-.section-subtitle {
-  font-size: 0.88rem;
-  color: #888;
-  max-width: 560px;
+.section-title-em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #1565c0;
+}
+.section-sub {
+  font-size: 0.87rem;
+  color: #94a3b8;
+  line-height: 1.8;
+  max-width: 520px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* ── HERO ────────────────────────────────────────────────────────────────────── */
-.hero-section {
-  background: #ffffff;
+/* ── BUTTON SYSTEM ─────────────────────────────────────────────────── */
+.btn-primary-hero {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 30px;
+  cursor: pointer;
+  box-shadow: 0 6px 22px rgba(21, 101, 192, 0.38);
+  transition: all 0.22s;
+}
+.btn-primary-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(21, 101, 192, 0.52);
 }
 
-.hero-eyebrow {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 700;
-  color: #5f5f5f;
-  line-height: 1.2;
-  margin: 0;
-}
-.hero-eyebrow-italic {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
+.btn-ghost-hero {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: #1565c0;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
   font-weight: 600;
-  font-size: 1.1em;
+  border: 1.5px solid rgba(21, 101, 192, 0.4);
+  border-radius: 50px;
+  padding: 13px 30px;
+  cursor: pointer;
+  transition: all 0.22s;
+}
+.btn-ghost-hero:hover {
+  background: rgba(21, 101, 192, 0.06);
+  border-color: #1565c0;
+  transform: translateY(-2px);
+}
+
+/* ── HERO ──────────────────────────────────────────────────────────── */
+.hero-section {
+  background: #f0f4ff;
+  background-image:
+    radial-gradient(ellipse at 70% 20%, rgba(37, 99, 235, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 15% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 50%);
+  position: relative;
+  overflow: hidden;
+  padding-top: 80px;
+  padding-bottom: 72px;
+}
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+.hero-grid-pattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(21, 101, 192, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 101, 192, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.hero-glow-left {
+  position: absolute;
+  top: -80px;
+  left: -120px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow-right {
+  position: absolute;
+  bottom: -60px;
+  right: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(21, 101, 192, 0.09);
+  border: 1px solid rgba(21, 101, 192, 0.22);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: 0.73rem;
+  font-weight: 600;
   color: #1565c0;
 }
-.hero-body {
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.75;
-  max-width: 340px;
-}
-.hero-btn {
-  text-transform: none !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.2px !important;
+.hero-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.28);
+  flex-shrink: 0;
 }
 
-/* ── HERO COLLAGE ─────────────────────────────────────────────────────────────
-   FIX SUMMARY:
-   - .hero-collage has explicit height: 260px
-   - .hero-collage-main has explicit height: 260px (not "100%")
-   - .hero-collage-grid has explicit height: 260px (not "100%")
-   - v-img uses height="260" and height="125" (pixel numbers, never "100%")
-   - Each v-img sits directly inside the flex child with overflow:hidden
-──────────────────────────────────────────────────────────────────────────────── */
+.hero-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  color: #0a0f1e;
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hero-title-em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #1565c0;
+  font-size: 1.05em;
+}
+.hero-body {
+  font-size: 0.97rem;
+  color: #5a6478;
+  line-height: 1.85;
+  max-width: 440px;
+}
+
+.hero-stats-row {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding-top: 24px;
+  border-top: 1px solid rgba(21, 101, 192, 0.12);
+}
+.hero-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hero-stat-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1565c0;
+  line-height: 1;
+}
+.hero-stat-label {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+/* Hero collage */
 .hero-collage {
   display: flex;
-  gap: 10px;
-  height: 260px; /* explicit total height */
-  border-radius: 16px;
-  overflow: hidden;
+  gap: 12px;
+  height: 280px;
 }
-
 .hero-collage-main {
   flex: 2;
-  height: 260px; /* explicit — required for v-img to fill correctly */
+  position: relative;
+  border-radius: 20px;
   overflow: hidden;
-  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(21, 101, 192, 0.22);
 }
-
 .collage-main-img {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 20px;
+}
+.collage-live-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.badge-dot-green {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
 }
 
 .hero-collage-grid {
   flex: 1;
-  height: 260px; /* explicit — required */
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow: hidden;
+  height: 280px;
 }
-
+.collage-stat-card {
+  background: linear-gradient(135deg, #1565c0, #2563eb);
+  border-radius: 16px;
+  padding: 18px 16px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(21, 101, 192, 0.35);
+  flex-shrink: 0;
+}
+.csc-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.csc-label {
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-top: 4px;
+  font-weight: 500;
+}
+.csc-deco {
+  position: absolute;
+  bottom: -4px;
+  right: 8px;
+}
 .collage-sm-img {
   width: 100%;
   border-radius: 12px;
-  /* height is set via the height prop on v-img: height="125" */
 }
 
-/* ── FACILITY OFFERED ────────────────────────────────────────────────────────── */
+/* ── AMBIENT DIVIDER ──────────────────────────────────────────────── */
+.ambient-divider {
+  background: #0f172a;
+  overflow: hidden;
+  padding: 16px 0;
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.ambient-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 24px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.32);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.ambient-tag::before {
+  content: '◆';
+  margin-right: 24px;
+  color: rgba(21, 101, 192, 0.5);
+  font-size: 0.5rem;
+}
+
+/* ── FACILITY SECTION ─────────────────────────────────────────────── */
 .facility-section {
-  background: #f5f7fb;
+  background: #f8faff;
 }
 
-/*
-  FIX: .facility-card wraps v-img directly.
-  position:relative on the card + position:absolute on overlay = correct stacking.
-  No nested .facility-img div needed — v-img IS the background.
-*/
+.facility-filter-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.fac-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  background: white;
+  border: 1.5px solid #e5eaf5;
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.fac-filter-pill:hover {
+  border-color: #1565c0;
+  color: #1565c0;
+}
+.fac-filter-pill--on {
+  background: #1565c0;
+  border-color: #1565c0;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.35);
+}
+
 .facility-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  /* height is driven by v-img height="280" */
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09);
   transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
+    box-shadow 0.3s,
+    transform 0.3s;
 }
-.facility-card:hover {
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
-  transform: translateY(-4px);
+.facility-card:hover,
+.facility-card--active {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16);
+  transform: translateY(-6px);
 }
-
 .facility-base-img {
   display: block;
   width: 100%;
-  /* scale on hover via CSS transform */
-  transition: transform 0.4s ease;
+  transition: transform 0.5s ease;
 }
 .facility-card:hover .facility-base-img {
-  transform: scale(1.06);
+  transform: scale(1.07);
 }
 
-/* Hover overlay — sits on top of the image */
+.facility-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(6, 9, 23, 0.75) 0%,
+    rgba(6, 9, 23, 0.1) 55%,
+    transparent 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
 .facility-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(13, 71, 161, 0.88);
+  z-index: 3;
+  background: rgba(13, 71, 161, 0.9);
+  backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 28px;
+  padding: 32px;
   text-align: center;
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(14px);
   transition:
     opacity 0.35s ease,
     transform 0.35s ease;
-  border-radius: 16px;
-  z-index: 2;
+  border-radius: 20px;
 }
 .facility-overlay--visible {
   opacity: 1;
   transform: translateY(0);
 }
+
+.fac-overlay-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
 .facility-overlay-name {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.2rem;
+  font-family: 'Sora', sans-serif;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #fff;
   margin-bottom: 10px;
 }
 .facility-overlay-desc {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.81rem;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.7;
   margin: 0;
 }
+.fac-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.fac-chip {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.65rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 3px 10px;
+}
+.fac-overlay-btn {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.fac-overlay-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
 
-/* Bottom pill label */
 .facility-label {
   position: absolute;
-  bottom: 14px;
-  left: 14px;
-  background: rgba(0, 0, 0, 0.45);
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 20px;
+  bottom: 16px;
+  left: 16px;
+  z-index: 2;
   display: flex;
   align-items: center;
-  backdrop-filter: blur(4px);
-  z-index: 3;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 50px;
   transition: opacity 0.3s ease;
-  letter-spacing: 0.3px;
+}
+.fac-label-icon {
+  width: 24px;
+  height: 24px;
+  background: rgba(21, 101, 192, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fac-label-cap {
+  font-size: 0.64rem;
+  opacity: 0.6;
+  font-weight: 400;
 }
 .facility-label--hidden {
-  opacity: 0; /* FIX: explicit class toggle instead of sibling selector */
+  opacity: 0;
 }
 
-/* ── TESTIMONIALS ─────────────────────────────────────────────────────────────── */
+/* Facility dialog */
+.facility-dialog-card {
+  border: none;
+}
+.fac-dialog-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.1) 60%,
+    transparent 100%
+  );
+}
+.fac-dialog-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+.fac-dialog-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+}
+.fac-dialog-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.85;
+}
+.fac-dialog-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fac-feat-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+/* ── PERKS SECTION ────────────────────────────────────────────────── */
+.perks-section {
+  background: #080d1c;
+  position: relative;
+  overflow: hidden;
+}
+.perks-bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.perks-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
+  top: -100px;
+  left: -100px;
+}
+.perks-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+  bottom: -80px;
+  right: -60px;
+}
+
+.perk-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 26px 22px;
+  cursor: pointer;
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    transform 0.25s;
+  height: 100%;
+}
+.perk-card:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-4px);
+}
+.perk-card--open {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.4);
+}
+.perk-icon-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.perk-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+.perk-desc {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.75;
+  margin: 0;
+}
+.perk-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.perk-detail-text {
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.75;
+  margin: 0;
+}
+.perk-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+.perk-value {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* ── BOOKING SECTION ──────────────────────────────────────────────── */
+.booking-section {
+  background: #f8faff;
+}
+.booking-card {
+  background: #fff;
+  border-radius: 28px;
+  display: flex;
+  box-shadow: 0 20px 60px rgba(21, 101, 192, 0.1);
+  border: 1px solid #e5eaf5;
+  overflow: hidden;
+}
+.booking-left {
+  padding: 42px;
+  flex: 1.2;
+}
+.booking-right {
+  flex: 1;
+}
+.booking-live-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.booking-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+}
+.booking-live-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #059669;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.booking-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+.booking-sub {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.75;
+}
+
+.booking-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.booking-plan {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1.5px solid #e5eaf5;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.booking-plan:hover {
+  border-color: #c4d5f7;
+}
+.booking-plan--sel {
+  border-color: #1565c0;
+  background: rgba(21, 101, 192, 0.04);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
+}
+.bp-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #c4d5f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s;
+}
+.booking-plan--sel .bp-radio {
+  border-color: #1565c0;
+}
+.bp-radio-inner {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #1565c0;
+}
+.bp-info {
+  flex: 1;
+}
+.bp-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.bp-sub {
+  font-size: 0.73rem;
+  color: #94a3b8;
+}
+.bp-price {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1565c0;
+  white-space: nowrap;
+}
+
+.booking-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+}
+.booking-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.booking-img-badge {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  padding: 8px 16px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ── TESTIMONIALS ─────────────────────────────────────────────────── */
 .testimonials-section {
-  background: #ffffff;
+  background: #fff;
 }
 
-.testimonial-title-bold {
-  font-family: 'Montserrat', sans-serif;
+.testimonial-bold {
+  font-family: 'Sora', sans-serif;
   font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 900;
+  font-weight: 700;
   color: #5f5f5f;
   letter-spacing: 1px;
 }
-.testimonial-title-italic {
+.testimonial-italic {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-size: clamp(1.8rem, 4vw, 2.5rem);
@@ -650,84 +1669,263 @@ const testimonials = ref([
   color: #1565c0;
 }
 
-/* Carousel wrapper — pb-12 on the row gives space for the dot delimiters */
-.testimonial-carousel {
-  border-radius: 16px !important;
-  overflow: visible !important;
+.testi-selector {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
-:deep(.v-carousel__controls) {
-  bottom: -44px !important;
+.testi-avatar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  opacity: 0.45;
+  transition:
+    opacity 0.22s,
+    transform 0.22s;
 }
-:deep(.v-btn--icon.v-carousel__controls__item .v-icon) {
-  font-size: 10px !important;
-  color: #1565c0 !important;
-  opacity: 0.35;
+.testi-avatar-btn:hover {
+  opacity: 0.75;
 }
-:deep(.v-btn--icon.v-carousel__controls__item.v-btn--active .v-icon) {
-  opacity: 1 !important;
-  color: #1565c0 !important;
+.testi-avatar-btn--active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+.testi-avatar-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #0f172a;
 }
 
-/* Testimonial card */
-.testimonial-card {
-  border: 1px solid #e0e8f5;
+.testimonial-panel {
+  background: #fff;
+  border-radius: 24px;
+  border: 1.5px solid #e5eaf5;
+  overflow: hidden;
+  box-shadow: 0 8px 36px rgba(21, 101, 192, 0.07);
+}
+
+.testi-photo-col {
+  position: relative;
+  height: 300px;
   overflow: hidden;
 }
-
-/*
-  FIX: testimonial photo is now a plain v-img with height="280".
-  No wrapper div needed — v-img handles its own sizing with an explicit height prop.
-*/
-.testimonial-photo-img {
-  display: block;
+.testi-photo {
   width: 100%;
-  /* height driven by height="280" prop */
+  border-radius: 0;
+}
+.testi-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13, 71, 161, 0.5) 0%, transparent 60%);
+}
+.testi-role-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: rgba(21, 101, 192, 0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
 }
 
-/* Quote panel */
-.testimonial-content {
+.testi-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: #ffffff;
-  min-height: 280px;
+  min-height: 300px;
 }
-.quote-mark {
+.testi-quote-mark {
   font-family: 'Playfair Display', serif;
-  font-size: 4rem;
+  font-size: 4.5rem;
   color: #1565c0;
   line-height: 0.8;
   font-weight: 700;
-  opacity: 0.75;
+  opacity: 0.65;
 }
-.testimonial-text {
-  font-size: 0.9rem;
+.testi-text {
+  font-size: 0.88rem;
   color: #444;
-  line-height: 1.8;
+  line-height: 1.9;
   margin: 0;
   max-width: 420px;
 }
-.testimonial-author {
+.testi-author {
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
 .author-name {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.97rem;
   color: #1a1a1a;
 }
 .author-role {
-  font-size: 0.82rem;
-  color: #888;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+.testi-stars {
+  display: flex;
+  gap: 3px;
 }
 
-/* ── FOOTER ── */
+.testi-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.testi-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d1d5db;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.testi-dot--active {
+  background: #1565c0;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ── GALLERY ──────────────────────────────────────────────────────── */
+.gallery-section {
+  background: #f8faff;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.gallery-wide {
+  grid-column: span 2;
+}
+.gallery-item {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.gallery-img {
+  width: 100%;
+  display: block;
+  transition: transform 0.45s ease;
+  border-radius: 16px;
+}
+.gallery-item:hover .gallery-img {
+  transform: scale(1.06);
+}
+.gallery-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 71, 161, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.gallery-item:hover .gallery-hover {
+  opacity: 1;
+}
+
+/* ── CTA ──────────────────────────────────────────────────────────── */
+.cta-section {
+  background: #080d1c;
+  position: relative;
+  overflow: hidden;
+}
+.cta-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+.cta-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 40% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 45%, rgba(124, 58, 237, 0.18) 0%, transparent 50%);
+}
+.cta-icon-ring {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 0 0 18px rgba(255, 255, 255, 0.04);
+}
+.cta-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  color: #fff;
+}
+.cta-sub {
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.85;
+  max-width: 460px;
+}
+.btn-cta-solid {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #2563eb, #1565c0);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 32px;
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.45);
+  transition: all 0.22s;
+}
+.btn-cta-solid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(37, 99, 235, 0.6);
+}
+.btn-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.82);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50px;
+  padding: 14px 32px;
+  cursor: pointer;
+  transition: all 0.22s;
+}
+.btn-cta-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: translateY(-2px);
+}
+
+/* ── FOOTER (unchanged) ───────────────────────────────────────────── */
 .footer-section {
   background: #06080f;
 }
-
 .footer-brand {
   font-family: 'Playfair Display', serif;
   font-size: 1.55rem;
@@ -736,7 +1934,6 @@ const testimonials = ref([
   letter-spacing: 2px;
   font-style: italic;
 }
-
 .footer-tag {
   font-size: 0.62rem;
   color: rgba(255, 255, 255, 0.3);
@@ -744,13 +1941,11 @@ const testimonials = ref([
   text-transform: uppercase;
   margin: 0;
 }
-
 .footer-desc {
   font-size: 0.77rem;
   color: rgba(255, 255, 255, 0.38);
   line-height: 1.8;
 }
-
 .footer-col-title {
   font-size: 0.62rem;
   font-weight: 700;
@@ -758,18 +1953,15 @@ const testimonials = ref([
   letter-spacing: 2.5px;
   text-transform: uppercase;
 }
-
 .footer-link {
   font-size: 0.79rem;
   color: rgba(255, 255, 255, 0.48);
   cursor: pointer;
   transition: color 0.15s;
 }
-
 .footer-link:hover {
   color: #fff;
 }
-
 .social-btn {
   width: 36px;
   height: 36px;
@@ -783,29 +1975,24 @@ const testimonials = ref([
   cursor: pointer;
   transition: all 0.18s;
 }
-
 .social-btn:hover {
   background: rgba(255, 255, 255, 0.13);
   color: #fff;
 }
-
 .footer-hr {
   height: 1px;
   background: rgba(255, 255, 255, 0.07);
   margin-top: 32px;
 }
-
 .footer-copy {
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.22);
   margin: 0;
 }
-
 .newsletter {
   display: flex;
   gap: 8px;
 }
-
 .nl-input {
   flex: 1;
   background: rgba(255, 255, 255, 0.06);
@@ -814,27 +2001,71 @@ const testimonials = ref([
   padding: 10px 16px;
   font-size: 0.8rem;
   color: #fff;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Sora', sans-serif;
   outline: none;
 }
-
 .nl-input::placeholder {
   color: rgba(255, 255, 255, 0.28);
 }
-
 .nl-input:focus {
   border-color: rgba(255, 255, 255, 0.28);
 }
-
 .nl-btn {
   background: linear-gradient(135deg, #1565c0, #2563eb);
   color: #fff;
   border: none;
   border-radius: 12px;
   width: 42px;
-  cursor: pointer;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+}
+
+/* ── TRANSITIONS ──────────────────────────────────────────────────── */
+.fx-enter-active,
+.fx-leave-active {
+  transition:
+    opacity 0.24s,
+    transform 0.24s;
+}
+.fx-enter-from,
+.fx-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+.testi-fade-enter-active,
+.testi-fade-leave-active {
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+.testi-fade-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.testi-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* ── MOBILE ───────────────────────────────────────────────────────── */
+@media (max-width: 599px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .gallery-wide {
+    grid-column: span 2;
+  }
+  .booking-card {
+    flex-direction: column;
+  }
+  .hero-collage {
+    height: auto;
+  }
+  .hero-collage-main {
+    height: 200px;
+  }
 }
 </style>
