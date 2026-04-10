@@ -18,7 +18,7 @@
           </div>
         </div>
         <v-spacer />
-        <div class="d-none d-md-flex align-center mr-6 gap-1">
+        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
           <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
           <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
           <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
@@ -1271,24 +1271,25 @@ function subscribeNewsletter() {
   line-height: 1.1;
 }
 .nav-sub {
-  font-size: 0.58rem;
-  color: #aaa;
-  letter-spacing: 0.4px;
+  font-size: 0.6rem;
+  color: #9e9e9e;
+  letter-spacing: 0.5px;
 }
 .nav-link {
-  font-size: 0.85rem !important;
+  font-size: 0.875rem !important;
   font-weight: 500 !important;
-  color: #444 !important;
+  color: #333 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
 .nav-link--active {
   color: #1565c0 !important;
+  font-weight: 700 !important;
 }
 .nav-apply-btn {
   background: linear-gradient(135deg, #1565c0, #2563eb);
   color: #fff;
-  font-family: 'Sora', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   border: none;
