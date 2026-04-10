@@ -2081,6 +2081,13 @@
 
             <!-- MENTORS FIELDS -->
             <template v-else-if="activeSection === 'mentors'">
+              <input
+                ref="mentorPhotoFileInput"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="handleMentorPhotoUpload"
+              />
               <v-row>
                 <v-col cols="12" sm="6">
                   <div class="form-label">Mentor Name *</div>
@@ -2107,16 +2114,52 @@
                   />
                 </v-col>
                 <v-col cols="12">
-                  <div class="form-label">Photo URL *</div>
-                  <v-text-field
-                    v-model="form.photo"
-                    placeholder="https://..."
-                    variant="outlined"
-                    density="comfortable"
-                    rounded="lg"
-                    :rules="[(r) => !!r || 'Required']"
-                    class="form-field"
+                  <div class="form-label d-flex align-center mb-2" style="gap: 8px">
+                    <v-icon icon="mdi-image-outline" size="14" color="#6A1B9A" class="mr-1" />
+                    Mentor Photo *
+                  </div>
+                  <div
+                    class="upload-box upload-box--event-banner"
+                    @click="mentorPhotoFileInput.click()"
+                  >
+                    <template v-if="form.mentorPhotoPreview || form.photo">
+                      <v-img
+                        :src="form.mentorPhotoPreview || form.photo"
+                        cover
+                        class="upload-box-preview"
+                        height="180"
+                      />
+                      <div class="upload-box-overlay">
+                        <v-icon icon="mdi-camera-flip-outline" size="20" color="white" />
+                      </div>
+                    </template>
+                    <template v-else>
+                      <v-icon icon="mdi-image-plus-outline" size="40" color="#6A1B9A" />
+                      <div class="upload-box-label" style="color: #6a1b9a">
+                        Click to upload mentor photo
+                      </div>
+                      <div class="upload-box-hint">PNG, JPG, WEBP — max 5MB</div>
+                    </template>
+                  </div>
+                  <v-progress-linear
+                    v-if="uploadProgress.mentor_photo"
+                    :model-value="uploadProgress.mentor_photo"
+                    color="secondary"
+                    rounded
+                    height="4"
+                    class="mt-2"
                   />
+                  <v-btn
+                    v-if="form.mentorPhotoPreview || form.photo"
+                    size="x-small"
+                    variant="tonal"
+                    color="error"
+                    class="mt-2"
+                    prepend-icon="mdi-trash-can-outline"
+                    @click="clearMentorPhoto"
+                  >
+                    Remove Image
+                  </v-btn>
                 </v-col>
                 <v-col cols="12">
                   <div class="form-label">
@@ -2175,7 +2218,11 @@
           <div>
             <h3 class="dialog-title">Confirm Publish Destination</h3>
             <p class="dialog-sub mt-1">
-              Choose where this {{ activeSingular.toLowerCase() }} will be published before saving.
+              {{
+                activeSection === 'mentors'
+                  ? 'Choose where this mentor profile will be displayed before saving.'
+                  : `Choose where this ${activeSingular.toLowerCase()} will be published before saving.`
+              }}
             </p>
           </div>
         </div>
@@ -2192,13 +2239,21 @@
             class="form-field mb-4"
           />
 
-          <div class="form-label mb-2">Publish To TBI Portal *</div>
+          <div class="form-label mb-2">
+            {{
+              activeSection === 'mentors' ? 'Display In TBI Portal *' : 'Publish To TBI Portal *'
+            }}
+          </div>
           <v-select
             v-model="publishDestination"
             :items="tbiOptions"
             item-title="name"
             item-value="id"
-            placeholder="Select destination portal"
+            :placeholder="
+              activeSection === 'mentors'
+                ? 'Select where this mentor will appear'
+                : 'Select destination portal'
+            "
             variant="outlined"
             density="comfortable"
             rounded="lg"
@@ -2602,6 +2657,7 @@ const teamFileInput = ref(null)
 const testimonialFileInput = ref(null)
 const eventImageFileInput = ref(null)
 const newsImageFileInput = ref(null)
+const mentorPhotoFileInput = ref(null)
 
 /**
  * Upload a file to Supabase Storage and return its public URL.
@@ -2769,6 +2825,16 @@ async function handleNewsImageUpload(event) {
   event.target.value = ''
 }
 
+// ── Mentor photo upload handler ─────────────────────────────────────────────
+async function handleMentorPhotoUpload(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  form.mentorPhotoPreview = URL.createObjectURL(file)
+  const url = await uploadToSupabase(file, 'mentors', 'photos', 'mentor_photo')
+  if (url) form.photo = url
+  event.target.value = ''
+}
+
 function clearNewsImage() {
   form.newsImagePreview = null
   form.image = ''
@@ -2777,6 +2843,11 @@ function clearNewsImage() {
 function clearEventImage() {
   form.eventImagePreview = null
   form.image_event = ''
+}
+
+function clearMentorPhoto() {
+  form.mentorPhotoPreview = null
+  form.photo = ''
 }
 
 function createGalleryImage() {
@@ -3029,6 +3100,7 @@ const blankForm = () => ({
   // mentors
   role: '',
   photo: '',
+  mentorPhotoPreview: null,
   expertise_raw: '',
 })
 
@@ -3168,6 +3240,7 @@ function openEditDialog(item) {
       activeSection.value === 'events' ? normalizeDetailGalleryItems(item.gallery_items) : [],
     role: item.role || '',
     photo: item.photo || '',
+    mentorPhotoPreview: null,
     expertise_raw: Array.isArray(item.expertise) ? item.expertise.join(', ') : '',
     descriptionLong: item.description_long || '',
     descriptionExtra: item.description_extra || '',
@@ -3359,7 +3432,8 @@ async function handleSubmit() {
   formError.value = ''
 
   publishError.value = ''
-  publishDestination.value = form.tbi_id || tbiFilter.value || ''
+  publishDestination.value =
+    activeSection.value === 'mentors' ? form.tbi_id || '' : form.tbi_id || tbiFilter.value || ''
   publishDialog.value = true
 }
 
@@ -3381,6 +3455,17 @@ async function confirmPublishSubmit() {
   if (result.success) {
     publishDialog.value = false
     formDialog.value = false
+
+    if (activeSection.value === 'mentors') {
+      const routeByPortal = {
+        navigatu: '/services-navigatu',
+        tara: '/services-tara',
+      }
+      const targetRoute = routeByPortal[form.tbi_id]
+      if (targetRoute) {
+        router.push(targetRoute)
+      }
+    }
   } else {
     formError.value = result.error?.message || 'Failed to save. Please try again.'
   }

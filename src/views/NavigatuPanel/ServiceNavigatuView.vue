@@ -418,7 +418,7 @@
       </div>
 
       <!-- ===== MENTORS ===== -->
-      <div class="sec-white py-sec">
+      <div v-if="leaders.length" class="sec-white py-sec">
         <v-container>
           <div class="text-center mb-12">
             <div class="eyebrow" style="color: #7c3aed">Our Network</div>
@@ -1031,48 +1031,7 @@ const navServices = ref([
   },
 ])
 
-const leaders = ref([
-  {
-    name: 'Dr. Riah E. Encarnacion',
-    photo: '/images/leaders/TbiDirector.jpg',
-    role: 'TBI Director',
-  },
-  {
-    name: 'John Mark B. Correa',
-    photo: '/images/leaders/JohnMarkCorrea.jpg',
-    role: 'TBI Project Head',
-  },
-  {
-    name: 'Mary Pilar J. Barber',
-    photo: '/images/leaders/MaryPilarBarber.jpg',
-    role: 'Community Development Project Head',
-  },
-  {
-    name: 'Mr. Ben Lim',
-    photo: '/images/leaders/TbiDirector.jpg',
-    role: 'Tech Advisor',
-  },
-  {
-    name: 'Dr. Carlos Tan',
-    photo: '/images/leaders/JohnMarkCorrea.jpg',
-    role: 'Innovation Head',
-  },
-  {
-    name: 'Ms. Liza Dela Cruz',
-    photo: '/images/leaders/MaryPilarBarber.jpg',
-    role: 'Finance Officer',
-  },
-  {
-    name: 'Mr. Rico Perez',
-    photo: '/images/leaders/TbiDirector.jpg',
-    role: 'Startup Mentor',
-  },
-  {
-    name: 'Ms. Grace Uy',
-    photo: '/images/leaders/JohnMarkCorrea.jpg',
-    role: 'Communications',
-  },
-])
+const leaders = ref([])
 
 async function fetchMentors() {
   const { data, error } = await supabase
@@ -1084,10 +1043,14 @@ async function fetchMentors() {
 
   if (error) {
     console.error('[ServiceNavigatuView] fetchMentors error', error)
+    leaders.value = []
     return
   }
 
-  if (!data || data.length === 0) return
+  if (!data || data.length === 0) {
+    leaders.value = []
+    return
+  }
 
   leaders.value = data.map((mentor) => ({
     name: mentor.name,
