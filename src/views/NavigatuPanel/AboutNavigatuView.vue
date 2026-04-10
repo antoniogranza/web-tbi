@@ -169,8 +169,8 @@
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Vision</h2>
               <p class="banner-body">
-                A socially-engaged digital, innovation, and entrepreneurial university excelling
-                globally in science, engineering, and the arts by 2028.
+                A prime technology business incubator of sustainable startups in Southern
+                Philippines
               </p>
             </div>
           </v-col>
@@ -230,8 +230,11 @@
               <p class="banner-eyebrow">Our</p>
               <h2 class="banner-title">Mission</h2>
               <p class="banner-body">
-                A socially-engaged digital, innovation, and entrepreneurial university excelling
-                globally in science, engineering, and the arts by 2028.
+                Our mission is to contribute to the prominent success of emerging technopreneurs in
+                southern Philippines through strategic partnerships, relevant education and training
+                programs, networking, business-enabling assistance, and facilitate the creation of
+                spinoffs or startups from research and development, towards job creation in specific
+                sectors that are aligned in our region's unique area of opportunity.
               </p>
             </div>
           </v-col>
@@ -312,6 +315,39 @@
           </v-row>
         </v-container>
       </v-container>
+
+      <!-- ===== FAQ ===== -->
+      <div class="sec-white py-sec">
+        <v-container>
+          <v-row justify="center">
+            <v-col cols="12" md="7">
+              <div class="text-center mb-12">
+                <div class="eyebrow" style="color: #ea580c">Got questions?</div>
+                <h2 class="sec-title">Frequently Asked <em>Questions</em></h2>
+              </div>
+              <div class="faq-list">
+                <div
+                  v-for="(faq, i) in faqs"
+                  :key="faq.q"
+                  class="faq-item"
+                  :class="{ 'faq-item--open': openFaq === i }"
+                  @click="openFaq = openFaq === i ? null : i"
+                >
+                  <div class="faq-row">
+                    <span class="faq-q">{{ faq.q }}</span>
+                    <v-icon class="faq-icon" size="18">{{
+                      openFaq === i ? 'mdi-minus' : 'mdi-plus'
+                    }}</v-icon>
+                  </div>
+                  <transition name="fx">
+                    <div v-if="openFaq === i" class="faq-ans">{{ faq.a }}</div>
+                  </transition>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
     </v-main>
 
     <!-- FOOTER -->
@@ -504,6 +540,30 @@ const leaders = ref([
   { name: 'Ms. Liza Dela Cruz', role: 'Finance Officer' },
   { name: 'Mr. Rico Perez', role: 'Startup Mentor' },
   { name: 'Ms. Grace Uy', role: 'Communications' },
+])
+
+const openFaq = ref(null)
+const faqs = ref([
+  {
+    q: 'How long is the incubation program?',
+    a: 'The core program runs for 6 months, with optional alumni support and mentorship continuing beyond graduation.',
+  },
+  {
+    q: 'Is there an equity or fee requirement?',
+    a: 'Navigatú TBI does not take equity. Some programs may have a modest participation fee depending on services availed.',
+  },
+  {
+    q: 'Do I need a registered business to apply?',
+    a: 'No — you can apply as an individual or informal team. We assist with business registration as part of the program.',
+  },
+  {
+    q: 'Can teams outside Butuan City apply?',
+    a: 'Yes! We accept applications across Caraga and beyond through our hybrid program.',
+  },
+  {
+    q: 'What happens after the program ends?',
+    a: 'Graduates join the Navigatú Alumni Network with continued mentorship and investor introductions.',
+  },
 ])
 </script>
 
@@ -966,6 +1026,98 @@ const leaders = ref([
 .leader-role {
   font-size: 0.78rem !important;
   color: #888 !important;
+}
+
+/* ── FAQ Section Helpers (from Service style) ── */
+.eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #1565c0;
+  margin-bottom: 10px;
+}
+.sec-title {
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.18;
+  margin-bottom: 10px;
+}
+.sec-title em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #1565c0;
+}
+.sec-sub {
+  font-size: 0.86rem;
+  color: #94a3b8;
+  line-height: 1.8;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.sec-white {
+  background: #fff;
+}
+.py-sec {
+  padding-top: 84px;
+  padding-bottom: 84px;
+}
+
+/* ── FAQ ── */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.faq-item {
+  border: 1.5px solid #e5eaf5;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.faq-item--open {
+  border-color: #c4d5f7;
+}
+.faq-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  cursor: pointer;
+  gap: 14px;
+}
+.faq-q {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.4;
+}
+.faq-icon {
+  flex-shrink: 0;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+.faq-item--open .faq-icon {
+  color: #1565c0;
+}
+.faq-ans {
+  padding: 0 22px 18px;
+  font-size: 0.81rem;
+  color: #64748b;
+  line-height: 1.8;
+}
+
+/* FAQ expand/collapse transition */
+.fx-enter-active,
+.fx-leave-active {
+  transition: all 0.22s ease;
+}
+
+.fx-enter-from,
+.fx-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 /* ── FOOTER ── */
