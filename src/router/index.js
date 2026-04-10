@@ -17,6 +17,16 @@ import NewsDetailNavigatuView from '@/views/NavigatuPanel/NewsDetailNavigatuView
 import EventNavigatuView from '@/views/NavigatuPanel/EventNavigatuView.vue'
 import EventDetailNavigatuView from '@/views/NavigatuPanel/EventDetailNavigatuView.vue'
 
+// Tara Routing
+import AboutTaraView from '@/views/TaraPanel/AboutTaraView.vue'
+import CoworkingTaraView from '@/views/TaraPanel/CoworkingTaraView.vue'
+import ServiceTaraView from '@/views/TaraPanel/ServiceTaraView.vue'
+import IncubateePageTaraView from '@/views/TaraPanel/IncubateePageTaraView.vue'
+import NewsTaraView from '@/views/TaraPanel/NewsTaraView.vue'
+import NewsDetailTaraView from '@/views/TaraPanel/NewsDetailTaraView.vue'
+import EventTaraView from '@/views/TaraPanel/EventTaraView.vue'
+import EventDetailTaraView from '@/views/TaraPanel/EventDetailTaraView.vue'
+
 // TBI Main Routing
 import Home from '@/views/tbi_main/HomeView.vue'
 import About from '@/views/tbi_main/AboutView.vue'
@@ -115,6 +125,43 @@ const routes = [
     path: '/events-navigatu/:id',
     name: 'NavigatuEventDetail',
     component: EventDetailNavigatuView,
+  },
+
+  // ✅ Tara Pages Route
+  {
+    path: '/about-tara',
+    component: AboutTaraView,
+  },
+  {
+    path: '/coworking-tara',
+    component: CoworkingTaraView,
+  },
+  {
+    path: '/services-tara',
+    component: ServiceTaraView,
+  },
+  {
+    path: '/incubatees-tara/:slug',
+    name: 'IncubateePageTara',
+    component: () => import('@/views/TaraPanel/IncubateePageTaraView.vue'),
+  },
+  {
+    path: '/news-tara',
+    component: NewsTaraView,
+  },
+  {
+    path: '/news-tara/:id',
+    name: 'TaraNewsDetail',
+    component: NewsDetailTaraView,
+  },
+  {
+    path: '/events-tara',
+    component: EventTaraView,
+  },
+  {
+    path: '/events-tara/:id',
+    name: 'TaraEventDetail',
+    component: EventDetailTaraView,
   },
 
   // Admin Panel Routes (Protected - require admin role)
