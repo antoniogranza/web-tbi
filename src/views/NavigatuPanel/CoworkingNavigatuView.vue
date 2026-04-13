@@ -875,6 +875,7 @@ const galleryImages = ref([
 .nav-apply-btn {
   background: linear-gradient(135deg, #1565c0, #2563eb);
   color: #fff;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   border: none;
@@ -887,6 +888,9 @@ const galleryImages = ref([
 .nav-apply-btn:hover {
   box-shadow: 0 6px 22px rgba(21, 101, 192, 0.5);
   transform: translateY(-1px);
+}
+.w-full {
+  width: 100%;
 }
 
 /* ── SHARED HELPERS ───────────────────────────────────────────────── */

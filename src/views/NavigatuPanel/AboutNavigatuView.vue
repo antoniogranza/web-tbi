@@ -21,7 +21,7 @@
         </div>
         <v-spacer />
         <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
-          <v-btn variant="text" class="nav-link nav-link--active" to="/about-navigatu">About</v-btn>
+          <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
           <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
           <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
           <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
@@ -155,11 +155,7 @@
           <v-row align="center" class="mb-12 mb-md-16">
             <v-col cols="12" md="6" class="mb-8 mb-md-0">
               <div class="vm-img-wrap">
-                <img
-                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80"
-                  alt="Vision"
-                  class="vm-img"
-                />
+                <img src="/public/images/VisionImg.jpg" alt="Vision" class="vm-img" />
                 <div class="vm-float-chip vm-float-chip--blue">
                   <v-icon size="13" class="mr-1">mdi-eye-outline</v-icon>Our Vision
                 </div>
@@ -175,8 +171,7 @@
               <h2 class="vm-title">A Prime <em>Tech Incubator</em><br />in the South</h2>
               <p class="vm-body mt-5 mb-7">
                 A prime technology business incubator of sustainable startups in Southern
-                Philippines — fostering a culture of innovation, resilience, and purposeful
-                entrepreneurship that transforms local ideas into regional and national solutions.
+                Philippines.
               </p>
               <div class="vm-tag-row">
                 <span class="vm-tag vm-tag--blue">Sustainable Startups</span>
@@ -190,11 +185,7 @@
           <v-row align="center" class="flex-md-row-reverse">
             <v-col cols="12" md="6" class="mb-8 mb-md-0">
               <div class="vm-img-wrap">
-                <img
-                  src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&q=80"
-                  alt="Mission"
-                  class="vm-img"
-                />
+                <img src="/public/images/collage/CollageImg1.jpg" alt="Mission" class="vm-img" />
                 <div class="vm-float-chip vm-float-chip--green">
                   <v-icon size="13" class="mr-1">mdi-bullseye-arrow</v-icon>Our Mission
                 </div>
@@ -204,10 +195,11 @@
               <div class="vm-eyebrow" style="color: #059669">Mission</div>
               <h2 class="vm-title">Empowering <em>Technopreneurs</em><br />for Impact</h2>
               <p class="vm-body mt-5 mb-7">
-                To contribute to the prominent success of emerging technopreneurs in Southern
-                Philippines through strategic partnerships, relevant education and training,
-                networking, business-enabling assistance, and the creation of spinoffs from R&D —
-                towards job creation aligned with the region's unique area of opportunity.
+                Our mission is to contribute to the prominent success of emerging technopreneurships
+                in southern Philippines through strategic partnerships, relevant education and
+                training programs, networking, business-enabling assistance, and facilitate the
+                creation of spinoffs or startups from research and development, towards job creation
+                in specific sectors that are aligned in our regions unique areas of opportunity.
               </p>
               <div class="vm-tag-row">
                 <span class="vm-tag vm-tag--green">Strategic Partnerships</span>
@@ -624,9 +616,7 @@ const faqs = ref([
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
-.nav-link--active {
-  color: #1565c0 !important;
-}
+
 .nav-search-hover {
   display: inline-flex;
   align-items: center;
@@ -656,6 +646,7 @@ const faqs = ref([
 .nav-apply-btn {
   background: linear-gradient(135deg, #1565c0, #2563eb);
   color: #fff;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   border: none;
@@ -668,6 +659,9 @@ const faqs = ref([
 .nav-apply-btn:hover {
   box-shadow: 0 6px 22px rgba(21, 101, 192, 0.5);
   transform: translateY(-1px);
+}
+.w-full {
+  width: 100%;
 }
 
 /* ── BUTTON SYSTEM ── */
@@ -1042,7 +1036,7 @@ const faqs = ref([
   flex-direction: column;
 }
 .svc-card--hover {
-  transform: translateY(-6px);
+  transform: translateY(0px);
   box-shadow: 0 16px 48px rgba(21, 101, 192, 0.12);
   border-color: #c4d5f7;
 }
@@ -1125,7 +1119,7 @@ const faqs = ref([
   height: 100%;
 }
 .ach-card--hover {
-  transform: translateY(-5px);
+  transform: translateY(0px);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
   border-color: rgba(255, 255, 255, 0.18);
 }
