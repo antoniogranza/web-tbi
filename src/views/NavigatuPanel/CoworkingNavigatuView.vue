@@ -302,7 +302,7 @@
           <div class="text-center mb-14">
             <div class="eyebrow-label" style="color: #f97316">Why Choose Us</div>
             <h2 class="section-title" style="color: #fff">
-              Why Work at <span class="section-title-em" style="color: #f97316">iTecH</span>
+              Why Work at <span class="section-title-em" style="color: #f97316">Navigatu</span>
             </h2>
             <p class="section-sub mt-3" style="color: rgba(255, 255, 255, 0.45)">
               Everything you need to build, collaborate, and grow
@@ -456,7 +456,7 @@
           <div class="cta-icon-ring mb-6">
             <v-icon icon="mdi-office-building-outline" size="32" color="white" />
           </div>
-          <h2 class="cta-title mb-4">Ready to Work from iTecH?</h2>
+          <h2 class="cta-title mb-4">Ready to Work from Navigatu?</h2>
           <p class="cta-sub mb-10 mx-auto">
             Join a growing community of founders, researchers, and innovators at Caraga's premier
             tech hub.
@@ -868,8 +868,9 @@ const galleryImages = ref([
     radial-gradient(ellipse at 15% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 50%);
   position: relative;
   overflow: hidden;
-  padding-top: 80px;
-  padding-bottom: 72px;
+  min-height: calc(100vh - 64px);
+  padding-top: 72px;
+  padding-bottom: 56px;
 }
 .hero-noise {
   position: absolute;
@@ -957,7 +958,7 @@ const galleryImages = ref([
 .hero-collage {
   display: flex;
   gap: 12px;
-  height: 280px;
+  height: 260px;
 }
 .hero-collage-main {
   flex: 2;
@@ -998,7 +999,7 @@ const galleryImages = ref([
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 280px;
+  height: 260px;
 }
 .collage-stat-card {
   background: linear-gradient(135deg, #1565c0, #2563eb);
@@ -1764,6 +1765,11 @@ const galleryImages = ref([
 
 /* ── MOBILE ───────────────────────────────────────────────────────── */
 @media (max-width: 599px) {
+  .hero-section {
+    min-height: unset;
+    padding-top: 72px;
+    padding-bottom: 48px;
+  }
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
   }
