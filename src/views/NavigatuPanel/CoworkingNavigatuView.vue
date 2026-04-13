@@ -290,9 +290,6 @@
                 <span>{{ feat }}</span>
               </div>
             </div>
-            <button class="btn-primary-hero mt-6" style="width: 100%; justify-content: center">
-              Book This Space
-            </button>
           </div>
         </v-card>
       </v-dialog>
