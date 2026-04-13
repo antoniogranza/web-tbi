@@ -290,8 +290,23 @@
           </h2>
           <p class="section-subtitle text-center mb-10">Our milestones for 7 Years of Operations</p>
 
+          <div class="d-flex justify-center flex-wrap ga-2 mb-8">
+            <v-btn
+              v-for="filter in incubateeFilters"
+              :key="filter.value"
+              rounded="pill"
+              :variant="activeIncubateeFilter === filter.value ? 'flat' : 'outlined'"
+              :color="activeIncubateeFilter === filter.value ? 'primary' : 'grey-darken-1'"
+              size="small"
+              class="text-none"
+              @click="activeIncubateeFilter = filter.value"
+            >
+              {{ filter.label }}
+            </v-btn>
+          </div>
+
           <v-row justify="center">
-            <v-col v-for="company in incubatees" :key="company.name" cols="6" sm="4" md="3">
+            <v-col v-for="company in filteredIncubatees" :key="company.name" cols="6" sm="4" md="3">
               <div
                 class="incubatee-card"
                 @click="$router.push(`/incubatees/${company.slug}`)"
@@ -313,6 +328,13 @@
               </div>
             </v-col>
           </v-row>
+
+          <p
+            v-if="!filteredIncubatees.length"
+            class="section-subtitle text-center mt-2"
+          >
+            No startups found for this filter.
+          </p>
         </v-container>
       </v-container>
 
@@ -432,7 +454,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase'
 
 // ── Navbar / drawer ──
@@ -538,12 +560,26 @@ const achievements = ref([
 
 // ── Incubatees — original Supabase logic (unchanged) ──
 const incubatees = ref([])
+const incubateeFilters = [
+  { label: 'All', value: 'all' },
+  { label: 'Active', value: 'active' },
+  { label: 'Graduated', value: 'graduated' },
+]
+const activeIncubateeFilter = ref('all')
+
+const filteredIncubatees = computed(() => {
+  if (activeIncubateeFilter.value === 'all') {
+    return incubatees.value
+  }
+
+  return incubatees.value.filter((company) => company.status === activeIncubateeFilter.value)
+})
 
 async function fetchIncubatees() {
   const { data, error } = await supabase
     .from('incubatees')
     .select('id,name,slug,logo,status')
-    .eq('status', 'active')
+    .in('status', ['active', 'graduated'])
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -555,6 +591,7 @@ async function fetchIncubatees() {
     name: item.name || 'Untitled',
     slug: item.slug || item.id,
     photo: item.logo || '/images/incubatees/logo/default.png',
+    status: String(item.status || '').toLowerCase(),
     hovered: false,
   }))
 }
