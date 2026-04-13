@@ -128,14 +128,6 @@
                   Take a Tour
                 </button>
               </div>
-
-              <!-- Quick stats row -->
-              <div class="hero-stats-row mt-10">
-                <div v-for="stat in heroStats" :key="stat.label" class="hero-stat-item">
-                  <div class="hero-stat-num">{{ stat.num }}</div>
-                  <div class="hero-stat-label">{{ stat.label }}</div>
-                </div>
-              </div>
             </v-col>
 
             <!-- Right: Image collage -->
@@ -184,11 +176,6 @@
           </v-row>
         </v-container>
       </section>
-
-      <!-- ===== AMBIENT DIVIDER ===== -->
-      <div class="ambient-divider">
-        <div v-for="tag in ambientTags" :key="tag" class="ambient-tag">{{ tag }}</div>
-      </div>
 
       <!-- ===== FACILITY OFFERED SECTION ===== -->
       <section class="facility-section py-16">
@@ -613,28 +600,6 @@ const facilityDialog = ref(false)
 const activeFacilityDetail = ref(null)
 const selectedPlan = ref('Day Pass')
 
-const heroStats = ref([
-  { num: '60+', label: 'Startups' },
-  { num: '₱80M+', label: 'Funds Raised' },
-  { num: '15+', label: 'Mentors' },
-  { num: '95%', label: 'Success Rate' },
-])
-
-const ambientTags = [
-  'Co-Working',
-  'Innovation Lab',
-  'Startup Incubation',
-  'Pitching Events',
-  'Design Sprints',
-  'Tech Mentorship',
-  'Open Collaboration',
-  'iTecH Hub',
-  'Caraga Region',
-  'Demo Days',
-  'CSU Research',
-  'Growth Programs',
-]
-
 const facilityFilters = [
   { key: 'all', label: 'All Spaces', icon: 'mdi-apps' },
   { key: 'work', label: 'Workspaces', icon: 'mdi-laptop' },
@@ -1058,33 +1023,6 @@ const galleryImages = ref([
   max-width: 440px;
 }
 
-.hero-stats-row {
-  display: flex;
-  gap: 28px;
-  flex-wrap: wrap;
-  padding-top: 24px;
-  border-top: 1px solid rgba(21, 101, 192, 0.12);
-}
-.hero-stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.hero-stat-num {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #1565c0;
-  line-height: 1;
-}
-.hero-stat-label {
-  font-size: 0.65rem;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-}
-
 /* Hero collage */
 .hero-collage {
   display: flex;
@@ -1162,35 +1100,6 @@ const galleryImages = ref([
 .collage-sm-img {
   width: 100%;
   border-radius: 12px;
-}
-
-/* ── AMBIENT DIVIDER ──────────────────────────────────────────────── */
-.ambient-divider {
-  background: #0f172a;
-  overflow: hidden;
-  padding: 16px 0;
-  display: flex;
-  gap: 0;
-  white-space: nowrap;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-.ambient-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 24px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.32);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-.ambient-tag::before {
-  content: '◆';
-  margin-right: 24px;
-  color: rgba(21, 101, 192, 0.5);
-  font-size: 0.5rem;
 }
 
 /* ── FACILITY SECTION ─────────────────────────────────────────────── */

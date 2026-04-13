@@ -99,19 +99,13 @@
                 Navigatú TBI empowers the next generation of Filipino tech founders through
                 mentorship, funding pathways, and a thriving startup community.
               </p>
-              <div class="d-flex flex-wrap gap-3 mb-10">
+              <div class="d-flex flex-wrap ga-3 mb-10">
                 <button class="btn-primary" @click="applyDialog = true">
                   <v-icon size="17" class="mr-2">mdi-rocket-launch-outline</v-icon> Apply Now
                 </button>
                 <button class="btn-ghost" @click="learnMoreScroll">
                   <v-icon size="17" class="mr-2">mdi-play-circle-outline</v-icon> Learn More
                 </button>
-              </div>
-              <div class="hero-stats">
-                <div v-for="s in heroStats" :key="s.label" class="hero-stat">
-                  <div class="hero-stat-num">{{ s.num }}</div>
-                  <div class="hero-stat-label">{{ s.label }}</div>
-                </div>
               </div>
             </v-col>
             <v-col cols="12" md="6" class="d-none d-md-block">
@@ -785,13 +779,6 @@ onMounted(() =>
   }, 300),
 )
 
-const heroStats = ref([
-  { num: '60+', label: 'Startups Incubated' },
-  { num: '₱80M+', label: 'Funding Raised' },
-  { num: '15+', label: 'Expert Mentors' },
-  { num: '95%', label: 'Survival Rate' },
-])
-
 const selectedTech = ref(null)
 const techCategories = ref([
   {
@@ -1423,11 +1410,7 @@ function subscribeNewsletter() {
   line-height: 1.85;
   max-width: 460px;
 }
-.hero-stats {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-}
+
 .hero-stat {
   display: flex;
   flex-direction: column;
