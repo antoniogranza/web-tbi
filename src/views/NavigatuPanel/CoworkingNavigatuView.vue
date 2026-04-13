@@ -343,65 +343,6 @@
         </v-container>
       </section>
 
-      <!-- ===== AVAILABILITY / BOOKING CTA ===== -->
-      <section class="booking-section py-14">
-        <v-container>
-          <v-row align="center" justify="center">
-            <v-col cols="12" md="8">
-              <div class="booking-card">
-                <div class="booking-left">
-                  <div class="booking-live-row mb-3">
-                    <span class="booking-live-dot" />
-                    <span class="booking-live-text">Available Now</span>
-                  </div>
-                  <h3 class="booking-title">Reserve Your Spot at iTecH</h3>
-                  <p class="booking-sub mt-2 mb-6">
-                    Flexible plans for individuals, startups, and teams. No long-term lock-in
-                    required.
-                  </p>
-                  <div class="booking-plans">
-                    <div
-                      v-for="plan in bookingPlans"
-                      :key="plan.name"
-                      class="booking-plan"
-                      :class="{ 'booking-plan--sel': selectedPlan === plan.name }"
-                      @click="selectedPlan = plan.name"
-                    >
-                      <div class="bp-radio">
-                        <div class="bp-radio-inner" v-if="selectedPlan === plan.name" />
-                      </div>
-                      <div class="bp-info">
-                        <div class="bp-name">{{ plan.name }}</div>
-                        <div class="bp-sub">{{ plan.desc }}</div>
-                      </div>
-                      <div class="bp-price">{{ plan.price }}</div>
-                    </div>
-                  </div>
-                  <button class="btn-primary-hero mt-6">
-                    <v-icon size="16" class="mr-2">mdi-calendar-check-outline</v-icon>
-                    Book a Tour
-                  </button>
-                </div>
-                <div class="booking-right d-none d-md-flex">
-                  <div class="booking-img-wrap">
-                    <v-img
-                      src="/images/facilities/FacilityA.JPG"
-                      height="340"
-                      cover
-                      class="booking-img"
-                    />
-                    <div class="booking-img-badge">
-                      <v-icon icon="mdi-shield-check" size="14" color="#1565C0" class="mr-1" />
-                      Verified Facility
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </section>
-
       <!-- ===== STAFF TESTIMONIALS ===== -->
       <section class="testimonials-section py-16">
         <v-container>
@@ -598,7 +539,6 @@ const activeFacilityFilter = ref('all')
 const activePerk = ref(null)
 const facilityDialog = ref(false)
 const activeFacilityDetail = ref(null)
-const selectedPlan = ref('Day Pass')
 
 const facilityFilters = [
   { key: 'all', label: 'All Spaces', icon: 'mdi-apps' },
@@ -737,13 +677,6 @@ const perks = ref([
     iconBg: 'rgba(234,88,12,0.15)',
     value: '3 Rooms',
   },
-])
-
-const bookingPlans = ref([
-  { name: 'Day Pass', desc: 'Drop-in access for a single day', price: '₱299/day' },
-  { name: 'Monthly Hot Desk', desc: 'Flexible desk, unlimited access', price: '₱2,500/mo' },
-  { name: 'Dedicated Desk', desc: 'Your own permanent workstation', price: '₱4,500/mo' },
-  { name: 'Team Suite', desc: 'Private office for 3–6 members', price: '₱12,000/mo' },
 ])
 
 const testimonials = ref([
@@ -1431,146 +1364,6 @@ const galleryImages = ref([
   letter-spacing: 0.3px;
 }
 
-/* ── BOOKING SECTION ──────────────────────────────────────────────── */
-.booking-section {
-  background: #f8faff;
-}
-.booking-card {
-  background: #fff;
-  border-radius: 28px;
-  display: flex;
-  box-shadow: 0 20px 60px rgba(21, 101, 192, 0.1);
-  border: 1px solid #e5eaf5;
-  overflow: hidden;
-}
-.booking-left {
-  padding: 42px;
-  flex: 1.2;
-}
-.booking-right {
-  flex: 1;
-}
-.booking-live-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.booking-live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
-}
-.booking-live-text {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #059669;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-.booking-title {
-  font-family: 'Sora', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 700;
-  color: #0f172a;
-  line-height: 1.2;
-}
-.booking-sub {
-  font-size: 0.82rem;
-  color: #94a3b8;
-  line-height: 1.75;
-}
-
-.booking-plans {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.booking-plan {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  border: 1.5px solid #e5eaf5;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.booking-plan:hover {
-  border-color: #c4d5f7;
-}
-.booking-plan--sel {
-  border-color: #1565c0;
-  background: rgba(21, 101, 192, 0.04);
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
-}
-.bp-radio {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid #c4d5f7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: border-color 0.2s;
-}
-.booking-plan--sel .bp-radio {
-  border-color: #1565c0;
-}
-.bp-radio-inner {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #1565c0;
-}
-.bp-info {
-  flex: 1;
-}
-.bp-name {
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-.bp-sub {
-  font-size: 0.73rem;
-  color: #94a3b8;
-}
-.bp-price {
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: #1565c0;
-  white-space: nowrap;
-}
-
-.booking-img-wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 340px;
-}
-.booking-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.booking-img-badge {
-  position: absolute;
-  bottom: 18px;
-  left: 18px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  border-radius: 50px;
-  padding: 8px 16px;
-  font-size: 0.73rem;
-  font-weight: 700;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
-
 /* ── TESTIMONIALS ─────────────────────────────────────────────────── */
 .testimonials-section {
   background: #fff;
@@ -1979,9 +1772,6 @@ const galleryImages = ref([
   }
   .gallery-wide {
     grid-column: span 2;
-  }
-  .booking-card {
-    flex-direction: column;
   }
   .hero-collage {
     height: auto;

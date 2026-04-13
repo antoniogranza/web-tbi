@@ -133,8 +133,13 @@
             </v-col>
           </v-row>
 
-          <!-- Tech cards -->
-          <v-row id="learn-more" class="mt-10">
+          <!-- ── INDUSTRY FOCUS CARDS (renamed from Tech Cards) ── -->
+          <div class="industry-label-row mt-12 mb-5">
+            <div class="industry-label-line" />
+            <span class="industry-label-text">Industry Focus</span>
+            <div class="industry-label-line" />
+          </div>
+          <v-row id="learn-more">
             <v-col
               v-for="(cat, i) in techCategories"
               :key="cat.title"
@@ -411,7 +416,7 @@
         </v-container>
       </div>
 
-      <!-- ===== MENTORS ===== -->
+      <!-- ===== MENTORS (Supabase logic untouched) ===== -->
       <div v-if="leaders.length" class="sec-white py-sec">
         <v-container>
           <div class="text-center mb-12">
@@ -435,17 +440,19 @@
         </v-container>
       </div>
 
-      <!-- ===== SUCCESS STORIES ===== -->
-      <div class="sec-offwhite py-sec">
+      <!-- ===== SUCCESS STORIES — redesigned ===== -->
+      <div class="stories-section py-sec">
         <v-container>
-          <div class="text-center mb-12">
+          <div class="text-center mb-6">
             <div class="eyebrow">Graduates</div>
             <h2 class="sec-title">Success <em>Stories</em></h2>
             <p class="sec-sub">
-              Every startup tells a story of success and milestones in their journey
+              Every startup tells a story of resilience and breakthrough milestones
             </p>
           </div>
-          <div class="d-flex justify-center flex-wrap gap-2 mb-8">
+
+          <!-- Filter pills -->
+          <div class="d-flex justify-center flex-wrap gap-2 mb-10">
             <button
               v-for="f in storyFilters"
               :key="f"
@@ -456,40 +463,73 @@
               {{ f }}
             </button>
           </div>
-          <div
-            v-for="story in filteredStories"
-            :key="story.name"
-            class="story-card mb-5"
-            @click="openStory(story)"
-          >
-            <div class="story-logo" :style="{ background: story.logoBg }">{{ story.initials }}</div>
-            <div class="story-body">
-              <div class="d-flex align-center justify-space-between mb-2 flex-wrap gap-2">
-                <h3 class="story-name">{{ story.name }}</h3>
-                <span
-                  class="story-pill"
-                  :style="{ background: story.statusBg, color: story.statusText }"
-                  >{{ story.status }}</span
-                >
+
+          <!-- Story grid -->
+          <v-row>
+            <v-col v-for="story in filteredStories" :key="story.name" cols="12" sm="6" lg="4">
+              <div class="story-card-new" @click="openStory(story)">
+                <!-- Cover image zone -->
+                <div class="scn-image-zone">
+                  <img :src="story.coverImg" :alt="story.name" class="scn-cover-img" />
+                  <!-- Status badge -->
+                  <div
+                    class="scn-status-badge"
+                    :style="{ background: story.statusBg, color: story.statusText }"
+                  >
+                    <span class="scn-status-dot" :style="{ background: story.statusText }" />
+                    {{ story.status }}
+                  </div>
+                  <!-- Logo overlay -->
+                  <div class="scn-logo-overlay">
+                    <div class="scn-logo-ring" :style="{ background: story.logoBg }">
+                      <span class="scn-logo-initials">{{ story.initials }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card body -->
+                <div class="scn-body">
+                  <!-- Name + industry row -->
+                  <div class="scn-name-row">
+                    <h3 class="scn-name">{{ story.name }}</h3>
+                    <span class="scn-industry-chip">{{ story.industryShort }}</span>
+                  </div>
+
+                  <p class="scn-desc mt-2 mb-4">{{ story.desc }}</p>
+
+                  <!-- Meta row -->
+                  <div class="scn-meta-row">
+                    <div class="scn-meta-item">
+                      <v-icon size="13" color="#1565c0" class="mr-1">mdi-calendar-outline</v-icon>
+                      <span class="scn-meta-label">Founded</span>
+                      <span class="scn-meta-val">{{ story.year }}</span>
+                    </div>
+                    <div class="scn-meta-item">
+                      <v-icon size="13" color="#16a34a" class="mr-1">mdi-cash-multiple</v-icon>
+                      <span class="scn-meta-label">Raised</span>
+                      <span class="scn-meta-val">{{ story.funding }}</span>
+                    </div>
+                    <div class="scn-meta-item">
+                      <v-icon size="13" color="#7c3aed" class="mr-1"
+                        >mdi-account-group-outline</v-icon
+                      >
+                      <span class="scn-meta-label">Team</span>
+                      <span class="scn-meta-val">{{ story.team }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Read more -->
+                  <div class="scn-footer mt-4">
+                    <span class="scn-read-more">
+                      Read story <v-icon size="14" class="ml-1">mdi-arrow-right</v-icon>
+                    </span>
+                  </div>
+                </div>
               </div>
-              <p class="story-desc mb-4">{{ story.desc }}</p>
-              <div class="story-meta">
-                <div class="sm-item">
-                  <v-icon size="13" color="#1565c0" class="mr-1">mdi-tag-outline</v-icon
-                  ><span>{{ story.industry }}</span>
-                </div>
-                <div class="sm-item">
-                  <v-icon size="13" color="#16a34a" class="mr-1">mdi-cash-multiple</v-icon
-                  ><span>{{ story.funding }}</span>
-                </div>
-                <div class="sm-item">
-                  <v-icon size="13" color="#e65100" class="mr-1">mdi-calendar-outline</v-icon
-                  ><span>{{ story.year }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-right mt-4">
+            </v-col>
+          </v-row>
+
+          <div class="text-right mt-8">
             <button class="btn-outlined">
               More Stories <v-icon size="15" class="ml-1">mdi-arrow-right</v-icon>
             </button>
@@ -497,57 +537,85 @@
         </v-container>
       </div>
 
-      <!-- Story dialog -->
-      <v-dialog v-model="storyDialog" max-width="560" transition="dialog-bottom-transition">
-        <v-card v-if="activeStory" rounded="xl" class="overflow-hidden">
-          <div
-            class="pa-6"
-            :style="{
-              background: activeStory.logoBg + '18',
-              borderBottom: '1px solid ' + activeStory.logoBg + '33',
-            }"
-          >
-            <div class="d-flex align-center gap-4">
-              <div class="story-dialog-logo" :style="{ background: activeStory.logoBg }">
-                {{ activeStory.initials }}
+      <!-- Story detail dialog — redesigned -->
+      <v-dialog v-model="storyDialog" max-width="620" transition="dialog-bottom-transition">
+        <v-card v-if="activeStory" rounded="xl" class="overflow-hidden pa-0">
+          <!-- Hero image -->
+          <div class="story-dialog-hero">
+            <img
+              :src="activeStory.coverImg"
+              :alt="activeStory.name"
+              class="story-dialog-hero-img"
+            />
+            <div class="story-dialog-hero-veil" />
+            <!-- Logo + name overlay on image -->
+            <div class="story-dialog-identity">
+              <div class="story-dialog-logo-ring" :style="{ background: activeStory.logoBg }">
+                <span class="story-dialog-initials">{{ activeStory.initials }}</span>
               </div>
               <div>
-                <h3 class="story-name">{{ activeStory.name }}</h3>
+                <div class="story-dialog-name">{{ activeStory.name }}</div>
                 <span
-                  class="story-pill d-inline-block mt-1"
+                  class="story-dialog-status"
                   :style="{ background: activeStory.statusBg, color: activeStory.statusText }"
                   >{{ activeStory.status }}</span
                 >
               </div>
-              <v-spacer /><v-btn icon size="small" variant="text" @click="storyDialog = false"
-                ><v-icon>mdi-close</v-icon></v-btn
-              >
             </div>
+            <v-btn
+              icon
+              size="small"
+              variant="flat"
+              class="story-dialog-close"
+              @click="storyDialog = false"
+            >
+              <v-icon size="18">mdi-close</v-icon>
+            </v-btn>
           </div>
-          <div class="pa-6">
-            <p class="text-body-2 text-medium-emphasis mb-5" style="line-height: 1.8">
-              {{ activeStory.fullDesc }}
-            </p>
-            <v-divider class="mb-4" />
+
+          <!-- Body -->
+          <div class="pa-7">
+            <!-- Tags row -->
+            <div class="d-flex flex-wrap gap-2 mb-5">
+              <v-chip size="small" color="primary" variant="tonal" prepend-icon="mdi-tag-outline">
+                {{ activeStory.industry }}
+              </v-chip>
+              <v-chip
+                size="small"
+                color="success"
+                variant="tonal"
+                prepend-icon="mdi-calendar-outline"
+              >
+                Founded {{ activeStory.year }}
+              </v-chip>
+              <v-chip
+                size="small"
+                color="purple"
+                variant="tonal"
+                prepend-icon="mdi-account-group-outline"
+              >
+                {{ activeStory.team }} team members
+              </v-chip>
+            </div>
+
+            <p class="story-dialog-body mb-6">{{ activeStory.fullDesc }}</p>
+
+            <v-divider class="mb-5" />
+
+            <!-- Stat row -->
             <v-row>
-              <v-col cols="4" class="text-center"
-                ><div class="text-h6 font-weight-bold" style="color: #1565c0">
-                  {{ activeStory.funding }}
-                </div>
-                <div class="text-caption text-medium-emphasis">Funding</div></v-col
-              >
-              <v-col cols="4" class="text-center"
-                ><div class="text-h6 font-weight-bold" style="color: #16a34a">
-                  {{ activeStory.team }}
-                </div>
-                <div class="text-caption text-medium-emphasis">Team</div></v-col
-              >
-              <v-col cols="4" class="text-center"
-                ><div class="text-h6 font-weight-bold" style="color: #e65100">
-                  {{ activeStory.year }}
-                </div>
-                <div class="text-caption text-medium-emphasis">Founded</div></v-col
-              >
+              <v-col cols="4" class="text-center">
+                <div class="story-stat-val" style="color: #1565c0">{{ activeStory.funding }}</div>
+                <div class="story-stat-label">Funding Raised</div>
+              </v-col>
+              <v-col cols="4" class="text-center">
+                <div class="story-stat-val" style="color: #16a34a">{{ activeStory.team }}</div>
+                <div class="story-stat-label">Team Size</div>
+              </v-col>
+              <v-col cols="4" class="text-center">
+                <div class="story-stat-val" style="color: #7c3aed">{{ activeStory.year }}</div>
+                <div class="story-stat-label">Year Founded</div>
+              </v-col>
             </v-row>
           </div>
         </v-card>
@@ -577,7 +645,7 @@
       </div>
     </v-main>
 
-    <!-- APPLY DIALOG -->
+    <!-- APPLY DIALOG (unchanged) -->
     <v-dialog v-model="applyDialog" max-width="540" persistent>
       <v-card rounded="xl" class="pa-2">
         <v-card-title class="pa-6 pb-2 d-flex align-center justify-space-between">
@@ -712,7 +780,7 @@
       >
     </v-snackbar>
 
-    <!-- FOOTER -->
+    <!-- FOOTER (unchanged) -->
     <footer class="footer-section">
       <v-container class="py-12">
         <v-row>
@@ -907,17 +975,14 @@ function openApplyDetail(card) {
   activeApplyCard.value = card
   applyDetailDialog.value = true
 }
-
 function openApplyFromDrawer() {
   applyDialog.value = true
   drawer.value = false
 }
-
 function openApplyFromDetail() {
   applyDetailDialog.value = false
   applyDialog.value = true
 }
-
 function closeApplyDialog() {
   applyDialog.value = false
   applyStep.value = 1
@@ -1018,6 +1083,7 @@ const navServices = ref([
   },
 ])
 
+// ── MENTORS — Supabase logic completely untouched ──
 const leaders = ref([])
 
 async function fetchMentors() {
@@ -1048,10 +1114,12 @@ async function fetchMentors() {
 
 onMounted(fetchMentors)
 
+// ── SUCCESS STORIES ──
 const storyDialog = ref(false)
 const activeStory = ref(null)
 const activeStoryFilter = ref('All')
 const storyFilters = ['All', 'Artificial Intelligence', 'Business Software', 'HealthTech']
+
 const successStories = ref([
   {
     name: 'Ascribo AI',
@@ -1061,12 +1129,14 @@ const successStories = ref([
     statusBg: '#dcfce7',
     statusText: '#15803d',
     industry: 'Artificial Intelligence',
+    industryShort: 'AI',
     funding: '₱4.2M',
     year: '2025',
     team: '8',
     desc: 'A context-aware AI translation platform delivering precise results for law, medicine, and marketing.',
     fullDesc:
       'Ascribo.AI solves the critical problem of inaccurate language translation in high-stakes fields. Their proprietary context engine reduces translation errors by over 90%.',
+    coverImg: 'https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=600&q=80',
   },
   {
     name: 'BizNest',
@@ -1076,12 +1146,14 @@ const successStories = ref([
     statusBg: '#dbeafe',
     statusText: '#1d4ed8',
     industry: 'Business Software',
+    industryShort: 'SaaS',
     funding: '₱4.2M',
     year: '2025',
     team: '12',
     desc: 'A smart business management platform for MSMEs integrating POS, inventory, finance, and CRM.',
     fullDesc:
       'BizNest helps over 500 small businesses reduce operational overhead by 40% through a unified digital workspace.',
+    coverImg: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80',
   },
   {
     name: 'MediLink PH',
@@ -1091,12 +1163,14 @@ const successStories = ref([
     statusBg: '#fef9c3',
     statusText: '#a16207',
     industry: 'HealthTech',
+    industryShort: 'Health',
     funding: '₱1.8M',
     year: '2024',
     team: '5',
     desc: 'A telemedicine platform connecting rural Caraga communities with licensed physicians nationwide.',
     fullDesc:
       'MediLink PH enables real-time teleconsultations, digital prescriptions, and secure medical records for underserved areas.',
+    coverImg: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80',
   },
 ])
 
@@ -1105,6 +1179,7 @@ const filteredStories = computed(() =>
     ? successStories.value
     : successStories.value.filter((s) => s.industry === activeStoryFilter.value),
 )
+
 function openStory(story) {
   activeStory.value = story
   storyDialog.value = true
@@ -1162,13 +1237,11 @@ function subscribeNewsletter() {
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
-
 .nav-search-hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-
 .nav-search-field {
   width: 0;
   opacity: 0;
@@ -1180,7 +1253,6 @@ function subscribeNewsletter() {
   transition: all 0.22s ease;
   pointer-events: none;
 }
-
 .nav-search-hover:hover .nav-search-field,
 .nav-search-field:focus {
   width: 170px;
@@ -1188,11 +1260,9 @@ function subscribeNewsletter() {
   padding: 6px 12px;
   pointer-events: auto;
 }
-
 .nav-search-icon-btn {
   color: #3f4e63 !important;
 }
-
 .nav-apply-btn {
   background: linear-gradient(135deg, #1565c0, #2563eb);
   color: #fff;
@@ -1214,7 +1284,7 @@ function subscribeNewsletter() {
   width: 100%;
 }
 
-/* ── BUTTON SYSTEM ── */
+/* ── BUTTONS ── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -1231,10 +1301,9 @@ function subscribeNewsletter() {
   transition: all 0.22s;
 }
 .btn-primary:hover {
-  transform: translateY(-2px);
+  transform: translateY(0px);
   box-shadow: 0 10px 30px rgba(21, 101, 192, 0.5);
 }
-
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -1252,9 +1321,8 @@ function subscribeNewsletter() {
 .btn-ghost:hover {
   background: rgba(21, 101, 192, 0.06);
   border-color: #1565c0;
-  transform: translateY(-2px);
+  transform: translateY(0px);
 }
-
 .btn-outlined {
   display: inline-flex;
   align-items: center;
@@ -1273,7 +1341,6 @@ function subscribeNewsletter() {
   background: #1565c0;
   color: #fff;
 }
-
 .btn-micro {
   display: inline-flex;
   align-items: center;
@@ -1289,7 +1356,6 @@ function subscribeNewsletter() {
 .btn-micro:hover {
   opacity: 0.75;
 }
-
 .btn-card {
   display: inline-flex;
   align-items: center;
@@ -1410,25 +1476,6 @@ function subscribeNewsletter() {
   line-height: 1.85;
   max-width: 460px;
 }
-
-.hero-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.hero-stat-num {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: #1565c0;
-  line-height: 1;
-}
-.hero-stat-label {
-  font-size: 0.68rem;
-  color: #999;
-}
-
-/* Hero collage */
 .hero-collage {
   display: flex;
   gap: 14px;
@@ -1495,7 +1542,27 @@ function subscribeNewsletter() {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-/* Tech cards */
+/* ── INDUSTRY FOCUS LABEL ── */
+.industry-label-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.industry-label-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+}
+.industry-label-text {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* Tech / Industry Focus cards */
 .tc {
   opacity: 0;
   transform: translateY(18px);
@@ -1640,7 +1707,7 @@ function subscribeNewsletter() {
   pointer-events: none;
 }
 
-/* ── JOURNEY SECTION ── */
+/* ── JOURNEY ── */
 .journey-section {
   background: #080d1c;
   position: relative;
@@ -1669,7 +1736,6 @@ function subscribeNewsletter() {
   background: linear-gradient(90deg, #2563eb, #059669, #ea580c, #7c3aed);
   opacity: 0.3;
 }
-
 .jcard {
   background: rgba(255, 255, 255, 0.055);
   backdrop-filter: blur(14px);
@@ -1762,8 +1828,6 @@ function subscribeNewsletter() {
   line-height: 1.75;
   margin: 0;
 }
-
-/* Journey mobile */
 .jmobile {
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 16px;
@@ -1908,7 +1972,7 @@ function subscribeNewsletter() {
   padding-top: 12px;
 }
 
-/* ── LEADERSHIP CARDS (from About style) ── */
+/* ── MENTOR CARDS (unchanged) ── */
 .leader-card {
   overflow: hidden;
   transition: transform 0.2s ease;
@@ -1931,83 +1995,11 @@ function subscribeNewsletter() {
   color: #888 !important;
 }
 
-/* ── STORIES ── */
-.story-card {
-  display: flex;
-  align-items: stretch;
+/* ══════════════════════════════════════════
+   SUCCESS STORIES — New Design
+   ══════════════════════════════════════════ */
+.stories-section {
   background: #fff;
-  border: 1.5px solid #e5eaf5;
-  border-radius: 20px;
-  overflow: hidden;
-  cursor: pointer;
-  transition:
-    transform 0.22s,
-    box-shadow 0.22s,
-    border-color 0.22s;
-}
-.story-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
-  border-color: #c4d5f7;
-}
-.story-logo {
-  width: 120px;
-  min-width: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Sora', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.88);
-}
-.story-body {
-  padding: 24px 28px;
-  flex: 1;
-}
-.story-name {
-  font-size: 1.08rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-.story-pill {
-  font-size: 0.66rem;
-  font-weight: 700;
-  border-radius: 50px;
-  padding: 3px 12px;
-}
-.story-desc {
-  font-size: 0.79rem;
-  color: #64748b;
-  line-height: 1.8;
-}
-.story-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-}
-.sm-item {
-  display: flex;
-  align-items: center;
-  font-size: 0.76rem;
-  color: #94a3b8;
-  font-weight: 500;
-}
-.sm-item span {
-  color: #1e293b;
-  font-weight: 600;
-}
-.story-dialog-logo {
-  width: 62px;
-  height: 62px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fff;
-  flex-shrink: 0;
 }
 
 /* Filter pills */
@@ -2032,6 +2024,269 @@ function subscribeNewsletter() {
   border-color: #1565c0;
   color: #fff;
   box-shadow: 0 4px 14px rgba(21, 101, 192, 0.32);
+}
+
+/* Story card — magazine-style vertical card */
+.story-card-new {
+  background: #fff;
+  border: 1.5px solid #e5eaf5;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s,
+    border-color 0.25s;
+}
+.story-card-new:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 52px rgba(21, 101, 192, 0.13);
+  border-color: #bcd0f7;
+}
+
+/* Cover image zone */
+.scn-image-zone {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.scn-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.story-card-new:hover .scn-cover-img {
+  transform: scale(1.04);
+}
+
+/* Gradient veil over photo so logo/badge stay readable */
+.scn-image-zone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Status badge pinned top-right */
+.scn-status-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.scn-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Logo ring overlapping image → body seam */
+.scn-logo-overlay {
+  position: absolute;
+  bottom: -22px;
+  left: 20px;
+  z-index: 3;
+}
+.scn-logo-ring {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scn-logo-initials {
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Card body */
+.scn-body {
+  flex: 1;
+  padding: 30px 20px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Name + industry chip */
+.scn-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.scn-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.25;
+}
+.scn-industry-chip {
+  background: #f0f4ff;
+  color: #1565c0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  border-radius: 50px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 1px solid #dbeafe;
+  margin-top: 2px;
+}
+
+.scn-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.75;
+  flex: 1;
+}
+
+/* Meta row: Founded · Raised · Team */
+.scn-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
+.scn-meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  gap: 2px;
+}
+.scn-meta-label {
+  margin-right: 2px;
+}
+.scn-meta-val {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Read more footer */
+.scn-footer {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
+.scn-read-more {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #1565c0;
+  display: inline-flex;
+  align-items: center;
+  transition: gap 0.18s;
+}
+.story-card-new:hover .scn-read-more {
+  gap: 4px;
+}
+
+/* ── STORY DIALOG — redesigned ── */
+.story-dialog-hero {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+.story-dialog-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.story-dialog-hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+/* Identity row (logo + name) pinned bottom-left of hero image */
+.story-dialog-identity {
+  position: absolute;
+  bottom: 18px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+}
+.story-dialog-logo-ring {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 2.5px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+.story-dialog-initials {
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.story-dialog-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.story-dialog-status {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  border-radius: 50px;
+  padding: 3px 10px;
+  margin-top: 4px;
+}
+
+/* Close button pinned top-right */
+.story-dialog-close {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  z-index: 3 !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.story-dialog-body {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.85;
+}
+.story-stat-val {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.story-stat-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
 }
 
 /* ── CTA ── */
@@ -2233,19 +2488,9 @@ function subscribeNewsletter() {
   transform: translateY(-6px);
 }
 
-/* Mobile */
 @media (max-width: 599px) {
-  .story-card {
-    flex-direction: column;
-  }
-  .story-logo {
-    width: 100%;
-    min-width: unset;
-    min-height: 72px;
-    justify-content: flex-start;
-    padding: 16px 20px;
-    gap: 14px;
-    flex-direction: row;
+  .scn-image-zone {
+    height: 160px;
   }
 }
 </style>
