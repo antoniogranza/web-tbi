@@ -106,7 +106,7 @@
         </div>
 
         <!-- Diagonal cut SVG mask that clips the left white panel -->
-        <div class="hero-left-panel py-15 py-md-0">
+        <div class="hero-left-panel py-sm-10 py-md-0">
           <div class="hero-left-content px-6 px-md-8 px-xl-16">
             <!-- Breadcrumb-style label -->
 
@@ -130,21 +130,13 @@
             </p>
 
             <!-- CTA row -->
-            <div class="d-flex flex-wrap gap-3 mb-10">
+            <div class="d-flex flex-wrap ga-3 mb-10">
               <button class="btn-solid" @click="videoDialog = true">
                 <v-icon size="16" class="mr-2">mdi-play-circle-outline</v-icon>Watch Our Story
               </button>
               <button class="btn-line">
                 <v-icon size="16" class="mr-2">mdi-arrow-right</v-icon>Read More
               </button>
-            </div>
-
-            <!-- Milestone ribbon — 4 small inline counters -->
-            <div class="hero-ribbon">
-              <div v-for="m in milestones" :key="m.label" class="ribbon-item">
-                <span class="ribbon-val">{{ m.val }}</span>
-                <span class="ribbon-label">{{ m.label }}</span>
-              </div>
             </div>
           </div>
         </div>
@@ -460,14 +452,6 @@ const videoDialog = ref(false)
 const hoveredSvc = ref(null)
 const hoveredAch = ref(null)
 const openFaq = ref(null)
-
-// ── Hero milestone ribbon ──
-const milestones = ref([
-  { val: '142', label: 'Incubatees' },
-  { val: '₱10.4M', label: 'Funding' },
-  { val: '₱20.2M', label: 'Revenue' },
-  { val: '17', label: 'Partners' },
-])
 
 // ── Services ──
 const services = ref([
@@ -864,18 +848,6 @@ const faqs = ref([
   max-width: 440px;
 }
 
-/* Milestone ribbon */
-.hero-ribbon {
-  display: flex;
-  gap: 0;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  max-width: 420px;
-  box-shadow: 0 4px 18px rgba(21, 101, 192, 0.08);
-}
 .ribbon-item {
   flex: 1;
   display: flex;
@@ -937,9 +909,7 @@ const faqs = ref([
       rgba(255, 255, 255, 0.3) 100%
     );
   }
-  .hero-ribbon {
-    max-width: 100%;
-  }
+
   .hero-accent-bar {
     min-height: 90px;
   }
