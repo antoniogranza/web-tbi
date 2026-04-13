@@ -107,7 +107,7 @@
 
         <!-- Diagonal cut SVG mask that clips the left white panel -->
         <div class="hero-left-panel py-sm-10 py-md-0">
-          <div class="hero-left-content px-6 px-md-8 px-xl-16">
+          <div class="hero-left-content px-4 px-sm-6 px-md-10 px-lg-16 px-xl-16">
             <!-- Breadcrumb-style label -->
 
             <!-- Vertical accent line + heading -->
@@ -687,7 +687,7 @@ const faqs = ref([
   transition: all 0.22s;
 }
 .btn-solid:hover {
-  transform: translateY(-2px);
+  transform: translateY(0px);
   box-shadow: 0 10px 30px rgba(21, 101, 192, 0.5);
 }
 .btn-line {
@@ -708,7 +708,7 @@ const faqs = ref([
 .btn-line:hover {
   background: rgba(21, 101, 192, 0.06);
   border-color: #1565c0;
-  transform: translateY(-2px);
+  transform: translateY(0px);
 }
 
 /* ── SHARED SECTION STYLES ── */
