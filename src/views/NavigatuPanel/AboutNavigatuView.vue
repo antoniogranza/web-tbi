@@ -283,30 +283,13 @@
           </div>
 
           <v-row>
-            <v-col
-              v-for="(obj, i) in objectives"
-              :key="obj.title"
-              cols="12"
-              sm="6"
-              md="4"
-              class="mb-4"
-            >
-              <div
-                class="obj-card"
-                :class="{ 'obj-card--open': expandedObj === i }"
-                @click="expandedObj = expandedObj === i ? null : i"
-              >
+            <v-col v-for="obj in objectives" :key="obj.title" cols="12" sm="6" md="4" class="mb-4">
+              <div class="obj-card">
                 <div class="obj-icon" :style="{ background: obj.bg }">
                   <v-icon :icon="obj.icon" :color="obj.color" size="22" />
                 </div>
                 <h4 class="obj-title mt-3 mb-2">{{ obj.title }}</h4>
                 <p class="obj-short">{{ obj.short }}</p>
-                <transition name="fx">
-                  <div v-if="expandedObj === i" class="obj-detail mt-3">
-                    <div class="obj-divider" />
-                    <p class="obj-detail-text">{{ obj.detail }}</p>
-                  </div>
-                </transition>
               </div>
             </v-col>
           </v-row>
@@ -669,7 +652,6 @@ const videoDialog = ref(false)
 const hoveredSvc = ref(null)
 const hoveredAch = ref(null)
 const openFaq = ref(null)
-const expandedObj = ref(null)
 const activeValue = ref(null)
 const activeTimeline = ref(null)
 
@@ -1554,7 +1536,6 @@ const faqs = ref([
   border: 1.5px solid #e5eaf5;
   border-radius: 18px;
   padding: 24px;
-  cursor: pointer;
   height: 100%;
   transition:
     border-color 0.2s,
@@ -1566,10 +1547,6 @@ const faqs = ref([
   transform: translateY(-3px);
   box-shadow: 0 10px 32px rgba(21, 101, 192, 0.09);
   border-color: #c4d5f7;
-}
-.obj-card--open {
-  border-color: #1565c0;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
 }
 .obj-icon {
   width: 44px;
@@ -1589,17 +1566,6 @@ const faqs = ref([
   font-size: 0.77rem;
   color: #64748b;
   line-height: 1.7;
-}
-.obj-divider {
-  height: 1px;
-  background: #f1f5f9;
-  margin-bottom: 10px;
-}
-.obj-detail-text {
-  font-size: 0.76rem;
-  color: #475569;
-  line-height: 1.75;
-  margin: 0;
 }
 
 /* ── CORE VALUES ── */
