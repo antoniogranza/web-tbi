@@ -245,6 +245,13 @@
               </div>
             </v-col>
           </v-row>
+
+          <div class="d-flex justify-end mt-8">
+            <button class="explore-services-btn" style="--sc: #1565c0" @click="goToServicesSection">
+              Explore All Services
+              <v-icon size="16" class="ml-2">mdi-arrow-right</v-icon>
+            </button>
+          </div>
         </v-container>
       </div>
 
@@ -465,6 +472,10 @@ function runNavbarSearch() {
   const query = navSearchQuery.value.trim()
   if (!query) return
   router.push({ path: '/news-navigatu', query: { q: query } })
+}
+
+function goToServicesSection() {
+  router.push({ path: '/services-navigatu', hash: '#learn-more' })
 }
 
 // ── UI state ──
@@ -1125,11 +1136,31 @@ const faqs = ref([
   font-weight: 600;
   border: 1.5px solid var(--sc, #1565c0);
   border-radius: 50px;
-  padding: 7px 18px;
+  padding: 5px 18px;
   cursor: pointer;
   transition: all 0.2s;
 }
 .svc-btn:hover {
+  background: var(--sc, #1565c0);
+  color: #fff;
+}
+
+.explore-services-btn {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: var(--sc, #1565c0);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border: 1.5px solid var(--sc, #1565c0);
+  border-radius: 10px;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.explore-services-btn:hover {
   background: var(--sc, #1565c0);
   color: #fff;
 }
