@@ -34,8 +34,15 @@
               class="nav-search-field"
               type="text"
               placeholder="Search..."
+              @keyup.enter="runNavbarSearch"
             />
-            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+            <v-btn
+              variant="text"
+              icon
+              size="small"
+              class="nav-search-icon-btn"
+              @click="runNavbarSearch"
+            >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
@@ -521,9 +528,18 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const drawer = ref(false)
 const navSearchQuery = ref('')
+const router = useRouter()
+
+function runNavbarSearch() {
+  const query = navSearchQuery.value.trim()
+  if (!query) return
+  router.push({ path: '/news-navigatu', query: { q: query } })
+}
+
 const activeTestimonial = ref(0)
 const activeFacility = ref(null)
 const activeFacilityFilter = ref('all')

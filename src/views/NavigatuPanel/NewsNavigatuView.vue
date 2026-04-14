@@ -34,8 +34,15 @@
               class="nav-search-field"
               type="text"
               placeholder="Search..."
+              @keyup.enter="runNavbarSearch"
             />
-            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+            <v-btn
+              variant="text"
+              icon
+              size="small"
+              class="nav-search-icon-btn"
+              @click="runNavbarSearch"
+            >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
@@ -379,8 +386,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
 const drawer = ref(false)
@@ -392,7 +399,21 @@ const allLoaded = ref(false)
 const loadingNews = ref(false)
 const newsError = ref('')
 const news = ref([])
+const route = useRoute()
 const router = useRouter()
+
+function runNavbarSearch() {
+  const query = searchQuery.value.trim()
+  router.push({ path: '/news-navigatu', query: query ? { q: query } : {} })
+}
+
+watch(
+  () => route.query.q,
+  (q) => {
+    searchQuery.value = typeof q === 'string' ? q : ''
+  },
+  { immediate: true },
+)
 
 const categories = ['All', 'Announcement', 'Achievement', 'Partnership', 'Program', 'Research']
 

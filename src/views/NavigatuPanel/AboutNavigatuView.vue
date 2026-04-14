@@ -32,8 +32,15 @@
               class="nav-search-field"
               type="text"
               placeholder="Search..."
+              @keyup.enter="runNavbarSearch"
             />
-            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+            <v-btn
+              variant="text"
+              icon
+              size="small"
+              class="nav-search-icon-btn"
+              @click="runNavbarSearch"
+            >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
@@ -323,10 +330,7 @@
             </v-col>
           </v-row>
 
-          <p
-            v-if="!filteredIncubatees.length"
-            class="section-subtitle text-center mt-2"
-          >
+          <p v-if="!filteredIncubatees.length" class="section-subtitle text-center mt-2">
             No startups found for this filter.
           </p>
         </v-container>
@@ -449,11 +453,19 @@
 
 <script setup>
 import { computed, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
 // ── Navbar / drawer ──
 const drawer = ref(false)
 const navSearchQuery = ref('')
+const router = useRouter()
+
+function runNavbarSearch() {
+  const query = navSearchQuery.value.trim()
+  if (!query) return
+  router.push({ path: '/news-navigatu', query: { q: query } })
+}
 
 // ── UI state ──
 const videoDialog = ref(false)

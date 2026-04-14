@@ -33,8 +33,15 @@
               class="nav-search-field"
               type="text"
               placeholder="Search..."
+              @keyup.enter="runNavbarSearch"
             />
-            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+            <v-btn
+              variant="text"
+              icon
+              size="small"
+              class="nav-search-icon-btn"
+              @click="runNavbarSearch"
+            >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
@@ -288,6 +295,12 @@ const navSearchQuery = ref('')
 const loading = ref(false)
 const error = ref('')
 const article = ref(null)
+
+function runNavbarSearch() {
+  const query = navSearchQuery.value.trim()
+  if (!query) return
+  router.push({ path: '/news-navigatu', query: { q: query } })
+}
 
 function normalizeNewsItem(item) {
   return {

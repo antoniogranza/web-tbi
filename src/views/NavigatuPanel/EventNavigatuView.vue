@@ -34,8 +34,15 @@
               class="nav-search-field"
               type="text"
               placeholder="Search events..."
+              @keyup.enter="runNavbarSearch"
             />
-            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+            <v-btn
+              variant="text"
+              icon
+              size="small"
+              class="nav-search-icon-btn"
+              @click="runNavbarSearch"
+            >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
@@ -465,6 +472,10 @@ const activeType = ref('All')
 const viewMode = ref('upcoming')
 const sortBy = ref('Date (Soonest)')
 const router = useRouter()
+
+function runNavbarSearch() {
+  searchQuery.value = searchQuery.value.trim()
+}
 
 // ── Supabase data state ───────────────────────────────────────────────────────
 const events = ref([])

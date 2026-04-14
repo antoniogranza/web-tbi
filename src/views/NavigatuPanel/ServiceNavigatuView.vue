@@ -33,8 +33,15 @@
               class="nav-search-field"
               type="text"
               placeholder="Search..."
+              @keyup.enter="runNavbarSearch"
             />
-            <v-btn variant="text" icon size="small" class="nav-search-icon-btn">
+            <v-btn
+              variant="text"
+              icon
+              size="small"
+              class="nav-search-icon-btn"
+              @click="runNavbarSearch"
+            >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
@@ -787,6 +794,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
 const scrolled = ref(false)
@@ -798,6 +806,13 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 const drawer = ref(false)
 const searchQuery = ref('')
+const router = useRouter()
+
+function runNavbarSearch() {
+  const query = searchQuery.value.trim()
+  if (!query) return
+  router.push({ path: '/news-navigatu', query: { q: query } })
+}
 
 const animatedCards = ref(false)
 onMounted(() =>
@@ -928,10 +943,7 @@ function openApplyDetail(card) {
   activeApplyCard.value = card
   applyDetailDialog.value = true
 }
-function openApplyFromDrawer() {
-  applyDialog.value = true
-  drawer.value = false
-}
+
 function closeApplyDialog() {
   applyDialog.value = false
   applyStep.value = 1
