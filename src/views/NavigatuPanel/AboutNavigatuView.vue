@@ -173,13 +173,13 @@
             <v-col cols="12" md="5" class="mb-8 mb-md-0">
               <div class="about-img-stack">
                 <img
-                  src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=700&q=80"
+                  src="/public/images/facilities/FacilityA.JPG"
                   alt="Navigatú facility"
                   class="about-img-main"
                 />
                 <div class="about-img-float">
                   <img
-                    src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&q=80"
+                    src="/public/images/facilities/FacilityD.png"
                     alt="Team collaboration"
                     class="about-img-sm"
                   />
@@ -201,10 +201,10 @@
                 region.
               </p>
               <p class="sec-body mb-7">
-                The incubator provides a structured environment where students, faculty researchers,
-                and early-stage entrepreneurs receive the tools, mentorship, and network they need
-                to transform ideas into sustainable businesses — contributing directly to job
-                creation and regional economic development across Southern Philippines.
+                Coined from the word navigation and is inspired by the rich history of Butuan's
+                Balangay Boats as the oldest wooden watercraft excavated in the region that showed
+                evidence of our trading relationships all throughout Southeast Asia in as early as
+                700 AD.
               </p>
 
               <!-- Key facts grid -->
@@ -316,7 +316,6 @@
                 :class="{ 'obj-card--open': expandedObj === i }"
                 @click="expandedObj = expandedObj === i ? null : i"
               >
-                <div class="obj-num" :style="{ color: obj.color }">0{{ i + 1 }}</div>
                 <div class="obj-icon" :style="{ background: obj.bg }">
                   <v-icon :icon="obj.icon" :color="obj.color" size="22" />
                 </div>
@@ -328,14 +327,6 @@
                     <p class="obj-detail-text">{{ obj.detail }}</p>
                   </div>
                 </transition>
-                <div class="obj-footer mt-3">
-                  <span class="obj-toggle-label">
-                    {{ expandedObj === i ? 'Show less' : 'Read more' }}
-                    <v-icon size="13" class="ml-1">{{
-                      expandedObj === i ? 'mdi-chevron-up' : 'mdi-chevron-down'
-                    }}</v-icon>
-                  </span>
-                </div>
               </div>
             </v-col>
           </v-row>
@@ -725,58 +716,91 @@ const keyFacts = ref([
 // ── Objectives ──
 const objectives = ref([
   {
-    title: 'Promote Technopreneurship',
-    short: 'Foster a culture of technology-driven entrepreneurship in Caraga.',
+    title: 'Advance Entrepreneurial Culture',
+    short: 'Advance the entrepreneurial culture of the university.',
     detail:
-      'Navigatú actively promotes the technopreneurship mindset in universities, communities, and industry through events, boot camps, and awareness programs across the Caraga region.',
-    icon: 'mdi-rocket-launch-outline',
+      'Cultivate a strong innovation mindset and entrepreneurial spirit across the university community.',
+    icon: 'mdi-school-outline',
     bg: '#dbeafe',
     color: '#1565c0',
   },
   {
-    title: 'Support R&D Commercialization',
-    short: 'Bridge the gap between academic research and the marketplace.',
+    title: 'Lead Innovation Programs',
+    short:
+      'Lead in the development of a comprehensive set of programs to nurture innovation and entrepreneurship among students, researchers, and faculty members in the university.',
     detail:
-      'We assist faculty and researchers in converting publishable research into viable commercial products by providing IP support, prototype funding, and market readiness assessments.',
-    icon: 'mdi-flask-outline',
+      'Design and implement structured programs that build entrepreneurial capability and innovation outcomes for all university sectors.',
+    icon: 'mdi-lightbulb-on-outline',
     bg: '#d1fae5',
     color: '#059669',
   },
   {
-    title: 'Build Strategic Partnerships',
-    short: 'Forge connections with local and international stakeholders.',
+    title: 'Be the Central Connection Point',
+    short:
+      'Serve as the central point where students, faculty, researchers, alumni, entrepreneurs, business leaders, investors, and industry can connect with each other.',
     detail:
-      'With 14 local and 3 international partners, Navigatú builds a robust ecosystem of collaborators including government agencies, private corporations, and foreign universities.',
-    icon: 'mdi-handshake-outline',
+      'Strengthen cross-sector collaboration by convening key stakeholders through one shared innovation platform.',
+    icon: 'mdi-connection',
     bg: '#ffedd5',
     color: '#ea580c',
   },
   {
-    title: 'Develop Human Capital',
-    short: 'Train and certify faculty, MSMEs, and startup founders.',
+    title: 'Establish Innovation Offices and Spaces',
+    short:
+      'Establish the incubation and innovation space, technology commercialization office, and industry collaboration offices.',
     detail:
-      'Our training programs have certified 50 faculty, upskilled 16 MSMEs, and developed 46 startup teams — creating a pipeline of innovation-ready professionals in the region.',
-    icon: 'mdi-account-tie-outline',
+      'Build physical and institutional structures that support incubation, commercialization, and collaborative development.',
+    icon: 'mdi-office-building-cog-outline',
     bg: '#ede9fe',
     color: '#7c3aed',
   },
   {
-    title: 'Create Jobs & Livelihood',
-    short: 'Generate meaningful employment through startup growth.',
+    title: 'Create Jobs, Wealth, and Businesses',
+    short: 'Help create jobs, wealth, and businesses aligning with national priorities.',
     detail:
-      'By incubating startups that hire locally, Navigatú has directly contributed to 28 jobs created and aims to scale this impact through each new cohort of graduating ventures.',
-    icon: 'mdi-briefcase-outline',
+      'Drive inclusive economic impact by supporting ventures that align with strategic national development goals.',
+    icon: 'mdi-briefcase-check-outline',
     bg: '#fef3c7',
     color: '#d97706',
   },
   {
-    title: 'Build a Regional Ecosystem',
-    short: 'Connect HEIs, government, and industry into one network.',
+    title: 'Promote Innovation-Based Startups',
+    short: 'Promote new technology, knowledge, and innovation-based startups.',
     detail:
-      "Navigatú anchors a consortium that integrates Caraga State University, DOST, DICT, and other HEIs — forming a unified innovation ecosystem that amplifies each partner's reach.",
-    icon: 'mdi-hub-outline',
+      'Encourage formation and growth of high-potential startups grounded in research and emerging technologies.',
+    icon: 'mdi-rocket-launch-outline',
     bg: '#fee2e2',
     color: '#dc2626',
+  },
+  {
+    title: 'Enable Speedy Commercialization',
+    short:
+      'Provide a platform for speedy commercialization of technologies developed by the university, any academic, technical, or R&D institution, or by an individual.',
+    detail:
+      'Accelerate the path from research outputs and inventions to market-ready products and services.',
+    icon: 'mdi-flask-outline',
+    bg: '#e0f2fe',
+    color: '#0284c7',
+  },
+  {
+    title: 'Build a Vibrant Startup Ecosystem',
+    short:
+      'Build a vibrant startup ecosystem by establishing a network between the university, financial institutions, industries, and other institutions.',
+    detail:
+      'Create durable partnerships that expand opportunities for founders, funders, and collaborators.',
+    icon: 'mdi-hub-outline',
+    bg: '#ecfccb',
+    color: '#65a30d',
+  },
+  {
+    title: 'Deliver Value-Added Startup Services',
+    short:
+      'Provide cost-effective, value-added services to startups such as mentoring, legal, financial, technical, and intellectual property support to help establish startups and build successful business models.',
+    detail:
+      'Offer end-to-end startup support services that reduce friction and improve venture survival and growth.',
+    icon: 'mdi-account-tie-outline',
+    bg: '#ffe4e6',
+    color: '#e11d48',
   },
 ])
 
@@ -1604,14 +1628,6 @@ const faqs = ref([
   border-color: #1565c0;
   box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
 }
-.obj-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 12px;
-  opacity: 0.25;
-}
 .obj-icon {
   width: 44px;
   height: 44px;
@@ -1641,17 +1657,6 @@ const faqs = ref([
   color: #475569;
   line-height: 1.75;
   margin: 0;
-}
-.obj-footer {
-  border-top: 1px solid #f1f5f9;
-  padding-top: 10px;
-}
-.obj-toggle-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #1565c0;
-  display: inline-flex;
-  align-items: center;
 }
 
 /* ── CORE VALUES ── */
