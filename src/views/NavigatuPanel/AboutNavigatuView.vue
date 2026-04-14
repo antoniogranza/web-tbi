@@ -1544,7 +1544,7 @@ const faqs = ref([
   position: relative;
 }
 .obj-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(0px);
   box-shadow: 0 10px 32px rgba(21, 101, 192, 0.09);
   border-color: #c4d5f7;
 }
