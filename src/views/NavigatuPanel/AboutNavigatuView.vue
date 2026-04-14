@@ -809,7 +809,7 @@ const coreValues = ref([
 // ── Services ──
 const services = ref([
   {
-    title: 'Incubation Program',
+    title: 'Business Ideation',
     description:
       'Comprehensive 6-month support for early-stage startups to develop, validate, and scale innovative ideas into market-ready ventures.',
     features: [
@@ -824,7 +824,7 @@ const services = ref([
     accentColor: '#1565C0',
   },
   {
-    title: 'Mentorship Program',
+    title: 'Startup Support',
     description:
       'One-on-one guidance from industry experts, seasoned entrepreneurs, and academic researchers to accelerate your growth.',
     features: [
