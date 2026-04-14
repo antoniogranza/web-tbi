@@ -38,7 +38,6 @@
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
-          <button class="nav-apply-btn ml-2" @click="applyDialog = true">Apply Now</button>
         </div>
         <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
       </v-container>
@@ -74,11 +73,6 @@
         />
         <v-list-item title="Events" prepend-icon="mdi-calendar-outline" rounded="lg" class="mb-1" />
       </v-list>
-      <template #append>
-        <div class="pa-4">
-          <button class="nav-apply-btn w-full" @click="openApplyFromDrawer">Apply Now</button>
-        </div>
-      </template>
     </v-navigation-drawer>
 
     <v-main>
@@ -100,9 +94,6 @@
                 mentorship, funding pathways, and a thriving startup community.
               </p>
               <div class="d-flex flex-wrap ga-3 mb-10">
-                <button class="btn-primary" @click="applyDialog = true">
-                  <v-icon size="17" class="mr-2">mdi-rocket-launch-outline</v-icon> Apply Now
-                </button>
                 <button class="btn-ghost" @click="learnMoreScroll">
                   <v-icon size="17" class="mr-2">mdi-play-circle-outline</v-icon> Learn More
                 </button>
@@ -617,9 +608,6 @@
             innovators.
           </p>
           <div class="d-flex justify-center flex-wrap gap-4">
-            <button class="btn-cta-solid" @click="applyDialog = true">
-              <v-icon size="17" class="mr-2">mdi-send-outline</v-icon> Start Application
-            </button>
             <button class="btn-cta-ghost">
               <v-icon size="17" class="mr-2">mdi-calendar-check-outline</v-icon> Schedule a Tour
             </button>
@@ -1598,8 +1586,8 @@ function subscribeNewsletter() {
     box-shadow 0.25s;
 }
 .apply-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+  transform: translateY(0px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
 }
 .ac-inner {
   position: relative;

@@ -40,7 +40,6 @@
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </div>
-          <button class="nav-apply-btn ml-2">Apply Now</button>
         </div>
 
         <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
@@ -80,11 +79,6 @@
           active
         />
       </v-list>
-      <template #append>
-        <div class="pa-4">
-          <button class="nav-apply-btn" style="width: 100%">Apply Now</button>
-        </div>
-      </template>
     </v-navigation-drawer>
 
     <v-main>

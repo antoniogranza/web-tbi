@@ -10,12 +10,15 @@ const menus = [
   { name: 'Impact', path: '/impact' },
   { name: 'Events', path: '/events' },
   { name: 'News', path: '/news' },
-  { name: 'Apply', path: '/apply' },
 ]
 
 const drawerOpen = ref(false)
-const toggleDrawer = () => { drawerOpen.value = !drawerOpen.value }
-const closeDrawer = () => { drawerOpen.value = false }
+const toggleDrawer = () => {
+  drawerOpen.value = !drawerOpen.value
+}
+const closeDrawer = () => {
+  drawerOpen.value = false
+}
 </script>
 
 <template>
@@ -126,15 +129,23 @@ const closeDrawer = () => { drawerOpen.value = false }
   bottom: 0;
   width: 0%;
   height: 1.5px;
-  background-color: #25671E;
+  background-color: #25671e;
   border-radius: 99px;
   transition: width 0.25s ease;
 }
 
-.nav-link:hover { color: #25671E; }
-.nav-link:hover::after { width: 100%; }
-.nav-link.router-link-active { color: #25671E; }
-.nav-link.router-link-active::after { width: 100%; }
+.nav-link:hover {
+  color: #25671e;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+.nav-link.router-link-active {
+  color: #25671e;
+}
+.nav-link.router-link-active::after {
+  width: 100%;
+}
 
 /* ── Hamburger button ── */
 .mobile-menu-btn {
@@ -155,7 +166,10 @@ const closeDrawer = () => { drawerOpen.value = false }
   width: 100%;
   background-color: #3a3a3a;
   border-radius: 99px;
-  transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    width 0.3s ease;
   transform-origin: center;
 }
 
@@ -209,7 +223,10 @@ const closeDrawer = () => { drawerOpen.value = false }
   letter-spacing: -0.01em;
   padding: 14px 32px;
   border-bottom: 1px solid rgba(200, 190, 185, 0.2);
-  transition: color 0.2s ease, background 0.2s ease, padding-left 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    padding-left 0.2s ease;
 }
 
 .mobile-nav-link:last-child {
@@ -217,33 +234,48 @@ const closeDrawer = () => { drawerOpen.value = false }
 }
 
 .mobile-nav-link:hover {
-  color: #25671E;
+  color: #25671e;
   background: rgba(37, 103, 30, 0.04);
   padding-left: 40px;
 }
 
 .mobile-nav-link.router-link-active {
-  color: #25671E;
+  color: #25671e;
   font-weight: 600;
-  border-left: 3px solid #25671E;
+  border-left: 3px solid #25671e;
   padding-left: 29px;
 }
 
 /* ── Transitions ── */
 .fade-enter-active,
-.fade-leave-active { transition: opacity 0.25s ease; }
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
 .fade-enter-from,
-.fade-leave-to { opacity: 0; }
+.fade-leave-to {
+  opacity: 0;
+}
 
 .slide-down-enter-active,
-.slide-down-leave-active { transition: transform 0.3s ease, opacity 0.3s ease; }
+.slide-down-leave-active {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
 .slide-down-enter-from,
-.slide-down-leave-to { transform: translateY(-12px); opacity: 0; }
+.slide-down-leave-to {
+  transform: translateY(-12px);
+  opacity: 0;
+}
 
 /* ── Responsive Breakpoint ── */
 @media (max-width: 960px) {
-  .desktop-nav { display: none; }
-  .mobile-menu-btn { display: inline-flex !important; }
+  .desktop-nav {
+    display: none;
+  }
+  .mobile-menu-btn {
+    display: inline-flex !important;
+  }
 
   :deep(.v-toolbar__content) {
     padding: 0 16px;
