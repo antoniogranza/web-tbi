@@ -191,18 +191,8 @@
               Students, Faculty, Early-Stage startups, and Tech Entrepreneurs can apply
             </p>
           </div>
-          <v-tabs
-            v-model="activeApplyTab"
-            color="primary"
-            align-tabs="center"
-            class="mb-8"
-            show-arrows
-          >
-            <v-tab value="all">All</v-tab>
-            <v-tab v-for="c in applyCards" :key="c.id" :value="c.id">{{ c.short }}</v-tab>
-          </v-tabs>
           <v-row>
-            <v-col v-for="card in filteredApplyCards" :key="card.id" cols="12" md="6" class="mb-4">
+            <v-col v-for="card in applyCards" :key="card.id" cols="12" md="6" class="mb-4">
               <div class="apply-card" :class="'ac--' + card.id" @click="openApplyDetail(card)">
                 <div class="ac-inner">
                   <div class="ac-badge" :style="{ background: card.badgeColor }">
@@ -868,7 +858,6 @@ function learnMoreScroll() {
   document.getElementById('learn-more')?.scrollIntoView({ behavior: 'smooth' })
 }
 
-const activeApplyTab = ref('all')
 const applyDetailDialog = ref(false)
 const activeApplyCard = ref(null)
 
@@ -947,11 +936,6 @@ const applyCards = ref([
   },
 ])
 
-const filteredApplyCards = computed(() =>
-  activeApplyTab.value === 'all'
-    ? applyCards.value
-    : applyCards.value.filter((c) => c.id === activeApplyTab.value),
-)
 function openApplyDetail(card) {
   activeApplyCard.value = card
   applyDetailDialog.value = true
