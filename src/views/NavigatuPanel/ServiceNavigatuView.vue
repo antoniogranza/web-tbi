@@ -255,13 +255,6 @@
                 class="px-0"
               />
             </v-list>
-            <button
-              class="btn-primary mt-6"
-              style="width: 100%; justify-content: center"
-              @click="openApplyFromDetail"
-            >
-              Apply as {{ activeApplyCard.short }}
-            </button>
           </div>
         </v-card>
       </v-dialog>
@@ -660,7 +653,7 @@
             <v-divider />
             <v-stepper-item value="2" title="Venture" :color="applyStep >= 2 ? 'primary' : ''" />
             <v-divider />
-            <v-stepper-item value="3" title="Submit" :color="applyStep >= 3 ? 'primary' : ''" />
+            <v-stepper-item value="3" title="Review" :color="applyStep >= 3 ? 'primary' : ''" />
           </v-stepper-header>
           <v-stepper-window>
             <v-stepper-window-item value="1">
@@ -731,10 +724,11 @@
             </v-stepper-window-item>
             <v-stepper-window-item value="3">
               <div class="pa-6 text-center">
-                <v-icon icon="mdi-check-circle-outline" size="56" color="success" class="mb-4" />
-                <h3 class="text-h6 font-weight-bold mb-2">You're all set!</h3>
+                <v-icon icon="mdi-information-outline" size="56" color="primary" class="mb-4" />
+                <h3 class="text-h6 font-weight-bold mb-2">Application is reviewed offline</h3>
                 <p class="text-body-2 text-medium-emphasis">
-                  Our team will contact you within 5 business days.
+                  This website does not accept online submissions. Please contact Navigatu TBI for
+                  application instructions.
                 </p>
                 <v-card class="mt-4 pa-4 text-left" color="grey-lighten-4" rounded="lg" flat>
                   <div class="text-caption font-weight-bold mb-2 text-medium-emphasis">SUMMARY</div>
@@ -757,28 +751,15 @@
           >
           <v-btn
             v-else
-            color="success"
+            color="primary"
             rounded="lg"
-            prepend-icon="mdi-send"
-            @click="submitApplication"
-            >Submit</v-btn
+            prepend-icon="mdi-close"
+            @click="closeApplyDialog"
+            >Close</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-snackbar
-      v-model="snackbar"
-      :timeout="4000"
-      color="success"
-      rounded="lg"
-      location="bottom center"
-    >
-      <v-icon icon="mdi-check-circle" class="mr-2" /> Application submitted! We'll be in touch soon.
-      <template #actions
-        ><v-btn variant="text" color="white" @click="snackbar = false">Close</v-btn></template
-      >
-    </v-snackbar>
 
     <!-- FOOTER (unchanged) -->
     <footer class="footer-section">
@@ -978,10 +959,6 @@ function openApplyDetail(card) {
 function openApplyFromDrawer() {
   applyDialog.value = true
   drawer.value = false
-}
-function openApplyFromDetail() {
-  applyDetailDialog.value = false
-  applyDialog.value = true
 }
 function closeApplyDialog() {
   applyDialog.value = false
@@ -1188,14 +1165,6 @@ function openStory(story) {
 const applyDialog = ref(false)
 const applyStep = ref(1)
 const applyForm = ref({ name: '', email: '', type: '', venture: '', category: '', pitch: '' })
-const snackbar = ref(false)
-
-function submitApplication() {
-  applyDialog.value = false
-  applyStep.value = 1
-  snackbar.value = true
-  applyForm.value = { name: '', email: '', type: '', venture: '', category: '', pitch: '' }
-}
 
 const newsletterEmail = ref('')
 const footerLinks = {
