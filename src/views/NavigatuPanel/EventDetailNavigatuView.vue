@@ -11,13 +11,17 @@
       style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
     >
       <v-container class="d-flex align-center pa-0" fluid>
-        <div class="d-flex align-center ml-4 ml-md-8">
+        <router-link
+          to="/navigatu"
+          class="d-flex align-center ml-4 ml-md-8"
+          style="text-decoration: none; color: inherit"
+        >
           <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
           <div>
             <div class="nav-brand">NAVIGATÚ</div>
             <div class="nav-sub">Technology Business Incubator</div>
           </div>
-        </div>
+        </router-link>
 
         <v-spacer />
 

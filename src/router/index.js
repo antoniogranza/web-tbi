@@ -8,6 +8,7 @@ import AdminDashboard from '@/views/AdminPanel/AdminDashboard.vue'
 import LoginView from '@/views/LoginView.vue'
 
 // Navigatu Routing
+import HomeNavigatuView from '@/views/NavigatuPanel/HomeNavigatuView.vue'
 import AboutNavigatuView from '@/views/NavigatuPanel/AboutNavigatuView.vue'
 import CoworkingNavigatuView from '@/views/NavigatuPanel/CoworkingNavigatuView.vue'
 import ServiceNavigatuView from '@/views/NavigatuPanel/ServiceNavigatuView.vue'
@@ -78,7 +79,6 @@ const routes = [
       { path: '', component: Home },
       { path: 'about', component: About },
       { path: 'program', component: Program },
-      { path: 'navigatu', component: Navigatu },
       { path: 'tara', component: Tara },
       { path: 'ecosystem', component: Ecosystem },
       { path: 'impact', component: Impact },
@@ -90,6 +90,10 @@ const routes = [
   },
 
   // ✅ Navigatu Pages Route (Protected - require authentication)
+  {
+    path: '/navigatu',
+    component: HomeNavigatuView,
+  },
   {
     path: '/about-navigatu',
     component: AboutNavigatuView,
