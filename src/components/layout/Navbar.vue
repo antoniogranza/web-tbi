@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 
+defineOptions({ name: 'AppNavbar' })
+
 const menus = [
   { name: 'About', path: '/about' },
   { name: 'Program', path: '/program' },
