@@ -2342,8 +2342,11 @@
 <script setup>
 import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth, supabase } from '@/utils/supabase'
+import { auth } from '@/utils/supabase'
 import { useAdminTable } from '@/composables/useAdminTable'
+import { useAdminDashboardMeta } from '@/composables/useAdminDashboardMeta'
+import { useAdminDashboardFilters } from '@/composables/useAdminDashboardFilters'
+import { useAdminDashboardMedia } from '@/composables/useAdminDashboardMedia'
 
 const router = useRouter()
 
@@ -2368,259 +2371,31 @@ const tableMap = {
 }
 const activeTable = computed(() => tableMap[activeSection.value] || incubateesTable)
 
-// ── Static config ─────────────────────────────────────────────────────────────
-const tbiOptions = [
-  {
-    id: 'navigatu',
-    name: 'Navigatú TBI',
-    shortName: 'NAV',
-    color: '#1565C0',
-    sub: 'Technology Business Incubator',
-  },
-  {
-    id: 'tara',
-    name: 'TARA ATBI',
-    shortName: 'TARA',
-    color: '#2E7D32',
-    sub: 'Agri Technology Business Incubator',
-  },
-  {
-    id: 'csutbi',
-    name: 'CSU TBI',
-    shortName: 'CSU',
-    color: '#B71C1C',
-    sub: 'Caraga State University TBI',
-  },
-]
-
-const categories = [
-  {
-    id: 'incubatees',
-    name: 'Incubatees',
-    singular: 'Incubatee',
-    icon: 'mdi-rocket-launch-outline',
-    color: '#1565C0',
-    btnColor: 'primary',
-    desc: 'Add, edit, and manage startup incubatees. Assign each to the TBI where it belongs.',
-  },
-  {
-    id: 'news',
-    name: 'News',
-    singular: 'News Article',
-    icon: 'mdi-newspaper-variant-outline',
-    color: '#2E7D32',
-    btnColor: 'success',
-    desc: 'Publish news and announcements. Choose which TBI portal shows the article.',
-  },
-  {
-    id: 'events',
-    name: 'Events',
-    singular: 'Event',
-    icon: 'mdi-calendar-star-outline',
-    color: '#E65100',
-    btnColor: 'warning',
-    desc: 'Create events and assign them to the correct TBI portal for display.',
-  },
-  {
-    id: 'mentors',
-    name: 'Mentors',
-    singular: 'Mentor',
-    icon: 'mdi-account-tie-outline',
-    color: '#6A1B9A',
-    btnColor: 'secondary',
-    desc: 'Add, edit, archive, and delete mentor profiles for each TBI portal.',
-  },
-]
-
-// ── Computed active category meta ─────────────────────────────────────────────
-const activeCategory = computed(() => categories.find((c) => c.id === activeSection.value))
-const activeCategoryName = computed(() => activeCategory.value?.name || 'Dashboard')
-const activeSingular = computed(() => activeCategory.value?.singular || '')
-const activeCategoryIcon = computed(
-  () => activeCategory.value?.icon || 'mdi-view-dashboard-outline',
-)
-const activeCategoryColor = computed(() => activeCategory.value?.color || '#1565C0')
-const activeCategoryBtnColor = computed(() => activeCategory.value?.btnColor || 'primary')
-const appBarTitle = computed(() =>
-  activeSection.value === 'home' ? 'Dashboard' : activeCategoryName.value,
-)
-
-// ── Dashboard stats ───────────────────────────────────────────────────────────
-const dashStats = computed(() => [
-  {
-    label: 'Total Incubatees',
-    value: incubateesTable.records.value.length || '—',
-    icon: 'mdi-rocket-launch-outline',
-    color: '#1565C0',
-    iconBg: '#E3F2FD',
-    section: 'incubatees',
-  },
-  {
-    label: 'Published News',
-    value: newsTable.records.value.filter((n) => n.status === 'active').length || '—',
-    icon: 'mdi-newspaper-variant-outline',
-    color: '#2E7D32',
-    iconBg: '#E8F5E9',
-    section: 'news',
-  },
-  {
-    label: 'Upcoming Events',
-    value: eventsTable.records.value.filter((e) => e.status === 'upcoming').length || '—',
-    icon: 'mdi-calendar-star-outline',
-    color: '#E65100',
-    iconBg: '#FFF3E0',
-    section: 'events',
-  },
-  {
-    label: 'TBI Portals',
-    value: tbiOptions.length,
-    icon: 'mdi-office-building-outline',
-    color: '#6A1B9A',
-    iconBg: '#EDE7F6',
-    section: null,
-  },
-  {
-    label: 'Active Mentors',
-    value: mentorsTable.records.value.filter((m) => m.status === 'active').length || '—',
-    icon: 'mdi-account-tie-outline',
-    color: '#6A1B9A',
-    iconBg: '#F3E5F5',
-    section: 'mentors',
-  },
-])
-
-const todayLabel = computed(() =>
-  new Date().toLocaleDateString('en-PH', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }),
-)
-
-// ── Filters ───────────────────────────────────────────────────────────────────
-const searchQuery = ref('')
-const tbiFilter = ref('')
-const statusFilter = ref('All')
-
-const activeStatusItems = computed(() => {
-  if (activeSection.value === 'events') return ['All', 'upcoming', 'past', 'draft']
-  if (activeSection.value === 'incubatees') return ['All', 'active', 'draft', 'graduated']
-  if (activeSection.value === 'mentors') return ['All', 'active', 'draft', 'archived']
-  return ['All', 'active', 'draft']
+const {
+  tbiOptions,
+  categories,
+  activeCategoryName,
+  activeSingular,
+  activeCategoryIcon,
+  activeCategoryColor,
+  activeCategoryBtnColor,
+  appBarTitle,
+  dashStats,
+  todayLabel,
+  activeHeaders,
+  tbiShortName,
+  tbiChipColor,
+  statusChipColor,
+} = useAdminDashboardMeta({
+  activeSection,
+  incubateesTable,
+  newsTable,
+  eventsTable,
+  mentorsTable,
 })
 
-const filteredRecords = computed(() => {
-  let list = activeTable.value.records.value
-  if (statusFilter.value !== 'All') list = list.filter((r) => r.status === statusFilter.value)
-  return list
-})
-
-// ── Table headers ─────────────────────────────────────────────────────────────
-const activeHeaders = computed(() => {
-  if (activeSection.value === 'incubatees')
-    return [
-      { title: '', key: 'thumb', sortable: false, width: '52px' },
-      { title: 'Startup Name', key: 'name', sortable: true },
-      { title: 'TBI', key: 'tbi_id', sortable: true },
-      { title: 'Category', key: 'category', sortable: true },
-      { title: 'Location', key: 'location', sortable: false },
-      { title: 'Year', key: 'year_founded', sortable: true },
-      { title: 'Status', key: 'status', sortable: true },
-      { title: 'Actions', key: 'actions', sortable: false },
-    ]
-  if (activeSection.value === 'news')
-    return [
-      { title: '', key: 'thumb', sortable: false, width: '52px' },
-      { title: 'Title', key: 'title', sortable: true },
-      { title: 'TBI', key: 'tbi_id', sortable: true },
-      { title: 'Category', key: 'category', sortable: true },
-      { title: 'Date', key: 'date', sortable: true },
-      { title: 'Author', key: 'author', sortable: false },
-      { title: 'Status', key: 'status', sortable: true },
-      { title: 'Actions', key: 'actions', sortable: false },
-    ]
-  if (activeSection.value === 'mentors')
-    return [
-      { title: '', key: 'thumb', sortable: false, width: '52px' },
-      { title: 'Mentor Name', key: 'name', sortable: true },
-      { title: 'TBI', key: 'tbi_id', sortable: true },
-      { title: 'Role', key: 'role', sortable: true },
-      { title: 'Status', key: 'status', sortable: true },
-      { title: 'Actions', key: 'actions', sortable: false },
-    ]
-  return [
-    { title: '', key: 'thumb', sortable: false, width: '52px' },
-    { title: 'Title', key: 'title', sortable: true },
-    { title: 'TBI', key: 'tbi_id', sortable: true },
-    { title: 'Type', key: 'type', sortable: true },
-    { title: 'Date', key: 'event_date', sortable: false },
-    { title: 'Location', key: 'location', sortable: false },
-    { title: 'Status', key: 'status', sortable: true },
-    { title: 'Actions', key: 'actions', sortable: false },
-  ]
-})
-
-// ── Current uploads summary for Media step ──────────────────────────────────
-const currentUploads = computed(() => {
-  const uploads = []
-  if (form.logo) {
-    uploads.push({ key: 'logo', url: form.logo, label: 'Logo' })
-  }
-  form.gallery.forEach((url, index) => {
-    if (url) {
-      uploads.push({ key: `gallery_${index}`, url, label: `Gallery ${index + 1}` })
-    }
-  })
-  return uploads
-})
-
-function removeUpload(key) {
-  if (key === 'logo') {
-    form.logo = ''
-    form.logoPreview = null
-  } else if (key.startsWith('gallery_')) {
-    const index = parseInt(key.split('_')[1])
-    form.gallery[index] = ''
-    form.galleryPreviews[index] = null
-  }
-}
-
-// ── Achievement photos summary ───────────────────────────────────────────────
-const achievementPhotos = computed(() => {
-  return form.achievements
-    .map((ach, index) => {
-      if (ach.photo) {
-        return {
-          key: `achievement_${index}`,
-          url: ach.photo,
-          label: ach.title || `Achievement ${index + 1}`,
-          index,
-        }
-      }
-      return null
-    })
-    .filter(Boolean)
-})
-
-function removeAchievementPhoto(index) {
-  form.achievements[index].photo = ''
-  form.achievements[index].photoPreview = null
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-const tbiShortName = (id) => tbiOptions.find((t) => t.id === id)?.shortName || id
-const tbiChipColor = (id) =>
-  ({ navigatu: 'primary', tara: 'success', csutbi: 'error' })[id] || 'default'
-const statusChipColor = (s) =>
-  ({
-    active: 'success',
-    draft: 'warning',
-    graduated: 'info',
-    upcoming: 'success',
-    past: 'secondary',
-    archived: 'secondary',
-  })[s] || 'default'
+const { searchQuery, tbiFilter, statusFilter, activeStatusItems, filteredRecords } =
+  useAdminDashboardFilters({ activeSection, activeTable })
 
 // ── Section switching ─────────────────────────────────────────────────────────
 function setSection(sectionId, preselectedTbi = '') {
@@ -2640,348 +2415,6 @@ function setSection(sectionId, preselectedTbi = '') {
 
 function onTbiFilterChange(val) {
   activeTable.value.fetchAll(val || null)
-}
-
-// ── Upload state ──────────────────────────────────────────────────────────────
-const uploadProgress = reactive({})
-const pendingGalleryIndex = ref(0)
-const pendingAchievementIndex = ref(0)
-const pendingTeamIndex = ref(0)
-const pendingTestimonialIndex = ref(0)
-
-// File input refs
-const logoFileInput = ref(null)
-const galleryFileInput = ref(null)
-const achievementFileInput = ref(null)
-const teamFileInput = ref(null)
-const testimonialFileInput = ref(null)
-const eventImageFileInput = ref(null)
-const newsImageFileInput = ref(null)
-const mentorPhotoFileInput = ref(null)
-
-/**
- * Upload a file to Supabase Storage and return its public URL.
- * @param {File} file - The File object from the input
- * @param {string} bucket - The Supabase storage bucket name (e.g. 'incubatees')
- * @param {string} folder - Sub-folder path (e.g. 'logos', 'gallery', 'team')
- * @param {string} progressKey - Key to track upload progress in uploadProgress reactive object
- * @returns {Promise<string|null>} Public URL of uploaded file, or null on error
- */
-async function uploadToSupabase(file, bucket, folder, progressKey) {
-  if (!file) return null
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  if (!session) {
-    formError.value = 'Your session expired. Please log in again before uploading files.'
-    uploadProgress[progressKey] = 0
-    return null
-  }
-
-  // Validate file size (max 5MB)
-  const MAX_SIZE = 5 * 1024 * 1024
-  if (file.size > MAX_SIZE) {
-    formError.value = `File "${file.name}" exceeds 5MB limit.`
-    return null
-  }
-
-  // Build a unique file path: folder/timestamp_originalname
-  const ext = file.name.split('.').pop()
-  const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
-  const filePath = `${folder}/${fileName}`
-
-  // Simulate progress (Supabase JS v2 doesn't expose upload progress natively)
-  uploadProgress[progressKey] = 10
-
-  const { error } = await supabase.storage.from(bucket).upload(filePath, file, {
-    cacheControl: '3600',
-    upsert: false,
-    contentType: file.type,
-  })
-
-  if (error) {
-    console.error('Supabase upload error:', error)
-    const deniedByPolicy =
-      error.message?.toLowerCase().includes('row-level security') ||
-      error.message?.toLowerCase().includes('not allowed') ||
-      error.statusCode === '403'
-    const policyHint = deniedByPolicy
-      ? ` Check Supabase Storage INSERT policy for bucket "${bucket}" and path "${folder}/*".`
-      : ''
-    formError.value = `Upload failed: ${error.message}${policyHint}`
-    uploadProgress[progressKey] = 0
-    return null
-  }
-
-  uploadProgress[progressKey] = 90
-
-  // Get the public URL
-  const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(filePath)
-
-  uploadProgress[progressKey] = 100
-  setTimeout(() => {
-    uploadProgress[progressKey] = 0
-  }, 1200)
-
-  return urlData?.publicUrl || null
-}
-
-// ── Logo upload handler ───────────────────────────────────────────────────────
-async function handleFileUpload(event) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  // Show local preview immediately
-  form.logoPreview = URL.createObjectURL(file)
-  // Upload to Supabase Storage
-  const url = await uploadToSupabase(file, 'incubatees', 'logos', 'logo')
-  if (url) form.logo = url
-  event.target.value = ''
-}
-
-// ── Gallery upload handlers ───────────────────────────────────────────────────
-function openGalleryUpload(index) {
-  pendingGalleryIndex.value = index
-  galleryFileInput.value?.click()
-}
-
-async function handleGalleryUpload(event, index) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  // Local preview
-  form.galleryPreviews[index] = URL.createObjectURL(file)
-  // Upload
-  const key = `gallery_${index}`
-  const url = await uploadToSupabase(file, 'incubatees', 'gallery', key)
-  if (url) form.gallery[index] = url
-  event.target.value = ''
-}
-
-// ── Achievement photo upload handlers ─────────────────────────────────────────
-function openAchievementUpload(index) {
-  pendingAchievementIndex.value = index
-  achievementFileInput.value?.click()
-}
-
-async function handleAchievementPhotoUpload(event, index) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  form.achievements[index].photoPreview = URL.createObjectURL(file)
-  const key = `achievement_${index}`
-  const url = await uploadToSupabase(file, 'incubatees', 'achievements', key)
-  if (url) form.achievements[index].photo = url
-  event.target.value = ''
-}
-
-// ── Team photo upload handlers ────────────────────────────────────────────────
-function openTeamUpload(index) {
-  pendingTeamIndex.value = index
-  teamFileInput.value?.click()
-}
-
-async function handleTeamPhotoUpload(event, index) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  form.team[index].photoPreview = URL.createObjectURL(file)
-  const key = `team_${index}`
-  const url = await uploadToSupabase(file, 'incubatees', 'team', key)
-  if (url) form.team[index].photo = url
-  event.target.value = ''
-}
-
-// ── Testimonial photo upload handlers ────────────────────────────────────────
-function openTestimonialUpload(index) {
-  pendingTestimonialIndex.value = index
-  testimonialFileInput.value?.click()
-}
-
-async function handleTestimonialPhotoUpload(event, index) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  form.testimonials[index].photoPreview = URL.createObjectURL(file)
-  const key = `testimonial_${index}`
-  const url = await uploadToSupabase(file, 'incubatees', 'testimonials', key)
-  if (url) form.testimonials[index].photo = url
-  event.target.value = ''
-}
-
-// ── Event banner upload handler ────────────────────────────────────────────
-async function handleEventImageUpload(event) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  form.eventImagePreview = URL.createObjectURL(file)
-  const url = await uploadToSupabase(file, 'events', 'banners', 'event_image')
-  if (url) form.image_event = url
-  event.target.value = ''
-}
-
-// ── News cover image upload handler ──────────────────────────────────────────
-async function handleNewsImageUpload(event) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  form.newsImagePreview = URL.createObjectURL(file)
-  const url = await uploadToSupabase(file, 'news', 'covers', 'news_image')
-  if (url) form.image = url
-  event.target.value = ''
-}
-
-// ── Mentor photo upload handler ─────────────────────────────────────────────
-async function handleMentorPhotoUpload(event) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  form.mentorPhotoPreview = URL.createObjectURL(file)
-  const url = await uploadToSupabase(file, 'mentors', 'photos', 'mentor_photo')
-  if (url) form.photo = url
-  event.target.value = ''
-}
-
-function clearNewsImage() {
-  form.newsImagePreview = null
-  form.image = ''
-}
-
-function clearEventImage() {
-  form.eventImagePreview = null
-  form.image_event = ''
-}
-
-function clearMentorPhoto() {
-  form.mentorPhotoPreview = null
-  form.photo = ''
-}
-
-function createGalleryImage() {
-  return {
-    image: '',
-    imagePreview: null,
-  }
-}
-
-function createDetailGalleryItem() {
-  return {
-    images: [createGalleryImage(), createGalleryImage(), createGalleryImage()],
-    short_description: '',
-    long_description: '',
-  }
-}
-
-function normalizeDetailGalleryItems(items) {
-  if (!Array.isArray(items)) return []
-  // Rebuild group structure from flat DB array using group_index.
-  // Fallback: older rows without group_index are chunked by 3.
-  const groupsMap = new Map()
-  const fallbackRows = []
-
-  items.forEach((item) => {
-    const groupIndex = Number.isInteger(item?.group_index) ? item.group_index : null
-    if (groupIndex === null) {
-      fallbackRows.push(item)
-      return
-    }
-
-    if (!groupsMap.has(groupIndex)) {
-      groupsMap.set(groupIndex, {
-        images: [],
-        short_description: item?.short_description || item?.short || '',
-        long_description: item?.long_description || item?.long || '',
-      })
-    }
-
-    groupsMap.get(groupIndex).images.push({
-      image: item?.image || '',
-      imagePreview: null,
-    })
-  })
-
-  if (fallbackRows.length) {
-    for (let i = 0; i < fallbackRows.length; i += 3) {
-      const chunk = fallbackRows.slice(i, i + 3)
-      groupsMap.set(groupsMap.size, {
-        images: chunk.map((item) => ({
-          image: item?.image || '',
-          imagePreview: null,
-        })),
-        short_description: chunk[0]?.short_description || chunk[0]?.short || '',
-        long_description: chunk[0]?.long_description || chunk[0]?.long || '',
-      })
-    }
-  }
-
-  return Array.from(groupsMap.entries())
-    .sort(([a], [b]) => a - b)
-    .map(([, group]) => group)
-}
-
-function addNewsGalleryItem() {
-  // No limit on gallery items
-  form.news_gallery.push(createDetailGalleryItem())
-}
-
-function removeNewsGalleryItem(index) {
-  form.news_gallery.splice(index, 1)
-}
-
-function addEventGalleryItem() {
-  // No limit on gallery items
-  form.event_gallery.push(createDetailGalleryItem())
-}
-
-function removeEventGalleryItem(index) {
-  form.event_gallery.splice(index, 1)
-}
-
-function addImageToNewsGalleryItem(itemIndex) {
-  if (form.news_gallery[itemIndex]) {
-    form.news_gallery[itemIndex].images.push(createGalleryImage())
-  }
-}
-
-function removeImageFromNewsGalleryItem(itemIndex, imageIndex) {
-  if (form.news_gallery[itemIndex]) {
-    form.news_gallery[itemIndex].images.splice(imageIndex, 1)
-  }
-}
-
-function addImageToEventGalleryItem(itemIndex) {
-  if (form.event_gallery[itemIndex]) {
-    form.event_gallery[itemIndex].images.push(createGalleryImage())
-  }
-}
-
-function removeImageFromEventGalleryItem(itemIndex, imageIndex) {
-  if (form.event_gallery[itemIndex]) {
-    form.event_gallery[itemIndex].images.splice(imageIndex, 1)
-  }
-}
-
-async function handleNewsGalleryImageUpload(event, itemIndex, imageIndex) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  if (!form.news_gallery[itemIndex]) return
-  form.news_gallery[itemIndex].images[imageIndex].imagePreview = URL.createObjectURL(file)
-  const key = `news_gallery_${itemIndex}_${imageIndex}_${Date.now()}`
-  const url = await uploadToSupabase(file, 'news', 'gallery', key)
-  if (url) {
-    form.news_gallery[itemIndex].images[imageIndex].image = url
-    // Update upload progress
-    uploadProgress[`news_gallery_${itemIndex}_${imageIndex}`] = 0
-  }
-  event.target.value = ''
-}
-
-async function handleEventGalleryImageUpload(event, itemIndex, imageIndex) {
-  const file = event.target.files?.[0]
-  if (!file) return
-  if (!form.event_gallery[itemIndex]) return
-  form.event_gallery[itemIndex].images[imageIndex].imagePreview = URL.createObjectURL(file)
-  const key = `event_gallery_${itemIndex}_${imageIndex}_${Date.now()}`
-  const url = await uploadToSupabase(file, 'events', 'gallery', key)
-  if (url) {
-    form.event_gallery[itemIndex].images[imageIndex].image = url
-    // Update upload progress
-    uploadProgress[`event_gallery_${itemIndex}_${imageIndex}`] = 0
-  }
-  event.target.value = ''
 }
 
 // ── Form state ────────────────────────────────────────────────────────────────
@@ -3105,6 +2538,52 @@ const blankForm = () => ({
 })
 
 const form = reactive(blankForm())
+
+const {
+  uploadProgress,
+  pendingGalleryIndex,
+  pendingAchievementIndex,
+  pendingTeamIndex,
+  pendingTestimonialIndex,
+  logoFileInput,
+  galleryFileInput,
+  achievementFileInput,
+  teamFileInput,
+  testimonialFileInput,
+  eventImageFileInput,
+  newsImageFileInput,
+  mentorPhotoFileInput,
+  currentUploads,
+  removeUpload,
+  achievementPhotos,
+  removeAchievementPhoto,
+  handleFileUpload,
+  openGalleryUpload,
+  handleGalleryUpload,
+  openAchievementUpload,
+  handleAchievementPhotoUpload,
+  openTeamUpload,
+  handleTeamPhotoUpload,
+  openTestimonialUpload,
+  handleTestimonialPhotoUpload,
+  handleEventImageUpload,
+  handleNewsImageUpload,
+  handleMentorPhotoUpload,
+  clearNewsImage,
+  clearEventImage,
+  clearMentorPhoto,
+  normalizeDetailGalleryItems,
+  addNewsGalleryItem,
+  removeNewsGalleryItem,
+  addEventGalleryItem,
+  removeEventGalleryItem,
+  addImageToNewsGalleryItem,
+  removeImageFromNewsGalleryItem,
+  addImageToEventGalleryItem,
+  removeImageFromEventGalleryItem,
+  handleNewsGalleryImageUpload,
+  handleEventGalleryImageUpload,
+} = useAdminDashboardMedia({ form, formError })
 
 const newsDateMenu = ref(false)
 const eventDateMenu = ref(false)
