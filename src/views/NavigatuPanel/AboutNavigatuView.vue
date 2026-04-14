@@ -137,26 +137,6 @@
                 <v-icon size="16" class="mr-2">mdi-arrow-down</v-icon>Learn More
               </button>
             </div>
-
-            <!-- Stat ribbon -->
-            <div class="hero-ribbon">
-              <div class="ribbon-item">
-                <span class="ribbon-val">7+</span>
-                <span class="ribbon-label">Years Operating</span>
-              </div>
-              <div class="ribbon-item">
-                <span class="ribbon-val">142</span>
-                <span class="ribbon-label">Incubatees</span>
-              </div>
-              <div class="ribbon-item">
-                <span class="ribbon-val">₱20.2M</span>
-                <span class="ribbon-label">Revenue Generated</span>
-              </div>
-              <div class="ribbon-item">
-                <span class="ribbon-val">17</span>
-                <span class="ribbon-label">Partners</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1346,43 +1326,6 @@ const faqs = ref([
   color: #475569;
   line-height: 1.9;
   max-width: 440px;
-}
-
-.hero-ribbon {
-  display: flex;
-  background: #fff;
-  border: 1px solid #e5eaf5;
-  border-radius: 16px;
-  overflow: hidden;
-  max-width: 440px;
-  box-shadow: 0 6px 24px rgba(21, 101, 192, 0.08);
-}
-.ribbon-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 8px;
-  border-right: 1px solid #e5eaf5;
-  gap: 3px;
-}
-.ribbon-item:last-child {
-  border-right: none;
-}
-.ribbon-val {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1565c0;
-  line-height: 1;
-}
-.ribbon-label {
-  font-size: 0.58rem;
-  color: #94a3b8;
-  letter-spacing: 0.3px;
-  text-align: center;
-  line-height: 1.3;
 }
 
 .hero-edge-badge {
