@@ -222,9 +222,7 @@
           <div class="text-center mb-14">
             <div class="band-eyebrow">What We Offer</div>
             <h2 class="band-title">Services <em>Offered</em></h2>
-            <p class="band-sub">
-              Three flagship programs to take your idea from concept to company
-            </p>
+            <p class="band-sub">Select a program to view full service details and pathways</p>
           </div>
 
           <v-row>
@@ -234,6 +232,7 @@
                 :class="{ 'svc-card--hover': hoveredSvc === i }"
                 @mouseenter="hoveredSvc = i"
                 @mouseleave="hoveredSvc = null"
+                @click="openServiceCard(svc)"
               >
                 <div class="svc-icon-zone" :style="{ background: svc.gradient }">
                   <v-icon :icon="svc.icon" size="44" color="white" />
@@ -242,7 +241,11 @@
                 <div class="svc-body pa-6">
                   <h3 class="svc-title mb-3">{{ svc.title }}</h3>
                   <p class="svc-desc mb-5">{{ svc.description }}</p>
-                  <button class="svc-btn" :style="{ '--sc': svc.accentColor }">
+                  <button
+                    class="svc-btn"
+                    :style="{ '--sc': svc.accentColor }"
+                    @click.stop="openServiceCard(svc)"
+                  >
                     Learn More <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
                   </button>
                 </div>
@@ -479,7 +482,15 @@ function runNavbarSearch() {
 }
 
 function goToServicesSection() {
-  router.push({ path: '/services-navigatu', hash: '#learn-more' })
+  router.push({ path: '/services-navigatu', hash: '#services-offered' })
+}
+
+function openServiceCard(service) {
+  router.push({
+    path: '/services-navigatu',
+    hash: '#services-offered',
+    query: { service: service.slug },
+  })
 }
 
 // ── UI state ──
@@ -491,27 +502,30 @@ const openFaq = ref(null)
 // ── Services ──
 const services = ref([
   {
-    title: 'Incubation Program',
+    slug: 'business-ideation',
+    title: 'Business Ideation',
     description:
-      'Comprehensive 6-month support for early-stage startups to develop, validate, and scale their innovative ideas into market-ready ventures.',
+      'Business incubation, mentorship, investor access, and startup workshops to turn ideas into viable ventures.',
     icon: 'mdi-lightbulb-on-outline',
     gradient: 'linear-gradient(135deg, #1565C0 0%, #42A5F5 100%)',
     glowColor: 'rgba(21,101,192,0.4)',
     accentColor: '#1565C0',
   },
   {
-    title: 'Mentorship Program',
+    slug: 'startup-support',
+    title: 'Startup Support',
     description:
-      'One-on-one guidance from industry experts, seasoned entrepreneurs, and academic researchers to accelerate your business growth.',
-    icon: 'mdi-handshake-outline',
+      'Planning, validation, IP guidance, prototyping, and go-to-market support for growing startup teams.',
+    icon: 'mdi-rocket-launch-outline',
     gradient: 'linear-gradient(135deg, #1B5E20 0%, #66BB6A 100%)',
     glowColor: 'rgba(27,94,32,0.4)',
     accentColor: '#2E7D32',
   },
   {
+    slug: 'training-program',
     title: 'Training Program',
     description:
-      'Workshops, bootcamps, and seminars covering entrepreneurship, tech development, financial modeling, and business strategy.',
+      'Entrepreneurship education, curriculum design, and R&D commercialization support for faculty and founders.',
     icon: 'mdi-school-outline',
     gradient: 'linear-gradient(135deg, #4A148C 0%, #AB47BC 100%)',
     glowColor: 'rgba(74,20,140,0.4)',

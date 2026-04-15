@@ -62,84 +62,89 @@
           prepend-icon="mdi-information-outline"
           rounded="lg"
           class="mb-1"
+          to="/about-navigatu"
         />
         <v-list-item
           title="Services"
           prepend-icon="mdi-briefcase-outline"
           rounded="lg"
           class="mb-1"
+          to="/services-navigatu"
+          active
         />
         <v-list-item
           title="Coworking"
           prepend-icon="mdi-office-building-outline"
           rounded="lg"
           class="mb-1"
+          to="/coworking-navigatu"
         />
         <v-list-item
           title="News"
           prepend-icon="mdi-newspaper-variant-outline"
           rounded="lg"
           class="mb-1"
-          active
+          to="/news-navigatu"
         />
-        <v-list-item title="Events" prepend-icon="mdi-calendar-outline" rounded="lg" class="mb-1" />
+        <v-list-item
+          title="Events"
+          prepend-icon="mdi-calendar-outline"
+          rounded="lg"
+          class="mb-1"
+          to="/events-navigatu"
+        />
       </v-list>
     </v-navigation-drawer>
 
     <v-main>
       <!-- ===== HERO ===== -->
-      <div class="hero-section">
-        <div class="hero-grid" />
-        <v-container class="hero-inner">
-          <v-row align="center">
-            <v-col cols="12" md="6" class="hero-left">
+      <div class="svc-hero">
+        <div class="svc-hero-grid" />
+        <div class="svc-hero-glow" />
+        <v-container class="svc-hero-inner">
+          <v-row align="center" justify="center">
+            <v-col cols="12" md="8" class="text-center">
               <div class="hero-pill mb-6">
                 <span class="live-dot" />
                 Butuan City, Caraga Region
               </div>
-              <h1 class="hero-title">
-                <em>Your Hub</em> for<br />Innovation &<br />Technopreneurship
+              <h1 class="svc-hero-title mb-5">
+                Programs Built for<br /><em>Real Startup Growth</em>
               </h1>
-              <p class="hero-body mt-5 mb-8">
-                Navigatú TBI empowers the next generation of Filipino tech founders through
-                mentorship, funding pathways, and a thriving startup community.
+              <p class="svc-hero-body mb-8 mx-auto">
+                Navigatú TBI offers three flagship programs — each crafted to move you from idea to
+                validated, market-ready venture with hands-on mentorship and structured support.
               </p>
-              <div class="d-flex flex-wrap ga-3 mb-10">
-                <button class="btn-ghost" @click="learnMoreScroll">
-                  <v-icon size="17" class="mr-2">mdi-play-circle-outline</v-icon> Learn More
+              <div class="d-flex justify-center flex-wrap ga-3">
+                <button class="btn-solid" @click="scrollTo('services-grid')">
+                  <v-icon size="16" class="mr-2">mdi-briefcase-outline</v-icon>Explore Programs
+                </button>
+                <button class="btn-line" @click="scrollTo('incubation-journey')">
+                  <v-icon size="16" class="mr-2">mdi-map-outline</v-icon>See the Journey
                 </button>
               </div>
-            </v-col>
-            <v-col cols="12" md="6" class="d-none d-md-block">
-              <div class="hero-collage">
-                <div class="collage-main">
-                  <img
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80"
-                    alt="Team"
-                    class="collage-img-main"
-                  />
-                  <div class="collage-live-badge"><span class="live-dot" /> Live Programs</div>
-                </div>
-                <div class="collage-side">
-                  <div class="collage-stat-card">
-                    <div class="collage-big">60+</div>
-                    <div class="collage-sub">Startups Launched</div>
-                  </div>
-                  <img
-                    src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&q=80"
-                    alt="Office"
-                    class="collage-img-side"
-                  />
+
+              <!-- Stat strip -->
+              <div class="hero-stat-strip mt-12">
+                <div v-for="stat in heroStats" :key="stat.label" class="hss-item">
+                  <div class="hss-val">{{ stat.val }}</div>
+                  <div class="hss-label">{{ stat.label }}</div>
                 </div>
               </div>
             </v-col>
           </v-row>
+        </v-container>
+      </div>
 
-          <!-- ── INDUSTRY FOCUS CARDS (renamed from Tech Cards) ── -->
-          <div class="industry-label-row mt-12 mb-5">
-            <div class="industry-label-line" />
-            <span class="industry-label-text">Industry Focus</span>
-            <div class="industry-label-line" />
+      <!-- ===== INDUSTRY FOCUS ===== -->
+      <div class="sec-white py-sec">
+        <v-container>
+          <div class="text-center mb-12">
+            <div class="eyebrow">What We Focus On</div>
+            <h2 class="sec-title">Industry <em>Focus Areas</em></h2>
+            <p class="sec-sub">
+              Click any area to learn how Navigatú supports that technology sector
+            </p>
           </div>
           <v-row id="learn-more">
             <v-col
@@ -165,16 +170,15 @@
                   <div v-if="selectedTech === cat.title" class="tech-detail">
                     <div class="tech-divider" />
                     <p class="tech-detail-text">{{ cat.detail }}</p>
-                    <button
-                      class="btn-micro"
-                      :style="{
-                        color: cat.color,
-                        borderColor: cat.color + '55',
-                        background: cat.color + '14',
-                      }"
-                    >
-                      <v-icon size="12" class="mr-1">mdi-arrow-right</v-icon> Explore
-                    </button>
+                    <div class="tech-tags mt-2">
+                      <span
+                        v-for="tag in cat.tags"
+                        :key="tag"
+                        class="tech-tag"
+                        :style="{ background: cat.color + '18', color: cat.color }"
+                        >{{ tag }}</span
+                      >
+                    </div>
                   </div>
                 </transition>
               </div>
@@ -184,7 +188,7 @@
       </div>
 
       <!-- ===== WHO CAN APPLY ===== -->
-      <div class="sec-white py-sec">
+      <div class="sec-offwhite py-sec">
         <v-container>
           <div class="text-center mb-12">
             <div class="eyebrow">Eligibility</div>
@@ -193,66 +197,90 @@
               Students, Faculty, Early-Stage startups, and Tech Entrepreneurs can apply
             </p>
           </div>
+
+          <!-- Filter Tabs -->
+          <div class="wca-tabs mb-8">
+            <button
+              v-for="f in applyFilters"
+              :key="f.id"
+              class="wca-tab"
+              :class="{ 'wca-tab--active': activeApplyTab === f.id }"
+              @click="activeApplyTab = f.id"
+            >
+              {{ f.label }}
+            </button>
+          </div>
+
           <v-row>
-            <v-col v-for="card in applyCards" :key="card.id" cols="12" md="6" class="mb-4">
-              <div class="apply-card" :class="'ac--' + card.id" @click="openApplyDetail(card)">
-                <div class="ac-inner">
-                  <div class="ac-badge" :style="{ background: card.badgeColor }">
-                    <v-icon :icon="card.icon" size="26" color="white" />
+            <v-col v-for="card in filteredApplyCards" :key="card.id" cols="12" sm="6" class="mb-2">
+              <div
+                class="wca-card"
+                :class="{ 'wca-card--open': expandedCard === card.id }"
+                @click="expandedCard = expandedCard === card.id ? null : card.id"
+                role="button"
+                :aria-expanded="expandedCard === card.id"
+                tabindex="0"
+                @keydown.enter="expandedCard = expandedCard === card.id ? null : card.id"
+                @keydown.space.prevent="expandedCard = expandedCard === card.id ? null : card.id"
+              >
+                <div class="wca-card-top">
+                  <div class="wca-header">
+                    <div class="wca-icon" :style="{ background: card.iconBg }">
+                      <v-icon :icon="card.icon" :color="card.iconColor" size="20" />
+                    </div>
+                    <div class="wca-title-group">
+                      <div class="wca-title">{{ card.title }}</div>
+                      <div class="wca-short">{{ card.tags[0] }}</div>
+                    </div>
+                    <div
+                      class="wca-toggle"
+                      :class="{ 'wca-toggle--open': expandedCard === card.id }"
+                    >
+                      <v-icon size="16" color="inherit">mdi-chevron-down</v-icon>
+                    </div>
                   </div>
-                  <h3 class="ac-title mt-4 mb-2">{{ card.title }}</h3>
-                  <p class="ac-body mb-4">{{ card.desc }}</p>
-                  <div class="ac-chips mb-4">
-                    <span v-for="tag in card.tags" :key="tag" class="ac-chip">{{ tag }}</span>
+                  <p class="wca-desc">{{ card.desc }}</p>
+                  <div class="wca-chips">
+                    <span v-for="tag in card.tags" :key="tag" class="wca-chip">{{ tag }}</span>
                   </div>
-                  <button class="btn-card" :style="{ '--c': card.badgeColor }">
-                    Learn More <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
-                  </button>
                 </div>
-                <div class="ac-deco">{{ card.emoji }}</div>
+                <transition name="wca-expand">
+                  <div v-if="expandedCard === card.id" class="wca-expanded">
+                    <div class="wca-divider" />
+                    <div class="wca-expanded-inner">
+                      <div>
+                        <div class="wca-section-label">Requirements</div>
+                        <ul class="wca-req-list">
+                          <li v-for="req in card.requirements" :key="req" class="wca-req-item">
+                            <div class="wca-check" :style="{ background: card.iconBg }">
+                              <v-icon size="11" :color="card.iconColor">mdi-check</v-icon>
+                            </div>
+                            {{ req }}
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="wca-section-label">What you get</div>
+                        <div class="wca-perks">
+                          <div v-for="perk in card.perks" :key="perk.text" class="wca-perk">
+                            <div class="wca-perk-icon">
+                              <v-icon :icon="perk.icon" :color="card.iconColor" size="16" />
+                            </div>
+                            <div class="wca-perk-text">{{ perk.text }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </transition>
               </div>
             </v-col>
           </v-row>
         </v-container>
       </div>
 
-      <!-- Apply Detail Dialog -->
-      <v-dialog v-model="applyDetailDialog" max-width="520" transition="dialog-bottom-transition">
-        <v-card v-if="activeApplyCard" rounded="xl" class="overflow-hidden">
-          <div class="pa-6 pb-5" :class="'ac--' + activeApplyCard.id">
-            <div class="d-flex align-center justify-space-between">
-              <div class="ac-badge" :style="{ background: activeApplyCard.badgeColor }">
-                <v-icon :icon="activeApplyCard.icon" size="24" color="white" />
-              </div>
-              <v-btn icon size="small" variant="text" @click="applyDetailDialog = false"
-                ><v-icon>mdi-close</v-icon></v-btn
-              >
-            </div>
-            <h3 class="ac-title mt-3">{{ activeApplyCard.title }}</h3>
-          </div>
-          <div class="pa-6">
-            <p class="text-body-2 text-medium-emphasis mb-5" style="line-height: 1.8">
-              {{ activeApplyCard.fullDesc }}
-            </p>
-            <v-divider class="mb-4" />
-            <p class="text-caption font-weight-bold text-medium-emphasis mb-3">REQUIREMENTS</p>
-            <v-list density="compact" class="pa-0 bg-transparent">
-              <v-list-item
-                v-for="req in activeApplyCard.requirements"
-                :key="req"
-                :title="req"
-                prepend-icon="mdi-check-circle-outline"
-                :base-color="activeApplyCard.badgeColor"
-                density="compact"
-                class="px-0"
-              />
-            </v-list>
-          </div>
-        </v-card>
-      </v-dialog>
-
       <!-- ===== INCUBATION JOURNEY ===== -->
-      <div class="journey-section">
+      <div id="incubation-journey" class="journey-section">
         <div class="journey-glow" />
         <v-container class="position-relative">
           <div class="text-center mb-16">
@@ -349,60 +377,198 @@
         </v-container>
       </div>
 
-      <!-- ===== SERVICES ===== -->
-      <div class="sec-offwhite py-sec">
+      <!-- ===== SERVICES — REDESIGNED ===== -->
+      <div id="services-grid" class="sec-white py-sec">
         <v-container>
-          <div class="text-center mb-12">
+          <div class="text-center mb-14">
             <div class="eyebrow" style="color: #16a34a">What we offer</div>
-            <h2 class="sec-title">NAVIGATÚ <em>Services</em></h2>
-            <p class="sec-sub">Comprehensive support to help your venture thrive at every stage</p>
+            <h2 class="sec-title">NAVIGATÚ <em>Programs</em></h2>
+            <p class="sec-sub">
+              Three flagship programs designed to take your venture from concept to market
+            </p>
           </div>
-          <v-row align="stretch">
-            <v-col cols="12" md="5" class="d-none d-md-flex">
-              <div class="svc-img-wrap">
-                <img
-                  src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80"
-                  alt="Services"
-                  class="svc-img"
-                />
-                <div class="svc-img-badge">
-                  <v-icon icon="mdi-star-four-points" size="15" color="#f59e0b" class="mr-2" />
-                  Top-rated TBI in Caraga
-                </div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="7">
-              <v-row>
-                <v-col v-for="svc in navServices" :key="svc.title" cols="12" sm="6" class="mb-4">
-                  <div
-                    class="svc-card"
-                    :class="{ 'svc-card--active': activeSvc === svc.title }"
-                    @click="activeSvc = activeSvc === svc.title ? null : svc.title"
-                  >
-                    <div class="svc-icon" :style="{ background: svc.iconBg }">
-                      <v-icon :icon="svc.icon" :color="svc.color" size="20" />
-                    </div>
-                    <h4 class="svc-title mt-3 mb-2" :style="{ color: svc.color }">
-                      {{ svc.title }}
-                    </h4>
-                    <ul class="svc-list">
-                      <li v-for="item in svc.items" :key="item">{{ item }}</li>
-                    </ul>
-                    <transition name="fx">
-                      <div v-if="activeSvc === svc.title" class="svc-detail mt-3">
-                        {{ svc.detail }}
+
+          <!-- Program selector tabs -->
+          <div class="prog-tabs mb-10">
+            <button
+              v-for="svc in navServices"
+              :key="svc.slug"
+              class="prog-tab"
+              :class="{ 'prog-tab--active': activeSvc === svc.slug }"
+              :style="
+                activeSvc === svc.slug
+                  ? {
+                      '--ac': svc.color,
+                      borderColor: svc.color,
+                      color: svc.color,
+                      background: svc.color + '12',
+                    }
+                  : {}
+              "
+              @click="selectService(svc)"
+            >
+              <v-icon :icon="svc.icon" size="16" class="mr-2" />
+              {{ svc.title }}
+            </button>
+          </div>
+
+          <!-- Active service detail panel -->
+          <transition name="prog-switch" mode="out-in">
+            <div :key="activeSvc" class="prog-panel">
+              <v-row align="stretch" v-if="activeService">
+                <!-- Left: overview -->
+                <v-col cols="12" md="5">
+                  <div class="prog-overview" :style="{ borderTopColor: activeService.color }">
+                    <!-- Header -->
+                    <div class="prog-header">
+                      <div class="prog-icon-ring" :style="{ background: activeService.iconBg }">
+                        <v-icon :icon="activeService.icon" :color="activeService.color" size="28" />
                       </div>
-                    </transition>
+                      <div>
+                        <div class="prog-kicker" :style="{ color: activeService.color }">
+                          {{ activeService.kicker }}
+                        </div>
+                        <h3 class="prog-title">{{ activeService.title }}</h3>
+                      </div>
+                    </div>
+
+                    <p class="prog-summary mt-5 mb-6">{{ activeService.summary }}</p>
+
+                    <!-- Tags -->
+                    <div class="prog-tags mb-6">
+                      <span
+                        v-for="tag in activeService.tags"
+                        :key="tag"
+                        class="prog-tag"
+                        :style="{
+                          background: activeService.color + '16',
+                          color: activeService.color,
+                          borderColor: activeService.color + '30',
+                        }"
+                        >{{ tag }}</span
+                      >
+                    </div>
+
+                    <!-- Detail blurb -->
+                    <div
+                      class="prog-detail-blurb"
+                      :style="{ borderLeftColor: activeService.color }"
+                    >
+                      {{ activeService.detail }}
+                    </div>
+
+                    <!-- Who is this for -->
+                    <div class="prog-who mt-6">
+                      <div class="prog-who-label">Best suited for</div>
+                      <div class="prog-who-tags mt-2">
+                        <span v-for="who in activeService.who" :key="who" class="prog-who-chip">{{
+                          who
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </v-col>
+
+                <!-- Right: inclusions + outcomes -->
+                <v-col cols="12" md="7">
+                  <div class="prog-right">
+                    <!-- Program Inclusions -->
+                    <div class="prog-section mb-6">
+                      <div class="prog-section-label">
+                        <v-icon size="15" class="mr-2" :color="activeService.color"
+                          >mdi-check-decagram-outline</v-icon
+                        >
+                        Program Inclusions
+                      </div>
+                      <div class="prog-inclusions mt-4">
+                        <div
+                          v-for="item in activeService.items"
+                          :key="item"
+                          class="prog-inclusion-item"
+                          :style="{ '--ac': activeService.color }"
+                        >
+                          <div
+                            class="prog-inclusion-dot"
+                            :style="{ background: activeService.color }"
+                          />
+                          <span>{{ item }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Outcomes -->
+                    <div class="prog-section mb-6">
+                      <div class="prog-section-label">
+                        <v-icon size="15" class="mr-2" :color="activeService.color"
+                          >mdi-trending-up</v-icon
+                        >
+                        Expected Outcomes
+                      </div>
+                      <v-row class="mt-3">
+                        <v-col
+                          v-for="outcome in activeService.outcomes"
+                          :key="outcome.label"
+                          cols="6"
+                        >
+                          <div class="outcome-card" :style="{ '--ac': activeService.color }">
+                            <div class="outcome-icon" :style="{ background: activeService.iconBg }">
+                              <v-icon :icon="outcome.icon" :color="activeService.color" size="18" />
+                            </div>
+                            <div class="outcome-label mt-2">{{ outcome.label }}</div>
+                            <div class="outcome-desc">{{ outcome.desc }}</div>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </div>
+
+                    <!-- Duration badge -->
+                    <div
+                      class="prog-duration"
+                      :style="{
+                        background: activeService.color + '0e',
+                        borderColor: activeService.color + '28',
+                      }"
+                    >
+                      <v-icon :color="activeService.color" size="18" class="mr-2"
+                        >mdi-clock-outline</v-icon
+                      >
+                      <span class="prog-duration-label">Duration:</span>
+                      <span class="prog-duration-val" :style="{ color: activeService.color }">{{
+                        activeService.duration
+                      }}</span>
+                    </div>
                   </div>
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
+            </div>
+          </transition>
+
+          <!-- Other programs quick-nav -->
+          <div class="prog-other-row mt-10">
+            <div class="prog-other-label">Other programs</div>
+            <div class="prog-other-cards">
+              <div
+                v-for="svc in otherServices"
+                :key="svc.slug"
+                class="prog-other-card"
+                @click="selectService(svc)"
+              >
+                <div class="prog-other-icon" :style="{ background: svc.iconBg }">
+                  <v-icon :icon="svc.icon" :color="svc.color" size="18" />
+                </div>
+                <div class="prog-other-info">
+                  <div class="prog-other-title">{{ svc.title }}</div>
+                  <div class="prog-other-sub">{{ svc.kicker }}</div>
+                </div>
+                <v-icon size="16" color="#94a3b8">mdi-arrow-right</v-icon>
+              </div>
+            </div>
+          </div>
         </v-container>
       </div>
 
-      <!-- ===== MENTORS (Supabase logic untouched) ===== -->
-      <div v-if="leaders.length" class="sec-white py-sec">
+      <!-- ===== MENTORS ===== -->
+      <div v-if="leaders.length" class="sec-offwhite py-sec">
         <v-container>
           <div class="text-center mb-12">
             <div class="eyebrow" style="color: #7c3aed">Our Network</div>
@@ -425,7 +591,7 @@
         </v-container>
       </div>
 
-      <!-- ===== SUCCESS STORIES — redesigned ===== -->
+      <!-- ===== SUCCESS STORIES ===== -->
       <div class="stories-section py-sec">
         <v-container>
           <div class="text-center mb-6">
@@ -436,8 +602,7 @@
             </p>
           </div>
 
-          <!-- Filter pills -->
-          <div class="d-flex justify-center flex-wrap gap-2 mb-10">
+          <div class="d-flex justify-center flex-wrap ga-2 mb-10">
             <button
               v-for="f in storyFilters"
               :key="f"
@@ -449,14 +614,11 @@
             </button>
           </div>
 
-          <!-- Story grid -->
           <v-row>
             <v-col v-for="story in filteredStories" :key="story.name" cols="12" sm="6" lg="4">
               <div class="story-card-new" @click="openStory(story)">
-                <!-- Cover image zone -->
                 <div class="scn-image-zone">
                   <img :src="story.coverImg" :alt="story.name" class="scn-cover-img" />
-                  <!-- Status badge -->
                   <div
                     class="scn-status-badge"
                     :style="{ background: story.statusBg, color: story.statusText }"
@@ -464,25 +626,18 @@
                     <span class="scn-status-dot" :style="{ background: story.statusText }" />
                     {{ story.status }}
                   </div>
-                  <!-- Logo overlay -->
                   <div class="scn-logo-overlay">
                     <div class="scn-logo-ring" :style="{ background: story.logoBg }">
                       <span class="scn-logo-initials">{{ story.initials }}</span>
                     </div>
                   </div>
                 </div>
-
-                <!-- Card body -->
                 <div class="scn-body">
-                  <!-- Name + industry row -->
                   <div class="scn-name-row">
                     <h3 class="scn-name">{{ story.name }}</h3>
                     <span class="scn-industry-chip">{{ story.industryShort }}</span>
                   </div>
-
                   <p class="scn-desc mt-2 mb-4">{{ story.desc }}</p>
-
-                  <!-- Meta row -->
                   <div class="scn-meta-row">
                     <div class="scn-meta-item">
                       <v-icon size="13" color="#1565c0" class="mr-1">mdi-calendar-outline</v-icon>
@@ -502,8 +657,6 @@
                       <span class="scn-meta-val">{{ story.team }}</span>
                     </div>
                   </div>
-
-                  <!-- Read more -->
                   <div class="scn-footer mt-4">
                     <span class="scn-read-more">
                       Read story <v-icon size="14" class="ml-1">mdi-arrow-right</v-icon>
@@ -522,10 +675,9 @@
         </v-container>
       </div>
 
-      <!-- Story detail dialog — redesigned -->
+      <!-- Story detail dialog -->
       <v-dialog v-model="storyDialog" max-width="620" transition="dialog-bottom-transition">
         <v-card v-if="activeStory" rounded="xl" class="overflow-hidden pa-0">
-          <!-- Hero image -->
           <div class="story-dialog-hero">
             <img
               :src="activeStory.coverImg"
@@ -533,7 +685,6 @@
               class="story-dialog-hero-img"
             />
             <div class="story-dialog-hero-veil" />
-            <!-- Logo + name overlay on image -->
             <div class="story-dialog-identity">
               <div class="story-dialog-logo-ring" :style="{ background: activeStory.logoBg }">
                 <span class="story-dialog-initials">{{ activeStory.initials }}</span>
@@ -557,37 +708,28 @@
               <v-icon size="18">mdi-close</v-icon>
             </v-btn>
           </div>
-
-          <!-- Body -->
           <div class="pa-7">
-            <!-- Tags row -->
             <div class="d-flex flex-wrap gap-2 mb-5">
-              <v-chip size="small" color="primary" variant="tonal" prepend-icon="mdi-tag-outline">
-                {{ activeStory.industry }}
-              </v-chip>
+              <v-chip size="small" color="primary" variant="tonal" prepend-icon="mdi-tag-outline">{{
+                activeStory.industry
+              }}</v-chip>
               <v-chip
                 size="small"
                 color="success"
                 variant="tonal"
                 prepend-icon="mdi-calendar-outline"
+                >Founded {{ activeStory.year }}</v-chip
               >
-                Founded {{ activeStory.year }}
-              </v-chip>
               <v-chip
                 size="small"
                 color="purple"
                 variant="tonal"
                 prepend-icon="mdi-account-group-outline"
+                >{{ activeStory.team }} team members</v-chip
               >
-                {{ activeStory.team }} team members
-              </v-chip>
             </div>
-
             <p class="story-dialog-body mb-6">{{ activeStory.fullDesc }}</p>
-
             <v-divider class="mb-5" />
-
-            <!-- Stat row -->
             <v-row>
               <v-col cols="4" class="text-center">
                 <div class="story-stat-val" style="color: #1565c0">{{ activeStory.funding }}</div>
@@ -620,14 +762,14 @@
           </p>
           <div class="d-flex justify-center flex-wrap gap-4">
             <button class="btn-cta-ghost">
-              <v-icon size="17" class="mr-2">mdi-calendar-check-outline</v-icon> Schedule a Tour
+              <v-icon size="17" class="mr-2">mdi-calendar-check-outline</v-icon>Schedule a Tour
             </button>
           </div>
         </v-container>
       </div>
     </v-main>
 
-    <!-- APPLY DIALOG (unchanged) -->
+    <!-- APPLY DIALOG -->
     <v-dialog v-model="applyDialog" max-width="540" persistent>
       <v-card rounded="xl" class="pa-2">
         <v-card-title class="pa-6 pb-2 d-flex align-center justify-space-between">
@@ -716,7 +858,7 @@
                 <v-icon icon="mdi-information-outline" size="56" color="primary" class="mb-4" />
                 <h3 class="text-h6 font-weight-bold mb-2">Application is reviewed offline</h3>
                 <p class="text-body-2 text-medium-emphasis">
-                  This website does not accept online submissions. Please contact Navigatu TBI for
+                  This website does not accept online submissions. Please contact Navigatú TBI for
                   application instructions.
                 </p>
                 <v-card class="mt-4 pa-4 text-left" color="grey-lighten-4" rounded="lg" flat>
@@ -750,7 +892,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- FOOTER (unchanged) -->
+    <!-- FOOTER -->
     <footer class="footer-section">
       <v-container class="py-12">
         <v-row>
@@ -797,10 +939,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
+// ── Scroll ──
 const scrolled = ref(false)
 const onScroll = () => {
   scrolled.value = window.scrollY > 20
@@ -811,6 +954,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 const drawer = ref(false)
 const searchQuery = ref('')
 const router = useRouter()
+const route = useRoute()
 
 function runNavbarSearch() {
   const query = searchQuery.value.trim()
@@ -818,6 +962,19 @@ function runNavbarSearch() {
   router.push({ path: '/news-navigatu', query: { q: query } })
 }
 
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+}
+
+// ── Hero stats ──
+const heroStats = ref([
+  { val: '3', label: 'Flagship Programs' },
+  { val: '6 mo', label: 'Incubation Period' },
+  { val: '142', label: 'Incubatees Served' },
+  { val: '₱20.2M', label: 'Revenue Generated' },
+])
+
+// ── Industry Focus ──
 const animatedCards = ref(false)
 onMounted(() =>
   setTimeout(() => {
@@ -834,6 +991,7 @@ const techCategories = ref([
     color: '#1565C0',
     iconBg: '#dbeafe',
     detail: 'Build scalable apps with support from seasoned engineers and product managers.',
+    tags: ['Web Apps', 'Mobile', 'Enterprise'],
   },
   {
     title: 'Artificial Intelligence',
@@ -842,6 +1000,7 @@ const techCategories = ref([
     color: '#d97706',
     iconBg: '#fef3c7',
     detail: 'Develop AI products with compute resources, AI mentors, and open datasets.',
+    tags: ['ML', 'Computer Vision', 'NLP'],
   },
   {
     title: 'Internet of Things',
@@ -850,6 +1009,7 @@ const techCategories = ref([
     color: '#059669',
     iconBg: '#d1fae5',
     detail: 'Prototype IoT solutions with hardware lab access and industry partnerships.',
+    tags: ['Embedded', 'Sensors', 'Connectivity'],
   },
   {
     title: 'Engineering Tech',
@@ -858,27 +1018,30 @@ const techCategories = ref([
     color: '#7c3aed',
     iconBg: '#ede9fe',
     detail: 'From CAD to digital twins — build next-gen engineering software.',
+    tags: ['CAD', 'Digital Twins', 'Manufacturing'],
   },
 ])
 
-function learnMoreScroll() {
-  document.getElementById('learn-more')?.scrollIntoView({ behavior: 'smooth' })
-}
+// ── Who Can Apply ──
+const activeApplyTab = ref('all')
+const expandedCard = ref(null)
 
-const applyDetailDialog = ref(false)
-const activeApplyCard = ref(null)
+const applyFilters = [
+  { id: 'all', label: 'All applicants' },
+  { id: 'students', label: 'Students' },
+  { id: 'faculty', label: 'Faculty' },
+  { id: 'startups', label: 'Startups' },
+  { id: 'techpreneurs', label: 'Entrepreneurs' },
+]
 
 const applyCards = ref([
   {
     id: 'students',
-    short: 'Students',
     title: 'Students',
-    emoji: '🎓',
     icon: 'mdi-school',
-    badgeColor: '#1565C0',
-    desc: 'Undergraduate and graduate students with innovative ideas ready to build real-world startups.',
-    fullDesc:
-      'Students from any discipline with a passion for tech and entrepreneurship are encouraged to apply. Navigatú provides mentorship, tools, and community to help you build your first venture.',
+    iconBg: '#E6F1FB',
+    iconColor: '#185FA5',
+    desc: 'Undergraduate and graduate students with innovative ideas ready to build real-world startups from any discipline.',
     tags: ['Undergraduate', 'Graduate', 'All Disciplines'],
     requirements: [
       'Enrolled in a Philippine university',
@@ -886,17 +1049,20 @@ const applyCards = ref([
       'Letter of endorsement from adviser',
       'Commitment to 6-month program',
     ],
+    perks: [
+      { icon: 'mdi-brain', text: 'Mentorship from founders' },
+      { icon: 'mdi-laptop', text: 'Software & tools access' },
+      { icon: 'mdi-book-open-outline', text: 'Startup workshops' },
+      { icon: 'mdi-earth', text: 'Community network' },
+    ],
   },
   {
     id: 'faculty',
-    short: 'Faculty',
     title: 'Faculty & Researchers',
-    emoji: '🔬',
     icon: 'mdi-flask-outline',
-    badgeColor: '#059669',
-    desc: 'Professors and researchers looking to commercialize research and bridge academia and industry.',
-    fullDesc:
-      'University faculty and researchers who have developed innovations with commercial potential. Navigatú bridges research and market through IP support, commercialization strategy, and investor intros.',
+    iconBg: '#EAF3DE',
+    iconColor: '#3B6D11',
+    desc: 'Professors and researchers commercializing research innovations to bridge academia and industry.',
     tags: ['R&D Commercialization', 'Academia', 'IP Support'],
     requirements: [
       'Faculty or researcher at an HEI',
@@ -904,17 +1070,20 @@ const applyCards = ref([
       'Tech transfer readiness',
       'Institutional endorsement',
     ],
+    perks: [
+      { icon: 'mdi-scale-balance', text: 'IP & legal support' },
+      { icon: 'mdi-handshake-outline', text: 'Investor introductions' },
+      { icon: 'mdi-bank-outline', text: 'Commercialization strategy' },
+      { icon: 'mdi-chart-bar', text: 'Market validation' },
+    ],
   },
   {
     id: 'startups',
-    short: 'Startups',
     title: 'Early-Stage Startups',
-    emoji: '🚀',
     icon: 'mdi-rocket-launch-outline',
-    badgeColor: '#ea580c',
-    desc: 'Pre-seed and seed-stage startups needing structured support to validate and scale.',
-    fullDesc:
-      'Pre-seed and seed-stage tech startups that need support to move from MVP to product-market fit. Gain access to investor networks, legal support, and a community of co-founders.',
+    iconBg: '#FAECE7',
+    iconColor: '#993C1D',
+    desc: 'Pre-seed and seed-stage startups needing structured support to validate, grow, and achieve product-market fit.',
     tags: ['Pre-Seed', 'Seed Stage', 'MVP Ready'],
     requirements: [
       'Registered business entity or in process',
@@ -922,17 +1091,20 @@ const applyCards = ref([
       'Founding team of 2+',
       'Tech-driven product',
     ],
+    perks: [
+      { icon: 'mdi-currency-php', text: 'Funding access' },
+      { icon: 'mdi-domain', text: '24/7 coworking space' },
+      { icon: 'mdi-account-group-outline', text: 'Co-founder network' },
+      { icon: 'mdi-file-document-outline', text: 'Legal & compliance' },
+    ],
   },
   {
     id: 'techpreneurs',
-    short: 'Entrepreneurs',
     title: 'Tech Entrepreneurs',
-    emoji: '⚡',
     icon: 'mdi-lightning-bolt',
-    badgeColor: '#7c3aed',
-    desc: 'Experienced entrepreneurs building technology-driven solutions for real market problems.',
-    fullDesc:
-      'Seasoned entrepreneurs with prior startup experience looking to scale their tech businesses. Navigatú provides coworking, growth mentors, and corporate partnership programs.',
+    iconBg: '#EEEDFE',
+    iconColor: '#534AB7',
+    desc: 'Experienced entrepreneurs scaling technology-driven solutions for real, validated market problems.',
     tags: ['Tech-Driven', 'Growth Stage', 'Market Ready'],
     requirements: [
       'Prior entrepreneurial experience',
@@ -940,19 +1112,22 @@ const applyCards = ref([
       'Scalable tech solution',
       'Full-time commitment to venture',
     ],
+    perks: [
+      { icon: 'mdi-trending-up', text: 'Growth mentorship' },
+      { icon: 'mdi-factory', text: 'Corporate partnerships' },
+      { icon: 'mdi-earth', text: 'Expansion support' },
+      { icon: 'mdi-target', text: 'GTM coaching' },
+    ],
   },
 ])
 
-function openApplyDetail(card) {
-  activeApplyCard.value = card
-  applyDetailDialog.value = true
-}
+const filteredApplyCards = computed(() =>
+  activeApplyTab.value === 'all'
+    ? applyCards.value
+    : applyCards.value.filter((c) => c.id === activeApplyTab.value),
+)
 
-function closeApplyDialog() {
-  applyDialog.value = false
-  applyStep.value = 1
-}
-
+// ── Journey ──
 const activeJourneyStep = ref(null)
 const mobileJourneyOpen = ref(0)
 
@@ -1003,52 +1178,169 @@ const journeySteps = ref([
   },
 ])
 
-const activeSvc = ref(null)
+// ── Services ──
+const activeSvc = ref('business-ideation')
+
 const navServices = ref([
   {
-    title: 'Technical Support',
-    icon: 'mdi-code-braces',
+    slug: 'business-ideation',
+    title: 'Business Ideation',
+    kicker: 'From idea to opportunity',
+    summary:
+      'Shape your concept with structured incubation, expert mentoring, and practical venture-building support from day one.',
+    icon: 'mdi-lightbulb-on-outline',
     iconBg: '#dbeafe',
     color: '#1565C0',
-    items: ['Software Development', 'Cloud Infrastructure', 'Technical Mentorship', 'Code Reviews'],
+    tags: ['Incubation', 'Mentorship', 'Networking'],
+    duration: '6 months (core program)',
     detail:
-      'Access hands-on guidance from senior engineers, cloud credits, and a dedicated technical helpdesk.',
+      'Ideal for founders building from zero to a validated concept, with curated guidance at each milestone. Our structured approach ensures you test assumptions early and build confidently.',
+    who: ['Students', 'Early founders', 'Idea-stage teams'],
+    items: [
+      'Business incubation and startup development',
+      'Mentorship and guidance from entrepreneurs and industry experts',
+      'Assistance in accessing funding opportunities and investor networks',
+      'Workspace and infrastructure support',
+      'Networking events and collaboration opportunities',
+      'Business development workshops and training programs',
+    ],
+    outcomes: [
+      {
+        icon: 'mdi-lightbulb-outline',
+        label: 'Validated Concept',
+        desc: 'A market-tested idea with real user feedback',
+      },
+      {
+        icon: 'mdi-account-multiple-outline',
+        label: 'Strong Network',
+        desc: 'Access to mentor and investor connections',
+      },
+      {
+        icon: 'mdi-file-chart-outline',
+        label: 'Business Plan',
+        desc: 'A solid, investor-ready business plan',
+      },
+      {
+        icon: 'mdi-cash-multiple',
+        label: 'Funding Pathway',
+        desc: 'Clear roadmap to your first funding round',
+      },
+    ],
   },
   {
-    title: 'Business Development',
-    icon: 'mdi-chart-line',
+    slug: 'startup-support',
+    title: 'Startup Support',
+    kicker: 'Build with confidence',
+    summary:
+      'Move from early traction to market readiness with commercial, legal, and product support systems built for growth.',
+    icon: 'mdi-rocket-launch-outline',
     iconBg: '#d1fae5',
     color: '#059669',
-    items: [
-      'Business Model Design',
-      'Market Validation',
-      'Go-to-Market Strategy',
-      'Sales Coaching',
-    ],
+    tags: ['Validation', 'Commercialization', 'Go-to-Market'],
+    duration: 'Ongoing (cohort-based)',
     detail:
-      'Work with mentors to refine your go-to-market strategy and build a sustainable revenue model.',
+      'Designed for teams ready to de-risk execution, sharpen product-market fit, and scale efficiently. Access legal, IP, and commercialization resources under one roof.',
+    who: ['MVP-stage startups', 'Seed-funded teams', 'Commercializing researchers'],
+    items: [
+      'Business planning assistance',
+      'Market research and validation support',
+      'Legal and intellectual property guidance',
+      'Prototype development and testing facilities',
+      'Assistance with product commercialization and go-to-market strategies',
+      'Access to local, regional, national, and international competitions',
+    ],
+    outcomes: [
+      {
+        icon: 'mdi-target',
+        label: 'Market Fit',
+        desc: 'Validated product-market fit with paying users',
+      },
+      {
+        icon: 'mdi-shield-check-outline',
+        label: 'IP Protection',
+        desc: 'Patents or trademarks filed and protected',
+      },
+      {
+        icon: 'mdi-chart-line',
+        label: 'Revenue Growth',
+        desc: 'Clear revenue model and early traction',
+      },
+      {
+        icon: 'mdi-trophy-outline',
+        label: 'Competition Ready',
+        desc: 'Prepared for regional and national competitions',
+      },
+    ],
   },
   {
-    title: 'Funding Access',
-    icon: 'mdi-currency-php',
+    slug: 'training-program',
+    title: 'Training Program',
+    kicker: 'Develop entrepreneurial capability',
+    summary:
+      'Strengthen startup and academic innovation pipelines through focused entrepreneurship learning tracks and curriculum.',
+    icon: 'mdi-school-outline',
     iconBg: '#ffedd5',
     color: '#ea580c',
-    items: ['Seed Funding', 'Investor Connections', 'Pitch Preparation', 'Grant Applications'],
+    tags: ['Education', 'Curriculum', 'R&D Commercialization'],
+    duration: 'Flexible (modular format)',
     detail:
-      'Get introduced to angel investors, VCs, and government grant programs with a 70% success rate.',
-  },
-  {
-    title: 'Workspace & Facilities',
-    icon: 'mdi-domain',
-    iconBg: '#ede9fe',
-    color: '#7c3aed',
-    items: ['Co-working Space', 'Meeting Rooms', 'High Speed Internet', 'Development Tools'],
-    detail:
-      'A 24/7 coworking space with private offices, gigabit internet, and premium software licenses.',
+      'Tailored for students, faculty, and startup teams that need both entrepreneurial mindset and execution skills. Modules can be taken independently or as a full certification track.',
+    who: ['Faculty & researchers', 'Students', 'Corporate teams'],
+    items: [
+      'Entrepreneurship education training',
+      'Entrepreneurship curriculum development',
+      'Assistance in commercializing R&D outputs produced by university faculty and researchers',
+    ],
+    outcomes: [
+      {
+        icon: 'mdi-certificate-outline',
+        label: 'Certification',
+        desc: 'Recognized entrepreneurship training certificate',
+      },
+      {
+        icon: 'mdi-flask-outline',
+        label: 'R&D Pipeline',
+        desc: 'Accelerated research-to-market pathway',
+      },
+      {
+        icon: 'mdi-book-open-outline',
+        label: 'Curriculum',
+        desc: 'Institutional entrepreneurship curriculum',
+      },
+      {
+        icon: 'mdi-account-star-outline',
+        label: 'Skilled Founders',
+        desc: 'Execution-ready entrepreneurial teams',
+      },
+    ],
   },
 ])
 
-// ── MENTORS — Supabase logic completely untouched ──
+const activeService = computed(
+  () => navServices.value.find((s) => s.slug === activeSvc.value) || null,
+)
+const otherServices = computed(() => navServices.value.filter((s) => s.slug !== activeSvc.value))
+
+function selectService(service) {
+  activeSvc.value = service.slug
+  router.replace({
+    path: '/services-navigatu',
+    hash: '#services-grid',
+    query: { ...route.query, service: service.slug },
+  })
+}
+
+watch(
+  () => route.query.service,
+  (serviceQuery) => {
+    if (typeof serviceQuery !== 'string') return
+    const matched = navServices.value.find((s) => s.slug === serviceQuery)
+    if (matched) activeSvc.value = matched.slug
+  },
+  { immediate: true },
+)
+
+// ── Mentors (Supabase unchanged) ──
 const leaders = ref([])
 
 async function fetchMentors() {
@@ -1064,12 +1356,10 @@ async function fetchMentors() {
     leaders.value = []
     return
   }
-
   if (!data || data.length === 0) {
     leaders.value = []
     return
   }
-
   leaders.value = data.map((mentor) => ({
     name: mentor.name,
     role: mentor.role,
@@ -1079,7 +1369,7 @@ async function fetchMentors() {
 
 onMounted(fetchMentors)
 
-// ── SUCCESS STORIES ──
+// ── Success Stories ──
 const storyDialog = ref(false)
 const activeStory = ref(null)
 const activeStoryFilter = ref('All')
@@ -1150,10 +1440,16 @@ function openStory(story) {
   storyDialog.value = true
 }
 
+// ── Apply dialog ──
 const applyDialog = ref(false)
 const applyStep = ref(1)
 const applyForm = ref({ name: '', email: '', type: '', venture: '', category: '', pitch: '' })
+function closeApplyDialog() {
+  applyDialog.value = false
+  applyStep.value = 1
+}
 
+// ── Footer ──
 const newsletterEmail = ref('')
 const footerLinks = {
   programs: ['Incubation', 'Pre-incubation', 'Acceleration', 'Alumni Network'],
@@ -1220,65 +1516,44 @@ function subscribeNewsletter() {
 .nav-search-icon-btn {
   color: #3f4e63 !important;
 }
-.nav-apply-btn {
-  background: linear-gradient(135deg, #1565c0, #2563eb);
-  color: #fff;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 50px;
-  padding: 9px 22px;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.35);
-  transition: all 0.2s;
-}
-.nav-apply-btn:hover {
-  box-shadow: 0 6px 22px rgba(21, 101, 192, 0.5);
-  transform: translateY(-1px);
-}
-.w-full {
-  width: 100%;
-}
 
 /* ── BUTTONS ── */
-.btn-primary {
+.btn-solid {
   display: inline-flex;
   align-items: center;
   background: linear-gradient(135deg, #1565c0, #2563eb);
   color: #fff;
   font-family: 'Sora', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   border: none;
   border-radius: 50px;
-  padding: 14px 30px;
+  padding: 13px 26px;
   cursor: pointer;
-  box-shadow: 0 6px 22px rgba(21, 101, 192, 0.38);
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.38);
   transition: all 0.22s;
 }
-.btn-primary:hover {
-  transform: translateY(0px);
+.btn-solid:hover {
+  transform: translateY(-1px);
   box-shadow: 0 10px 30px rgba(21, 101, 192, 0.5);
 }
-.btn-ghost {
+.btn-line {
   display: inline-flex;
   align-items: center;
   background: transparent;
   color: #1565c0;
   font-family: 'Sora', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   border: 1.5px solid rgba(21, 101, 192, 0.4);
   border-radius: 50px;
-  padding: 13px 30px;
+  padding: 12px 26px;
   cursor: pointer;
   transition: all 0.22s;
 }
-.btn-ghost:hover {
+.btn-line:hover {
   background: rgba(21, 101, 192, 0.06);
   border-color: #1565c0;
-  transform: translateY(0px);
 }
 .btn-outlined {
   display: inline-flex;
@@ -1312,24 +1587,6 @@ function subscribeNewsletter() {
 }
 .btn-micro:hover {
   opacity: 0.75;
-}
-.btn-card {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.55);
-  color: var(--c, #1565c0);
-  font-family: 'Sora', sans-serif;
-  font-size: 0.76rem;
-  font-weight: 600;
-  border: 1.5px solid var(--c, #1565c0);
-  border-radius: 50px;
-  padding: 7px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-card:hover {
-  background: var(--c, #1565c0);
-  color: #fff;
 }
 
 /* ── SECTION HELPERS ── */
@@ -1373,17 +1630,17 @@ function subscribeNewsletter() {
 }
 
 /* ── HERO ── */
-.hero-section {
+.svc-hero {
   background: #f0f4ff;
   background-image:
     radial-gradient(ellipse at 68% 30%, rgba(37, 99, 235, 0.1) 0%, transparent 55%),
     radial-gradient(ellipse at 18% 75%, rgba(124, 58, 237, 0.07) 0%, transparent 50%);
   position: relative;
   overflow: hidden;
-  padding-top: 84px;
-  padding-bottom: 64px;
+  padding-top: 108px;
+  padding-bottom: 72px;
 }
-.hero-grid {
+.svc-hero-grid {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -1392,7 +1649,13 @@ function subscribeNewsletter() {
     linear-gradient(90deg, rgba(21, 101, 192, 0.045) 1px, transparent 1px);
   background-size: 40px 40px;
 }
-.hero-inner {
+.svc-hero-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 60%, rgba(37, 99, 235, 0.08) 0%, transparent 60%);
+}
+.svc-hero-inner {
   position: relative;
 }
 .hero-pill {
@@ -1415,111 +1678,68 @@ function subscribeNewsletter() {
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.28);
   flex-shrink: 0;
 }
-.hero-title {
+.svc-hero-title {
   font-family: 'Sora', sans-serif;
-  font-size: clamp(2.1rem, 5vw, 3.5rem);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
   font-weight: 700;
   color: #0a0f1e;
   line-height: 1.13;
 }
-.hero-title em {
+.svc-hero-title em {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   color: #1565c0;
 }
-.hero-body {
-  font-size: 0.98rem;
+.svc-hero-body {
+  font-size: 0.97rem;
   color: #5a6478;
   line-height: 1.85;
-  max-width: 460px;
+  max-width: 560px;
 }
-.hero-collage {
+
+.hero-stat-strip {
   display: flex;
-  gap: 14px;
-  max-width: 460px;
-  margin-left: auto;
-}
-.collage-main {
-  flex: 1.7;
-  position: relative;
-  border-radius: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  background: #fff;
+  border: 1px solid #e5eaf5;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 24px 60px rgba(21, 101, 192, 0.2);
+  max-width: 580px;
+  margin: 0 auto;
+  box-shadow: 0 6px 24px rgba(21, 101, 192, 0.08);
 }
-.collage-img-main {
-  width: 100%;
-  height: 350px;
-  object-fit: cover;
-  display: block;
-}
-.collage-live-badge {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  background: rgba(0, 0, 0, 0.62);
-  backdrop-filter: blur(10px);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 600;
-  border-radius: 50px;
-  padding: 6px 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.collage-side {
+.hss-item {
   flex: 1;
+  min-width: 120px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 12px;
+  border-right: 1px solid #e5eaf5;
 }
-.collage-stat-card {
-  background: linear-gradient(135deg, #1565c0, #2563eb);
-  border-radius: 16px;
-  padding: 20px 16px;
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(21, 101, 192, 0.32);
+.hss-item:last-child {
+  border-right: none;
 }
-.collage-big {
-  font-size: 2rem;
+.hss-val {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.25rem;
   font-weight: 700;
+  color: #1565c0;
   line-height: 1;
 }
-.collage-sub {
-  font-size: 0.68rem;
-  opacity: 0.72;
+.hss-label {
+  font-size: 0.6rem;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+  text-align: center;
+  line-height: 1.35;
   margin-top: 4px;
 }
-.collage-img-side {
-  width: 100%;
-  height: 170px;
-  object-fit: cover;
-  border-radius: 16px;
-  display: block;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
 
-/* ── INDUSTRY FOCUS LABEL ── */
-.industry-label-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.industry-label-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
-}
-.industry-label-text {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: #94a3b8;
-  white-space: nowrap;
-}
-
-/* Tech / Industry Focus cards */
+/* ── INDUSTRY FOCUS ── */
 .tc {
   opacity: 0;
   transform: translateY(18px);
@@ -1588,80 +1808,214 @@ function subscribeNewsletter() {
   font-size: 0.73rem;
   color: #555;
   line-height: 1.7;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+}
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tech-tag {
+  font-size: 0.62rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 3px 10px;
 }
 
-/* ── APPLY CARDS ── */
-.apply-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 22px;
-  cursor: pointer;
-  transition:
-    transform 0.25s,
-    box-shadow 0.25s;
-}
-.apply-card:hover {
-  transform: translateY(0px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-}
-.ac-inner {
-  position: relative;
-  z-index: 1;
-  padding: 32px;
-}
-.ac--students {
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-}
-.ac--faculty {
-  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-}
-.ac--startups {
-  background: linear-gradient(135deg, #ffedd5, #fed7aa);
-}
-.ac--techpreneurs {
-  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
-}
-.ac-badge {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-}
-.ac-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-.ac-body {
-  font-size: 0.82rem;
-  color: #475569;
-  line-height: 1.75;
-}
-.ac-chips {
+/* ── WHO CAN APPLY ── */
+.wca-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  justify-content: center;
 }
-.ac-chip {
-  background: rgba(255, 255, 255, 0.62);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+.wca-tab {
+  padding: 6px 18px;
   border-radius: 50px;
-  padding: 3px 12px;
-  font-size: 0.67rem;
+  border: 1.5px solid #dde3f0;
+  background: transparent;
+  color: #64748b;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.78rem;
   font-weight: 600;
-  color: #444;
+  cursor: pointer;
+  transition: all 0.18s;
 }
-.ac-deco {
-  position: absolute;
-  top: 14px;
-  right: 20px;
-  font-size: 3rem;
-  opacity: 0.11;
-  pointer-events: none;
+.wca-tab:hover {
+  border-color: #1565c0;
+  color: #1565c0;
+}
+.wca-tab--active {
+  background: #1565c0;
+  border-color: #1565c0;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.28);
+}
+.wca-card {
+  border: 1.5px solid #e5eaf5;
+  border-radius: 18px;
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.wca-card:hover {
+  border-color: #c4d5f7;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(21, 101, 192, 0.08);
+}
+.wca-card--open {
+  border-color: #1565c0;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
+}
+.wca-card-top {
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wca-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wca-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.wca-title-group {
+  flex: 1;
+}
+.wca-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.wca-short {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+.wca-toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #f8faff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  flex-shrink: 0;
+  transition: all 0.25s;
+}
+.wca-toggle--open {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1565c0;
+  transform: rotate(180deg);
+}
+.wca-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.7;
+}
+.wca-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.wca-chip {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 50px;
+  border: 1px solid #e5eaf5;
+  color: #64748b;
+  background: #f8faff;
+}
+.wca-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 0 22px;
+}
+.wca-expanded-inner {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.wca-section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 10px;
+}
+.wca-req-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wca-req-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.55;
+}
+.wca-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.wca-perks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.wca-perk {
+  background: #f8faff;
+  border: 1px solid #e5eaf5;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.wca-perk-text {
+  font-size: 0.75rem;
+  color: #475569;
+  line-height: 1.4;
+}
+.wca-expand-enter-active,
+.wca-expand-leave-active {
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+}
+.wca-expand-enter-from,
+.wca-expand-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 /* ── JOURNEY ── */
@@ -1837,99 +2191,294 @@ function subscribeNewsletter() {
   line-height: 1.75;
 }
 
-/* ── SERVICES ── */
-.svc-img-wrap {
-  position: relative;
-  border-radius: 22px;
-  overflow: hidden;
-  width: 100%;
-}
-.svc-img {
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
-  object-fit: cover;
-  border-radius: 22px;
-}
-.svc-img-badge {
-  position: absolute;
-  bottom: 18px;
-  left: 18px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  border-radius: 50px;
-  padding: 9px 18px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: #111;
+/* ── SERVICES / PROGRAMS — New Design ── */
+.prog-tabs {
   display: flex;
-  align-items: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
 }
-.svc-card {
+.prog-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  border-radius: 50px;
+  border: 1.5px solid #e5eaf5;
+  background: #fff;
+  color: #64748b;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.prog-tab:hover {
+  border-color: #c4d5f7;
+  color: #1565c0;
+}
+.prog-tab--active {
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.prog-panel {
   background: #fff;
   border: 1.5px solid #e5eaf5;
-  border-radius: 18px;
-  padding: 22px;
-  cursor: pointer;
+  border-radius: 24px;
+  padding: 32px;
+}
+
+.prog-overview {
   height: 100%;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s,
-    border-color 0.2s;
+  border-top: 4px solid #1565c0;
+  border-radius: 16px;
+  background: #f8faff;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
 }
-.svc-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(21, 101, 192, 0.09);
-  border-color: #c4d5f7;
+.prog-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
 }
-.svc-card--active {
-  border-color: #1565c0;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
+.prog-icon-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.svc-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+.prog-kicker {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.prog-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.25;
+}
+.prog-summary {
+  font-size: 0.84rem;
+  color: #475569;
+  line-height: 1.8;
+}
+.prog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.prog-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 4px 12px;
+  border: 1px solid;
+}
+.prog-detail-blurb {
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.75;
+  border-left: 3px solid;
+  padding-left: 14px;
+  border-radius: 0;
+}
+.prog-who {
+  margin-top: auto;
+}
+.prog-who-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+.prog-who-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.prog-who-chip {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.prog-right {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.prog-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 10px;
+}
+
+.prog-inclusions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.prog-inclusion-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.6;
+}
+.prog-inclusion-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.outcome-card {
+  background: #f8faff;
+  border: 1.5px solid #e5eaf5;
+  border-radius: 14px;
+  padding: 14px;
+  transition: border-color 0.2s;
+}
+.outcome-card:hover {
+  border-color: var(--ac, #1565c0);
+}
+.outcome-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.svc-title {
-  font-size: 0.88rem;
+.outcome-label {
+  font-size: 0.8rem;
   font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
 }
-.svc-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.svc-list li {
-  font-size: 0.77rem;
+.outcome-desc {
+  font-size: 0.7rem;
   color: #64748b;
-  padding: 5px 0;
-  border-bottom: 1px solid #f1f5f9;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.svc-list li::before {
-  content: '›';
-  font-size: 1rem;
-  color: #cbd5e1;
-}
-.svc-list li:last-child {
-  border-bottom: none;
-}
-.svc-detail {
-  font-size: 0.73rem;
-  color: #777;
-  line-height: 1.7;
-  border-top: 1px solid #eee;
-  padding-top: 12px;
+  line-height: 1.5;
+  margin-top: 3px;
 }
 
-/* ── MENTOR CARDS (unchanged) ── */
+.prog-duration {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid;
+  margin-top: auto;
+}
+.prog-duration-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-right: 6px;
+}
+.prog-duration-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.prog-other-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 20px;
+}
+.prog-other-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+.prog-other-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 1;
+}
+.prog-other-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8faff;
+  border: 1.5px solid #e5eaf5;
+  border-radius: 14px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.18s;
+  flex: 1;
+  min-width: 200px;
+}
+.prog-other-card:hover {
+  border-color: #c4d5f7;
+  background: #fff;
+  transform: translateY(-1px);
+}
+.prog-other-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.prog-other-info {
+  flex: 1;
+}
+.prog-other-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.prog-other-sub {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+/* Program switch transition */
+.prog-switch-enter-active,
+.prog-switch-leave-active {
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.prog-switch-enter-from,
+.prog-switch-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* ── MENTORS ── */
 .leader-card {
   overflow: hidden;
   transition: transform 0.2s ease;
@@ -1952,14 +2501,10 @@ function subscribeNewsletter() {
   color: #888 !important;
 }
 
-/* ══════════════════════════════════════════
-   SUCCESS STORIES — New Design
-   ══════════════════════════════════════════ */
+/* ── SUCCESS STORIES ── */
 .stories-section {
   background: #fff;
 }
-
-/* Filter pills */
 .filter-pill {
   background: transparent;
   border: 1.5px solid #dde3f0;
@@ -1982,8 +2527,6 @@ function subscribeNewsletter() {
   color: #fff;
   box-shadow: 0 4px 14px rgba(21, 101, 192, 0.32);
 }
-
-/* Story card — magazine-style vertical card */
 .story-card-new {
   background: #fff;
   border: 1.5px solid #e5eaf5;
@@ -2003,8 +2546,6 @@ function subscribeNewsletter() {
   box-shadow: 0 20px 52px rgba(21, 101, 192, 0.13);
   border-color: #bcd0f7;
 }
-
-/* Cover image zone */
 .scn-image-zone {
   position: relative;
   height: 200px;
@@ -2021,16 +2562,12 @@ function subscribeNewsletter() {
 .story-card-new:hover .scn-cover-img {
   transform: scale(1.04);
 }
-
-/* Gradient veil over photo so logo/badge stay readable */
 .scn-image-zone::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.55) 100%);
 }
-
-/* Status badge pinned top-right */
 .scn-status-badge {
   position: absolute;
   top: 12px;
@@ -2051,8 +2588,6 @@ function subscribeNewsletter() {
   border-radius: 50%;
   flex-shrink: 0;
 }
-
-/* Logo ring overlapping image → body seam */
 .scn-logo-overlay {
   position: absolute;
   bottom: -22px;
@@ -2075,16 +2610,12 @@ function subscribeNewsletter() {
   font-weight: 700;
   color: #fff;
 }
-
-/* Card body */
 .scn-body {
   flex: 1;
   padding: 30px 20px 20px;
   display: flex;
   flex-direction: column;
 }
-
-/* Name + industry chip */
 .scn-name-row {
   display: flex;
   align-items: flex-start;
@@ -2110,15 +2641,12 @@ function subscribeNewsletter() {
   border: 1px solid #dbeafe;
   margin-top: 2px;
 }
-
 .scn-desc {
   font-size: 0.78rem;
   color: #64748b;
   line-height: 1.75;
   flex: 1;
 }
-
-/* Meta row: Founded · Raised · Team */
 .scn-meta-row {
   display: flex;
   flex-wrap: wrap;
@@ -2140,8 +2668,6 @@ function subscribeNewsletter() {
   font-weight: 700;
   color: #1e293b;
 }
-
-/* Read more footer */
 .scn-footer {
   border-top: 1px solid #f1f5f9;
   padding-top: 12px;
@@ -2158,7 +2684,7 @@ function subscribeNewsletter() {
   gap: 4px;
 }
 
-/* ── STORY DIALOG — redesigned ── */
+/* ── STORY DIALOG ── */
 .story-dialog-hero {
   position: relative;
   height: 200px;
@@ -2175,8 +2701,6 @@ function subscribeNewsletter() {
   inset: 0;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.65) 100%);
 }
-
-/* Identity row (logo + name) pinned bottom-left of hero image */
 .story-dialog-identity {
   position: absolute;
   bottom: 18px;
@@ -2218,8 +2742,6 @@ function subscribeNewsletter() {
   padding: 3px 10px;
   margin-top: 4px;
 }
-
-/* Close button pinned top-right */
 .story-dialog-close {
   position: absolute !important;
   top: 12px !important;
@@ -2228,7 +2750,6 @@ function subscribeNewsletter() {
   background: rgba(255, 255, 255, 0.15) !important;
   backdrop-filter: blur(8px) !important;
 }
-
 .story-dialog-body {
   font-size: 0.85rem;
   color: #64748b;
@@ -2284,25 +2805,6 @@ function subscribeNewsletter() {
   color: rgba(255, 255, 255, 0.5);
   line-height: 1.85;
   max-width: 460px;
-}
-.btn-cta-solid {
-  display: inline-flex;
-  align-items: center;
-  background: linear-gradient(135deg, #2563eb, #1565c0);
-  color: #fff;
-  font-family: 'Sora', sans-serif;
-  font-size: 0.92rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 50px;
-  padding: 15px 32px;
-  cursor: pointer;
-  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.45);
-  transition: all 0.22s;
-}
-.btn-cta-solid:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 38px rgba(37, 99, 235, 0.58);
 }
 .btn-cta-ghost {
   display: inline-flex;
@@ -2448,6 +2950,15 @@ function subscribeNewsletter() {
 @media (max-width: 599px) {
   .scn-image-zone {
     height: 160px;
+  }
+  .hss-item {
+    min-width: 80px;
+  }
+  .prog-panel {
+    padding: 20px 16px;
+  }
+  .wca-perks {
+    grid-template-columns: 1fr;
   }
 }
 </style>
