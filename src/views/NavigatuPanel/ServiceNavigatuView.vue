@@ -382,7 +382,7 @@
         <v-container>
           <div class="text-center mb-14">
             <div class="eyebrow" style="color: #16a34a">What we offer</div>
-            <h2 class="sec-title">NAVIGATÚ <em>Programs</em></h2>
+            <h2 class="sec-title">NAVIGATÚ <em>Services</em></h2>
             <p class="sec-sub">
               Three flagship programs designed to take your venture from concept to market
             </p>
