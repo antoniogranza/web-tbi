@@ -99,36 +99,97 @@
     <v-main>
       <!-- ===== HERO ===== -->
       <div class="svc-hero">
-        <div class="svc-hero-grid" />
-        <div class="svc-hero-glow" />
+        <!-- Layered background -->
+        <img
+          src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1400&q=60"
+          alt=""
+          class="svc-hero-bg-img"
+          aria-hidden="true"
+        />
+        <div class="svc-hero-veil" />
+        <div class="svc-hero-veil2" />
+        <div class="svc-hero-grid-lines" />
+
+        <!-- Floating particles (rendered via JS in onMounted) -->
+        <div class="svc-hero-dots" ref="heroDots" />
+
         <v-container class="svc-hero-inner">
-          <v-row align="center" justify="center">
-            <v-col cols="12" md="8" class="text-center">
-              <div class="hero-pill mb-6">
-                <span class="live-dot" />
+          <v-row align="center" :style="{ minHeight: '100%' }">
+            <!-- LEFT: Copy -->
+            <v-col cols="12" md="6" class="hero-left-col">
+              <div class="hero-pill mb-5">
+                <span class="hero-pulse" />
                 Butuan City, Caraga Region
               </div>
+
               <h1 class="svc-hero-title mb-5">
                 Programs Built for<br /><em>Real Startup Growth</em>
               </h1>
-              <p class="svc-hero-body mb-8 mx-auto">
+
+              <p class="svc-hero-body mb-9">
                 Navigatú TBI offers three flagship programs — each crafted to move you from idea to
                 validated, market-ready venture with hands-on mentorship and structured support.
               </p>
-              <div class="d-flex justify-center flex-wrap ga-3">
-                <button class="btn-solid" @click="scrollTo('services-grid')">
-                  <v-icon size="16" class="mr-2">mdi-briefcase-outline</v-icon>Explore Programs
+
+              <div class="d-flex flex-wrap ga-3 mb-10">
+                <button class="btn-hero-solid" @click="scrollTo('services-grid')">
+                  <v-icon size="16" class="mr-2">mdi-briefcase-outline</v-icon>
+                  Explore Programs
                 </button>
-                <button class="btn-line" @click="scrollTo('incubation-journey')">
-                  <v-icon size="16" class="mr-2">mdi-map-outline</v-icon>See the Journey
+                <button class="btn-hero-ghost" @click="scrollTo('incubation-journey')">
+                  <v-icon size="16" class="mr-2">mdi-map-outline</v-icon>
+                  See the Journey
                 </button>
               </div>
 
-              <!-- Stat strip -->
-              <div class="hero-stat-strip mt-12">
-                <div v-for="stat in heroStats" :key="stat.label" class="hss-item">
-                  <div class="hss-val">{{ stat.val }}</div>
-                  <div class="hss-label">{{ stat.label }}</div>
+              <!-- Trust badges -->
+              <div class="hero-trust-row">
+                <span class="hero-trust-label">Recognized by</span>
+                <div class="hero-trust-divider" />
+                <div class="d-flex ga-2">
+                  <span class="hero-trust-badge">DOST</span>
+                  <span class="hero-trust-badge">DICT</span>
+                  <span class="hero-trust-badge">QSU</span>
+                </div>
+              </div>
+            </v-col>
+
+            <!-- RIGHT: Photo collage (desktop only) -->
+            <v-col cols="12" md="6" class="d-none d-md-flex justify-end">
+              <div class="hero-photo-stack">
+                <!-- Spinning accent ring -->
+                <div class="hero-accent-ring" />
+
+                <!-- Main photo -->
+                <div class="hero-photo-main">
+                  <img
+                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&q=80"
+                    alt="Navigatú team"
+                    class="hero-photo-img"
+                  />
+                  <div class="hero-photo-veil" />
+                  <div class="hero-photo-badge">
+                    <span class="hero-pulse" />
+                    <div>
+                      <div class="hero-badge-title">Live Programs</div>
+                      <div class="hero-badge-sub">Cohort now open</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Floating stat card -->
+                <div class="hero-stat-float">
+                  <div class="hero-stat-num">142</div>
+                  <div class="hero-stat-lbl">Incubatees Served</div>
+                </div>
+
+                <!-- Secondary photo -->
+                <div class="hero-photo-b">
+                  <img
+                    src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400&q=80"
+                    alt="Navigatú workspace"
+                    class="hero-photo-img"
+                  />
                 </div>
               </div>
             </v-col>
@@ -966,13 +1027,28 @@ function scrollTo(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 }
 
-// ── Hero stats ──
-const heroStats = ref([
-  { val: '3', label: 'Flagship Programs' },
-  { val: '6 mo', label: 'Incubation Period' },
-  { val: '142', label: 'Incubatees Served' },
-  { val: '₱20.2M', label: 'Revenue Generated' },
-])
+// ── Hero particles ──
+const heroDots = ref(null)
+
+onMounted(() => {
+  // spawn floating particles
+  if (heroDots.value) {
+    for (let i = 0; i < 22; i++) {
+      const d = document.createElement('div')
+      d.className = 'hero-dot'
+      const sz = Math.random() * 3 + 2
+      const color = Math.random() > 0.5 ? '96,165,250' : '34,197,94'
+      d.style.cssText = `
+        width:${sz}px;height:${sz}px;
+        left:${Math.random() * 100}%;
+        top:${Math.random() * 100}%;
+        background:rgba(${color},.4);
+        animation-duration:${Math.random() * 8 + 6}s;
+        animation-delay:${Math.random() * 6}s`
+      heroDots.value.appendChild(d)
+    }
+  }
+})
 
 // ── Industry Focus ──
 const animatedCards = ref(false)
@@ -1629,114 +1705,383 @@ function subscribeNewsletter() {
   padding-bottom: 84px;
 }
 
-/* ── HERO ── */
+/* ══════════════════════════════════
+   HERO — Dark cinematic redesign
+   ══════════════════════════════════ */
 .svc-hero {
-  background: #f0f4ff;
-  background-image:
-    radial-gradient(ellipse at 68% 30%, rgba(37, 99, 235, 0.1) 0%, transparent 55%),
-    radial-gradient(ellipse at 18% 75%, rgba(124, 58, 237, 0.07) 0%, transparent 50%);
+  background: #06080f;
   position: relative;
   overflow: hidden;
-  padding-top: 108px;
-  padding-bottom: 72px;
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  padding-top: 64px; /* navbar height offset */
 }
-.svc-hero-grid {
+
+/* Background photo */
+.svc-hero-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.18;
+  filter: saturate(0.4);
+  pointer-events: none;
+}
+
+/* Dark cinematic veil */
+.svc-hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #06080f 38%,
+    rgba(6, 8, 15, 0.72) 68%,
+    rgba(21, 101, 192, 0.16) 100%
+  );
+  pointer-events: none;
+}
+.svc-hero-veil2 {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, #06080f 100%);
+  pointer-events: none;
+}
+
+/* Subtle grid */
+.svc-hero-grid-lines {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(21, 101, 192, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(21, 101, 192, 0.045) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(37, 99, 235, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.055) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
-.svc-hero-glow {
+
+/* Floating dots container */
+.svc-hero-dots {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 60%, rgba(37, 99, 235, 0.08) 0%, transparent 60%);
+  overflow: hidden;
 }
+
+/* Individual dot */
+.hero-dot {
+  position: absolute;
+  border-radius: 50%;
+  animation: heroDotFloat linear infinite;
+}
+@keyframes heroDotFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.18;
+  }
+  100% {
+    transform: translateY(-130px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Inner layout */
 .svc-hero-inner {
   position: relative;
+  z-index: 2;
+  padding-top: 56px;
+  padding-bottom: 72px;
 }
+.hero-left-col {
+  padding-top: 16px;
+}
+
+/* Location pill */
 .hero-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(21, 101, 192, 0.09);
-  border: 1px solid rgba(21, 101, 192, 0.22);
+  background: rgba(37, 99, 235, 0.14);
+  border: 1px solid rgba(37, 99, 235, 0.32);
   border-radius: 50px;
   padding: 6px 16px;
-  font-size: 0.73rem;
-  font-weight: 600;
-  color: #1565c0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #93c5fd;
+  letter-spacing: 0.5px;
 }
-.live-dot {
+
+/* Animated pulse dot */
+.hero-pulse {
+  display: block;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #22c55e;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.28);
   flex-shrink: 0;
+  animation: heroPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
 }
+@keyframes heroPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Title */
 .svc-hero-title {
   font-family: 'Sora', sans-serif;
-  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
-  color: #0a0f1e;
-  line-height: 1.13;
+  color: #fff;
+  line-height: 1.1;
 }
 .svc-hero-title em {
   font-family: 'Playfair Display', serif;
   font-style: italic;
-  color: #1565c0;
-}
-.svc-hero-body {
-  font-size: 0.97rem;
-  color: #5a6478;
-  line-height: 1.85;
-  max-width: 560px;
+  color: #60a5fa;
 }
 
-.hero-stat-strip {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0;
-  background: #fff;
-  border: 1px solid #e5eaf5;
-  border-radius: 18px;
-  overflow: hidden;
-  max-width: 580px;
-  margin: 0 auto;
-  box-shadow: 0 6px 24px rgba(21, 101, 192, 0.08);
+/* Body */
+.svc-hero-body {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.88;
+  max-width: 480px;
 }
-.hss-item {
-  flex: 1;
-  min-width: 120px;
-  display: flex;
-  flex-direction: column;
+
+/* Buttons */
+.btn-hero-solid {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 18px 12px;
-  border-right: 1px solid #e5eaf5;
-}
-.hss-item:last-child {
-  border-right: none;
-}
-.hss-val {
+  background: #1565c0;
+  color: #fff;
   font-family: 'Sora', sans-serif;
-  font-size: 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: 13px 28px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(21, 101, 192, 0.42);
+  transition: all 0.22s;
+}
+.btn-hero-solid:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(21, 101, 192, 0.55);
+}
+.btn-hero-ghost {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  padding: 12px 26px;
+  cursor: pointer;
+  transition: all 0.22s;
+}
+.btn-hero-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Trust row */
+.hero-trust-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hero-trust-label {
+  font-size: 0.63rem;
   font-weight: 700;
-  color: #1565c0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+}
+.hero-trust-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.hero-trust-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+/* ── Photo collage ── */
+.hero-photo-stack {
+  position: relative;
+  width: 420px;
+  height: 480px;
+  flex-shrink: 0;
+}
+
+/* Spinning decorative ring */
+.hero-accent-ring {
+  position: absolute;
+  top: -28px;
+  right: -28px;
+  width: 110px;
+  height: 110px;
+  border: 2px solid rgba(37, 99, 235, 0.22);
+  border-radius: 50%;
+  animation: heroSpinRing 14s linear infinite;
+}
+.hero-accent-ring::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  border-radius: 50%;
+}
+@keyframes heroSpinRing {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Main photo */
+.hero-photo-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 64px;
+  height: 320px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.55);
+}
+.hero-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-photo-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(6, 8, 15, 0.68) 100%);
+}
+
+/* Badge on main photo */
+.hero-photo-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-badge-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.hero-badge-sub {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.48);
+  margin-top: 1px;
+}
+
+/* Floating stat card */
+.hero-stat-float {
+  position: absolute;
+  top: 192px;
+  right: 52px;
+  background: rgba(6, 8, 15, 0.84);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 20px;
+  text-align: center;
+  z-index: 3;
+  animation: heroFloatCard 4s ease-in-out infinite;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+@keyframes heroFloatCard {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.hero-stat-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #60a5fa;
   line-height: 1;
 }
-.hss-label {
-  font-size: 0.6rem;
-  color: #94a3b8;
-  letter-spacing: 0.3px;
-  text-align: center;
-  line-height: 1.35;
+.hero-stat-lbl {
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.38);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
   margin-top: 4px;
+}
+
+/* Secondary photo */
+.hero-photo-b {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 210px;
+  height: 228px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 959px) {
+  .svc-hero {
+    min-height: 560px;
+  }
+  .svc-hero-title {
+    font-size: 2rem;
+  }
+}
+@media (max-width: 599px) {
+  .svc-hero-inner {
+    padding-top: 40px;
+    padding-bottom: 56px;
+  }
+  .hero-btns {
+    flex-direction: column;
+  }
+  .btn-hero-solid,
+  .btn-hero-ghost {
+    justify-content: center;
+  }
 }
 
 /* ── INDUSTRY FOCUS ── */
