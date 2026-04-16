@@ -625,14 +625,44 @@
           </div>
           <v-row justify="center">
             <v-col v-for="leader in leaders" :key="leader.name" cols="12" sm="6" md="3">
-              <v-card rounded="xl" elevation="1" class="leader-card" hover>
-                <div class="leader-photo d-flex align-center justify-center">
-                  <v-img :src="leader.photo" height="320" cover class="leader-img" />
-                </div>
-                <v-card-item class="text-center pb-4">
-                  <v-card-title class="leader-name">{{ leader.name }}</v-card-title>
-                  <v-card-subtitle class="leader-role">{{ leader.role }}</v-card-subtitle>
-                </v-card-item>
+              <v-card rounded="xl" elevation="0" class="leader-card">
+                <v-img :src="leader.photo" height="300" cover class="leader-img">
+                  <div class="leader-img-overlay" />
+                  <div class="leader-badge-wrap">
+                    <v-chip
+                      size="small"
+                      variant="flat"
+                      class="leader-badge"
+                      prepend-icon="mdi-star-four-points"
+                    >
+                      Mentor
+                    </v-chip>
+                  </div>
+                </v-img>
+
+                <v-card-text class="leader-content">
+                  <div class="leader-head">
+                    <v-avatar size="44" class="leader-avatar" color="blue-lighten-5">
+                      <span class="leader-initials">
+                        {{
+                          leader.name
+                            .split(' ')
+                            .slice(0, 2)
+                            .map((part) => part[0])
+                            .join('')
+                            .toUpperCase()
+                        }}
+                      </span>
+                    </v-avatar>
+
+                    <div>
+                      <div class="leader-name">{{ leader.name }}</div>
+                      <div class="leader-role">{{ leader.role }}</div>
+                    </div>
+                  </div>
+
+                  <v-divider class="my-4" />
+                </v-card-text>
               </v-card>
             </v-col>
           </v-row>
@@ -2776,25 +2806,83 @@ function subscribeNewsletter() {
 
 /* ── MENTORS ── */
 .leader-card {
+  position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease;
+  border: 1px solid #e6edf8;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
 }
 .leader-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-8px);
+  border-color: #cfe0fb;
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.14);
 }
-.leader-photo {
-  background: #eef2fa;
+.leader-img {
+  position: relative;
+  overflow: hidden;
+}
+.leader-card:hover .leader-img {
+  transform: scale(1.02);
+  transition: transform 0.35s ease;
+}
+.leader-img-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.05) 30%, rgba(15, 23, 42, 0.42) 100%),
+    radial-gradient(circle at 78% 12%, rgba(37, 99, 235, 0.3), transparent 45%);
+}
+.leader-badge-wrap {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+}
+.leader-badge {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #0f172a !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  backdrop-filter: blur(8px);
+}
+.leader-content {
+  padding: 18px 18px 20px !important;
+}
+.leader-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.leader-avatar {
+  border: 1px solid #dbeafe;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65);
+}
+.leader-initials {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1d4ed8;
 }
 .leader-name {
-  font-size: 0.9rem !important;
+  font-size: 0.92rem;
   font-weight: 700;
-  color: #1a1a1a;
-  white-space: normal !important;
-  line-height: 1.3 !important;
+  color: #0f172a;
+  line-height: 1.25;
 }
 .leader-role {
-  font-size: 0.78rem !important;
-  color: #888 !important;
+  margin-top: 2px;
+  font-size: 0.77rem;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+@media (max-width: 600px) {
+  .leader-content {
+    padding: 16px !important;
+  }
 }
 
 /* ── SUCCESS STORIES ── */
