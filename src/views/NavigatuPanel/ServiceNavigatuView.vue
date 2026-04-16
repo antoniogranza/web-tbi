@@ -259,19 +259,6 @@
             </p>
           </div>
 
-          <!-- Filter Tabs -->
-          <div class="wca-tabs mb-8">
-            <button
-              v-for="f in applyFilters"
-              :key="f.id"
-              class="wca-tab"
-              :class="{ 'wca-tab--active': activeApplyTab === f.id }"
-              @click="activeApplyTab = f.id"
-            >
-              {{ f.label }}
-            </button>
-          </div>
-
           <v-row>
             <v-col v-for="card in filteredApplyCards" :key="card.id" cols="12" sm="6" class="mb-2">
               <div
@@ -1101,14 +1088,6 @@ const techCategories = ref([
 // ── Who Can Apply ──
 const activeApplyTab = ref('all')
 const expandedCard = ref(null)
-
-const applyFilters = [
-  { id: 'all', label: 'All applicants' },
-  { id: 'students', label: 'Students' },
-  { id: 'faculty', label: 'Faculty' },
-  { id: 'startups', label: 'Startups' },
-  { id: 'techpreneurs', label: 'Entrepreneurs' },
-]
 
 const applyCards = ref([
   {
@@ -2168,34 +2147,6 @@ function subscribeNewsletter() {
 }
 
 /* ── WHO CAN APPLY ── */
-.wca-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
-}
-.wca-tab {
-  padding: 6px 18px;
-  border-radius: 50px;
-  border: 1.5px solid #dde3f0;
-  background: transparent;
-  color: #64748b;
-  font-family: 'Sora', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.18s;
-}
-.wca-tab:hover {
-  border-color: #1565c0;
-  color: #1565c0;
-}
-.wca-tab--active {
-  background: #1565c0;
-  border-color: #1565c0;
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.28);
-}
 .wca-card {
   border: 1.5px solid #e5eaf5;
   border-radius: 18px;
@@ -2209,7 +2160,7 @@ function subscribeNewsletter() {
 }
 .wca-card:hover {
   border-color: #c4d5f7;
-  transform: translateY(-2px);
+  transform: translateY(0px);
   box-shadow: 0 8px 28px rgba(21, 101, 192, 0.08);
 }
 .wca-card--open {
