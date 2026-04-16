@@ -623,208 +623,29 @@
             <h2 class="sec-title">Meet the <em>Mentors</em></h2>
             <p class="sec-sub">Industry experts and seasoned entrepreneurs guiding your journey</p>
           </div>
+
           <v-row justify="center">
             <v-col v-for="leader in leaders" :key="leader.name" cols="12" sm="6" md="3">
-              <v-card rounded="xl" elevation="0" class="leader-card">
-                <v-img :src="leader.photo" height="300" cover class="leader-img">
-                  <div class="leader-img-overlay" />
-                  <div class="leader-badge-wrap">
-                    <v-chip
-                      size="small"
-                      variant="flat"
-                      class="leader-badge"
-                      prepend-icon="mdi-star-four-points"
-                    >
-                      Mentor
-                    </v-chip>
-                  </div>
-                </v-img>
-
-                <v-card-text class="leader-content">
-                  <div class="leader-head">
-                    <v-avatar size="44" class="leader-avatar" color="blue-lighten-5">
-                      <span class="leader-initials">
-                        {{
-                          leader.name
-                            .split(' ')
-                            .slice(0, 2)
-                            .map((part) => part[0])
-                            .join('')
-                            .toUpperCase()
-                        }}
-                      </span>
-                    </v-avatar>
-
-                    <div>
-                      <div class="leader-name">{{ leader.name }}</div>
-                      <div class="leader-role">{{ leader.role }}</div>
-                    </div>
-                  </div>
-
-                  <v-divider class="my-4" />
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== SUCCESS STORIES ===== -->
-      <div class="stories-section py-sec">
-        <v-container>
-          <div class="text-center mb-6">
-            <div class="eyebrow">Graduates</div>
-            <h2 class="sec-title">Success <em>Stories</em></h2>
-            <p class="sec-sub">
-              Every startup tells a story of resilience and breakthrough milestones
-            </p>
-          </div>
-
-          <div class="d-flex justify-center flex-wrap ga-2 mb-10">
-            <button
-              v-for="f in storyFilters"
-              :key="f"
-              class="filter-pill"
-              :class="{ 'filter-pill--on': activeStoryFilter === f }"
-              @click="activeStoryFilter = f"
-            >
-              {{ f }}
-            </button>
-          </div>
-
-          <v-row>
-            <v-col v-for="story in filteredStories" :key="story.name" cols="12" sm="6" lg="4">
-              <div class="story-card-new" @click="openStory(story)">
-                <div class="scn-image-zone">
-                  <img :src="story.coverImg" :alt="story.name" class="scn-cover-img" />
-                  <div
-                    class="scn-status-badge"
-                    :style="{ background: story.statusBg, color: story.statusText }"
-                  >
-                    <span class="scn-status-dot" :style="{ background: story.statusText }" />
-                    {{ story.status }}
-                  </div>
-                  <div class="scn-logo-overlay">
-                    <div class="scn-logo-ring" :style="{ background: story.logoBg }">
-                      <span class="scn-logo-initials">{{ story.initials }}</span>
-                    </div>
-                  </div>
+              <div class="mentor-card">
+                <!-- Photo zone -->
+                <div class="mentor-photo-zone">
+                  <img :src="leader.photo" :alt="leader.name" class="mentor-photo" />
+                  <div class="mentor-photo-veil" />
                 </div>
-                <div class="scn-body">
-                  <div class="scn-name-row">
-                    <h3 class="scn-name">{{ story.name }}</h3>
-                    <span class="scn-industry-chip">{{ story.industryShort }}</span>
-                  </div>
-                  <p class="scn-desc mt-2 mb-4">{{ story.desc }}</p>
-                  <div class="scn-meta-row">
-                    <div class="scn-meta-item">
-                      <v-icon size="13" color="#1565c0" class="mr-1">mdi-calendar-outline</v-icon>
-                      <span class="scn-meta-label">Founded</span>
-                      <span class="scn-meta-val">{{ story.year }}</span>
-                    </div>
-                    <div class="scn-meta-item">
-                      <v-icon size="13" color="#16a34a" class="mr-1">mdi-cash-multiple</v-icon>
-                      <span class="scn-meta-label">Raised</span>
-                      <span class="scn-meta-val">{{ story.funding }}</span>
-                    </div>
-                    <div class="scn-meta-item">
-                      <v-icon size="13" color="#7c3aed" class="mr-1"
-                        >mdi-account-group-outline</v-icon
-                      >
-                      <span class="scn-meta-label">Team</span>
-                      <span class="scn-meta-val">{{ story.team }}</span>
-                    </div>
-                  </div>
-                  <div class="scn-footer mt-4">
-                    <span class="scn-read-more">
-                      Read story <v-icon size="14" class="ml-1">mdi-arrow-right</v-icon>
-                    </span>
-                  </div>
+
+                <!-- Info row -->
+                <div class="mentor-info">
+                  <div class="mentor-name">{{ leader.name }}</div>
+                  <div class="mentor-role">{{ leader.role }}</div>
+
+                  <!-- Decorative accent line -->
+                  <div class="mentor-accent-line" />
                 </div>
               </div>
             </v-col>
           </v-row>
-
-          <div class="text-right mt-8">
-            <button class="btn-outlined">
-              More Stories <v-icon size="15" class="ml-1">mdi-arrow-right</v-icon>
-            </button>
-          </div>
         </v-container>
       </div>
-
-      <!-- Story detail dialog -->
-      <v-dialog v-model="storyDialog" max-width="620" transition="dialog-bottom-transition">
-        <v-card v-if="activeStory" rounded="xl" class="overflow-hidden pa-0">
-          <div class="story-dialog-hero">
-            <img
-              :src="activeStory.coverImg"
-              :alt="activeStory.name"
-              class="story-dialog-hero-img"
-            />
-            <div class="story-dialog-hero-veil" />
-            <div class="story-dialog-identity">
-              <div class="story-dialog-logo-ring" :style="{ background: activeStory.logoBg }">
-                <span class="story-dialog-initials">{{ activeStory.initials }}</span>
-              </div>
-              <div>
-                <div class="story-dialog-name">{{ activeStory.name }}</div>
-                <span
-                  class="story-dialog-status"
-                  :style="{ background: activeStory.statusBg, color: activeStory.statusText }"
-                  >{{ activeStory.status }}</span
-                >
-              </div>
-            </div>
-            <v-btn
-              icon
-              size="small"
-              variant="flat"
-              class="story-dialog-close"
-              @click="storyDialog = false"
-            >
-              <v-icon size="18">mdi-close</v-icon>
-            </v-btn>
-          </div>
-          <div class="pa-7">
-            <div class="d-flex flex-wrap gap-2 mb-5">
-              <v-chip size="small" color="primary" variant="tonal" prepend-icon="mdi-tag-outline">{{
-                activeStory.industry
-              }}</v-chip>
-              <v-chip
-                size="small"
-                color="success"
-                variant="tonal"
-                prepend-icon="mdi-calendar-outline"
-                >Founded {{ activeStory.year }}</v-chip
-              >
-              <v-chip
-                size="small"
-                color="purple"
-                variant="tonal"
-                prepend-icon="mdi-account-group-outline"
-                >{{ activeStory.team }} team members</v-chip
-              >
-            </div>
-            <p class="story-dialog-body mb-6">{{ activeStory.fullDesc }}</p>
-            <v-divider class="mb-5" />
-            <v-row>
-              <v-col cols="4" class="text-center">
-                <div class="story-stat-val" style="color: #1565c0">{{ activeStory.funding }}</div>
-                <div class="story-stat-label">Funding Raised</div>
-              </v-col>
-              <v-col cols="4" class="text-center">
-                <div class="story-stat-val" style="color: #16a34a">{{ activeStory.team }}</div>
-                <div class="story-stat-label">Team Size</div>
-              </v-col>
-              <v-col cols="4" class="text-center">
-                <div class="story-stat-val" style="color: #7c3aed">{{ activeStory.year }}</div>
-                <div class="story-stat-label">Year Founded</div>
-              </v-col>
-            </v-row>
-          </div>
-        </v-card>
-      </v-dialog>
 
       <!-- ===== CTA ===== -->
       <div class="cta-section">
@@ -1455,75 +1276,6 @@ async function fetchMentors() {
 onMounted(fetchMentors)
 
 // ── Success Stories ──
-const storyDialog = ref(false)
-const activeStory = ref(null)
-const activeStoryFilter = ref('All')
-const storyFilters = ['All', 'Artificial Intelligence', 'Business Software', 'HealthTech']
-
-const successStories = ref([
-  {
-    name: 'Ascribo AI',
-    initials: 'AI',
-    logoBg: '#1d4ed8',
-    status: 'Funded',
-    statusBg: '#dcfce7',
-    statusText: '#15803d',
-    industry: 'Artificial Intelligence',
-    industryShort: 'AI',
-    funding: '₱4.2M',
-    year: '2025',
-    team: '8',
-    desc: 'A context-aware AI translation platform delivering precise results for law, medicine, and marketing.',
-    fullDesc:
-      'Ascribo.AI solves the critical problem of inaccurate language translation in high-stakes fields. Their proprietary context engine reduces translation errors by over 90%.',
-    coverImg: 'https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=600&q=80',
-  },
-  {
-    name: 'BizNest',
-    initials: 'BN',
-    logoBg: '#15803d',
-    status: 'Scaling',
-    statusBg: '#dbeafe',
-    statusText: '#1d4ed8',
-    industry: 'Business Software',
-    industryShort: 'SaaS',
-    funding: '₱4.2M',
-    year: '2025',
-    team: '12',
-    desc: 'A smart business management platform for MSMEs integrating POS, inventory, finance, and CRM.',
-    fullDesc:
-      'BizNest helps over 500 small businesses reduce operational overhead by 40% through a unified digital workspace.',
-    coverImg: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80',
-  },
-  {
-    name: 'MediLink PH',
-    initials: 'ML',
-    logoBg: '#7c3aed',
-    status: 'MVP',
-    statusBg: '#fef9c3',
-    statusText: '#a16207',
-    industry: 'HealthTech',
-    industryShort: 'Health',
-    funding: '₱1.8M',
-    year: '2024',
-    team: '5',
-    desc: 'A telemedicine platform connecting rural Caraga communities with licensed physicians nationwide.',
-    fullDesc:
-      'MediLink PH enables real-time teleconsultations, digital prescriptions, and secure medical records for underserved areas.',
-    coverImg: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80',
-  },
-])
-
-const filteredStories = computed(() =>
-  activeStoryFilter.value === 'All'
-    ? successStories.value
-    : successStories.value.filter((s) => s.industry === activeStoryFilter.value),
-)
-
-function openStory(story) {
-  activeStory.value = story
-  storyDialog.value = true
-}
 
 // ── Apply dialog ──
 const applyDialog = ref(false)
@@ -2804,351 +2556,84 @@ function subscribeNewsletter() {
   transform: translateY(8px);
 }
 
-/* ── MENTORS ── */
-.leader-card {
-  position: relative;
+/* ── MENTORS — Modern redesign ── */
+.mentor-card {
+  border-radius: 20px;
   overflow: hidden;
-  border: 1px solid #e6edf8;
-  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
-  transition:
-    transform 0.24s ease,
-    box-shadow 0.24s ease,
-    border-color 0.24s ease;
-}
-.leader-card:hover {
-  transform: translateY(-8px);
-  border-color: #cfe0fb;
-  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.14);
-}
-.leader-img {
-  position: relative;
-  overflow: hidden;
-}
-.leader-card:hover .leader-img {
-  transform: scale(1.02);
-  transition: transform 0.35s ease;
-}
-.leader-img-overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(15, 23, 42, 0.05) 30%, rgba(15, 23, 42, 0.42) 100%),
-    radial-gradient(circle at 78% 12%, rgba(37, 99, 235, 0.3), transparent 45%);
-}
-.leader-badge-wrap {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 2;
-}
-.leader-badge {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #0f172a !important;
-  font-size: 0.68rem !important;
-  font-weight: 700 !important;
-  backdrop-filter: blur(8px);
-}
-.leader-content {
-  padding: 18px 18px 20px !important;
-}
-.leader-head {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-.leader-avatar {
-  border: 1px solid #dbeafe;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65);
-}
-.leader-initials {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #1d4ed8;
-}
-.leader-name {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #0f172a;
-  line-height: 1.25;
-}
-.leader-role {
-  margin-top: 2px;
-  font-size: 0.77rem;
-  color: #64748b;
-  line-height: 1.35;
-}
-
-@media (max-width: 600px) {
-  .leader-content {
-    padding: 16px !important;
-  }
-}
-
-/* ── SUCCESS STORIES ── */
-.stories-section {
-  background: #fff;
-}
-.filter-pill {
-  background: transparent;
-  border: 1.5px solid #dde3f0;
-  border-radius: 50px;
-  padding: 7px 18px;
-  font-family: 'Sora', sans-serif;
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.18s;
-}
-.filter-pill:hover {
-  border-color: #1565c0;
-  color: #1565c0;
-}
-.filter-pill--on {
-  background: #1565c0;
-  border-color: #1565c0;
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.32);
-}
-.story-card-new {
   background: #fff;
   border: 1.5px solid #e5eaf5;
-  border-radius: 22px;
-  overflow: hidden;
-  cursor: pointer;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
   transition:
-    transform 0.25s,
-    box-shadow 0.25s,
-    border-color 0.25s;
+    transform 0.26s ease,
+    box-shadow 0.26s ease,
+    border-color 0.26s ease;
+  cursor: default;
 }
-.story-card-new:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 52px rgba(21, 101, 192, 0.13);
-  border-color: #bcd0f7;
+.mentor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 56px rgba(124, 58, 237, 0.12);
+  border-color: #ddd6fe;
 }
-.scn-image-zone {
+
+/* Photo zone */
+.mentor-photo-zone {
   position: relative;
-  height: 200px;
+  height: 276px;
   overflow: hidden;
-  flex-shrink: 0;
 }
-.scn-cover-img {
+.mentor-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   transition: transform 0.4s ease;
 }
-.story-card-new:hover .scn-cover-img {
-  transform: scale(1.04);
-}
-.scn-image-zone::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.55) 100%);
-}
-.scn-status-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-  border-radius: 50px;
-  padding: 4px 12px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-.scn-status-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.scn-logo-overlay {
-  position: absolute;
-  bottom: -22px;
-  left: 20px;
-  z-index: 3;
-}
-.scn-logo-ring {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.scn-logo-initials {
-  font-family: 'Sora', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-}
-.scn-body {
-  flex: 1;
-  padding: 30px 20px 20px;
-  display: flex;
-  flex-direction: column;
-}
-.scn-name-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-.scn-name {
-  font-family: 'Sora', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
-  line-height: 1.25;
-}
-.scn-industry-chip {
-  background: #f0f4ff;
-  color: #1565c0;
-  font-size: 0.62rem;
-  font-weight: 700;
-  border-radius: 50px;
-  padding: 3px 10px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  border: 1px solid #dbeafe;
-  margin-top: 2px;
-}
-.scn-desc {
-  font-size: 0.78rem;
-  color: #64748b;
-  line-height: 1.75;
-  flex: 1;
-}
-.scn-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 12px;
-}
-.scn-meta-item {
-  display: flex;
-  align-items: center;
-  font-size: 0.72rem;
-  color: #94a3b8;
-  gap: 2px;
-}
-.scn-meta-label {
-  margin-right: 2px;
-}
-.scn-meta-val {
-  font-weight: 700;
-  color: #1e293b;
-}
-.scn-footer {
-  border-top: 1px solid #f1f5f9;
-  padding-top: 12px;
-}
-.scn-read-more {
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: #1565c0;
-  display: inline-flex;
-  align-items: center;
-  transition: gap 0.18s;
-}
-.story-card-new:hover .scn-read-more {
-  gap: 4px;
+.mentor-card:hover .mentor-photo {
+  transform: scale(1.05);
 }
 
-/* ── STORY DIALOG ── */
-.story-dialog-hero {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-}
-.story-dialog-hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.story-dialog-hero-veil {
+/* Gradient veil — stronger at bottom so name stays readable */
+.mentor-photo-veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.65) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(10, 5, 30, 0.04) 0%,
+    rgba(10, 5, 30, 0.08) 45%,
+    rgba(10, 5, 30, 0.52) 100%
+  );
 }
-.story-dialog-identity {
-  position: absolute;
-  bottom: 18px;
-  left: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 2;
+
+/* Info row */
+.mentor-info {
+  padding: 22px 18px 18px;
 }
-.story-dialog-logo-ring {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  border: 2.5px solid rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-  flex-shrink: 0;
-}
-.story-dialog-initials {
+.mentor-name {
   font-family: 'Sora', sans-serif;
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  color: #fff;
-}
-.story-dialog-name {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.2;
-}
-.story-dialog-status {
-  display: inline-block;
-  font-size: 0.62rem;
-  font-weight: 700;
-  border-radius: 50px;
-  padding: 3px 10px;
-  margin-top: 4px;
-}
-.story-dialog-close {
-  position: absolute !important;
-  top: 12px !important;
-  right: 12px !important;
-  z-index: 3 !important;
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(8px) !important;
-}
-.story-dialog-body {
-  font-size: 0.85rem;
-  color: #64748b;
-  line-height: 1.85;
-}
-.story-stat-val {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 700;
-  line-height: 1;
+  color: #0f172a;
+  line-height: 1.3;
   margin-bottom: 4px;
 }
-.story-stat-label {
-  font-size: 0.7rem;
-  color: #94a3b8;
+.mentor-role {
+  font-size: 0.74rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Decorative accent line */
+.mentor-accent-line {
+  height: 3px;
+  width: 32px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .leader-content {
+    padding: 16px !important;
+  }
 }
 
 /* ── CTA ── */
