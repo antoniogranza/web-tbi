@@ -10,11 +10,7 @@
               <v-icon icon="mdi-newspaper-variant-outline" size="14" class="mr-1" />
               Latest Updates
             </div>
-            <h1 class="hero-title">NAVIGATÃš <span class="hero-title-italic">News</span></h1>
-            <p class="hero-sub mt-3">
-              Stay up to date with the latest announcements, breakthroughs, and stories from
-              NavigatÃº TBI and our growing startup ecosystem.
-            </p>
+            <h1 class="hero-title">NAVIGATU <span class="hero-title-italic">News</span></h1>
           </v-col>
           <v-col cols="12" md="5" class="d-flex justify-end d-none d-md-flex">
             <div class="hero-deco-number">{{ news.length }}</div>
@@ -127,7 +123,7 @@
           <!-- Sort -->
           <v-select
             v-model="sortBy"
-            :items="['Newest First', 'Oldest First', 'Aâ€“Z']"
+            :items="['Newest First', 'Oldest First', 'A–Z']"
             variant="outlined"
             density="compact"
             rounded="lg"
@@ -376,7 +372,7 @@ function loadMore() {
   font-family: 'DM Sans', sans-serif !important;
 }
 
-/* â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Navbar  */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -445,7 +441,7 @@ function loadMore() {
   transform: translateY(-1px);
 }
 
-/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  HERO  */
 .news-hero {
   background: #0d47a1;
   position: relative;
@@ -492,13 +488,7 @@ function loadMore() {
   font-weight: 600;
   color: #90caf9;
 }
-.hero-sub {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.8;
-  max-width: 520px;
-  margin: 0;
-}
+
 .hero-deco-number {
   font-family: 'Playfair Display', serif;
   font-size: 7rem;
@@ -519,7 +509,7 @@ function loadMore() {
   line-height: 1.6;
 }
 
-/* â”€â”€ FILTER BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  FILTER BAR  */
 .filter-bar {
   background: #f5f7fb;
   border-bottom: 1px solid #e8eaf0;
@@ -552,7 +542,7 @@ function loadMore() {
   font-size: 0.85rem;
 }
 
-/* â”€â”€ SECTION SHARED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  SECTION SHARED  */
 .section-eyebrow {
   font-size: 0.7rem;
   font-weight: 700;
@@ -563,7 +553,7 @@ function loadMore() {
   align-items: center;
 }
 
-/* â”€â”€ FEATURED CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  FEATURED CARD  */
 .featured-section {
   background: #ffffff;
 }
@@ -646,7 +636,7 @@ function loadMore() {
   letter-spacing: 0 !important;
 }
 
-/* â”€â”€ NEWS GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  NEWS GRID  */
 .news-grid-section {
   background: #f5f7fb;
 }
@@ -748,7 +738,7 @@ function loadMore() {
   letter-spacing: 0 !important;
 }
 
-/* â”€â”€ EMPTY STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  EMPTY STATE  */
 .empty-state {
   text-align: center;
   padding: 60px 0;
@@ -764,7 +754,7 @@ function loadMore() {
   color: #ccc;
 }
 
-/* â”€â”€ DETAIL DIALOG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  DETAIL DIALOG  */
 .detail-dialog {
   overflow: hidden;
 }
@@ -812,7 +802,7 @@ function loadMore() {
   line-height: 1.9;
 }
 
-/* â”€â”€ FOOTER â”€â”€ */
+/*  FOOTER  */
 .footer-section {
   background: #06080f;
 }

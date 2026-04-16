@@ -17,11 +17,11 @@
               <span>Butuan City, Caraga Region</span>
             </div>
             <h1 class="hero-title">
-              NAVIGATÃš
+              NAVIGATU
               <span class="hero-title-em">Facility</span>
             </h1>
             <p class="hero-body mt-4 mb-8">
-              The Innovation and Technopreneurship Hub (iTecH) of Caraga State University â€” where
+              The Innovation and Technopreneurship Hub (iTecH) of Caraga State University - where
               ideas become ventures and ventures become legacies.
             </p>
             <div class="d-flex flex-wrap" style="gap: 14px">
@@ -248,7 +248,7 @@
         <div class="text-center mb-4">
           <div class="eyebrow-label" style="color: #7c3aed">People & Culture</div>
           <h2 class="section-title">
-            <span class="testimonial-bold">NAVIGATÃš</span>
+            <span class="testimonial-bold">NAVIGATU</span>
             <span class="testimonial-italic"> Staff Voices</span>
           </h2>
           <p class="section-sub mt-3">Stories from the people who make iTecH extraordinary</p>

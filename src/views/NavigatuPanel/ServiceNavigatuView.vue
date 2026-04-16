@@ -30,7 +30,7 @@
             </h1>
 
             <p class="svc-hero-body mb-9">
-              NavigatÃº TBI offers three flagship programs â€” each crafted to move you from idea to
+              Navigatu TBI offers three flagship programs each crafted to move you from idea to
               validated, market-ready venture with hands-on mentorship and structured support.
             </p>
 
@@ -67,7 +67,7 @@
               <div class="hero-photo-main">
                 <img
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&q=80"
-                  alt="NavigatÃº team"
+                  alt="Navigatu team"
                   class="hero-photo-img"
                 />
                 <div class="hero-photo-veil" />
@@ -107,7 +107,7 @@
           <div class="eyebrow">What We Focus On</div>
           <h2 class="sec-title">Industry <em>Focus Areas</em></h2>
           <p class="sec-sub">
-            Click any area to learn how NavigatÃº supports that technology sector
+            Click any area to learn how Navigatu supports that technology sector
           </p>
         </div>
         <v-row id="learn-more">
@@ -325,12 +325,12 @@
       </v-container>
     </div>
 
-    <!-- ===== SERVICES â€” REDESIGNED ===== -->
+    <!-- ===== SERVICES — REDESIGNED ===== -->
     <div id="services-grid" class="sec-white py-sec">
       <v-container>
         <div class="text-center mb-14">
           <div class="eyebrow" style="color: #16a34a">What we offer</div>
-          <h2 class="sec-title">NAVIGATÃš <em>Services</em></h2>
+          <h2 class="sec-title">NAVIGATU <em>Services</em></h2>
           <p class="sec-sub">
             Three flagship programs designed to take your venture from concept to market
           </p>
@@ -553,7 +553,7 @@
         </div>
         <h2 class="cta-title mb-4">Ready to Launch Your Startup?</h2>
         <p class="cta-sub mb-10 mx-auto">
-          Join NavigatÃº TBI and get access to mentorship, funding, and a thriving community of
+          Join Navigatu TBI and get access to mentorship, funding, and a thriving community of
           innovators.
         </p>
         <div class="d-flex justify-center flex-wrap gap-4">
@@ -879,7 +879,7 @@ const journeySteps = ref([
     phase: 'Application & Screening',
     icon: 'mdi-file-document-outline',
     color: '#2563eb',
-    duration: 'Weeks 1â€“2',
+    duration: 'Weeks 1–2',
     desc: 'Submit your pitch deck and documents. Our committee evaluates team strength, technology, and market fit.',
     expandDetail:
       'Our panel of industry experts reviews each application holistically â€” balancing innovation potential with execution readiness. Top applicants are invited for a live pitch session.',
@@ -890,7 +890,7 @@ const journeySteps = ref([
     phase: 'Onboarding & Validation',
     icon: 'mdi-clipboard-check-outline',
     color: '#059669',
-    duration: 'Months 1â€“2',
+    duration: 'Months 1-2',
     desc: 'Validate your business model with real customers. Participate in workshops, design sprints, and mentor check-ins.',
     expandDetail:
       "Weekly structured sessions with mentors, plus access to NAVIGATÃš's customer discovery toolkit. Founders test assumptions before writing a single line of production code.",
@@ -901,7 +901,7 @@ const journeySteps = ref([
     phase: 'Development & Acceleration',
     icon: 'mdi-rocket-launch-outline',
     color: '#ea580c',
-    duration: 'Months 3â€“5',
+    duration: 'Months 3-5',
     desc: 'Build, iterate, and accelerate. Access funding networks, legal support, and co-working facilities.',
     expandDetail:
       'Get paired with a technical mentor, tap into our investor network for pre-seed conversations, and use our 24/7 coworking space and premium software stack.',
@@ -921,7 +921,7 @@ const journeySteps = ref([
   },
 ])
 
-// â”€â”€ Services â”€â”€
+//  Services
 const activeSvc = ref('business-ideation')
 
 const navServices = ref([
@@ -1083,7 +1083,7 @@ watch(
   { immediate: true },
 )
 
-// â”€â”€ Mentors (Supabase unchanged) â”€â”€
+// Mentors (Supabase unchanged)
 const leaders = ref([])
 
 async function fetchMentors() {
@@ -1112,9 +1112,7 @@ async function fetchMentors() {
 
 onMounted(fetchMentors)
 
-// â”€â”€ Success Stories â”€â”€
-
-// â”€â”€ Apply dialog â”€â”€
+//  Apply dialog
 const applyDialog = ref(false)
 const applyStep = ref(1)
 const applyForm = ref({ name: '', email: '', type: '', venture: '', category: '', pitch: '' })
@@ -1134,7 +1132,7 @@ function closeApplyDialog() {
   font-family: 'Sora', sans-serif !important;
 }
 
-/* â”€â”€ NAVBAR â”€â”€ */
+/*  NAVBAR  */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -1181,7 +1179,7 @@ function closeApplyDialog() {
   color: #3f4e63 !important;
 }
 
-/* â”€â”€ BUTTONS â”€â”€ */
+/*  BUTTONS  */
 .btn-solid {
   display: inline-flex;
   align-items: center;
@@ -1253,7 +1251,7 @@ function closeApplyDialog() {
   opacity: 0.75;
 }
 
-/* â”€â”€ SECTION HELPERS â”€â”€ */
+/*  SECTION HELPERS  */
 .eyebrow {
   font-size: 0.68rem;
   font-weight: 700;
@@ -1515,7 +1513,7 @@ function closeApplyDialog() {
   color: rgba(255, 255, 255, 0.42);
 }
 
-/* â”€â”€ Photo collage â”€â”€ */
+/*  Photo collage  */
 .hero-photo-stack {
   position: relative;
   width: 420px;
@@ -1670,7 +1668,7 @@ function closeApplyDialog() {
   }
 }
 
-/* â”€â”€ INDUSTRY FOCUS â”€â”€ */
+/*  INDUSTRY FOCUS */
 .tc {
   opacity: 0;
   transform: translateY(18px);
@@ -1753,7 +1751,7 @@ function closeApplyDialog() {
   padding: 3px 10px;
 }
 
-/* â”€â”€ WHO CAN APPLY â”€â”€ */
+/*  WHO CAN APPLY  */
 .wca-card {
   border: 1.5px solid #e5eaf5;
   border-radius: 18px;
@@ -1921,7 +1919,7 @@ function closeApplyDialog() {
   transform: translateY(-6px);
 }
 
-/* â”€â”€ JOURNEY â”€â”€ */
+/*  JOURNEY  */
 .journey-section {
   background: #080d1c;
   position: relative;
@@ -2094,7 +2092,7 @@ function closeApplyDialog() {
   line-height: 1.75;
 }
 
-/* â”€â”€ SERVICES / PROGRAMS â€” New Design â”€â”€ */
+/*  SERVICES / PROGRAMS  */
 .prog-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -2461,7 +2459,7 @@ function closeApplyDialog() {
   }
 }
 
-/* â”€â”€ CTA â”€â”€ */
+/*  CTA  */
 .cta-section {
   background: #080d1c;
   position: relative;
@@ -2521,7 +2519,7 @@ function closeApplyDialog() {
   transform: translateY(-2px);
 }
 
-/* â”€â”€ FOOTER â”€â”€ */
+/*  FOOTER  */
 .footer-section {
   background: #06080f;
 }
@@ -2628,7 +2626,7 @@ function closeApplyDialog() {
   transform: translateY(-1px);
 }
 
-/* â”€â”€ TRANSITIONS â”€â”€ */
+/*  TRANSITIONS  */
 .fx-enter-active,
 .fx-leave-active {
   transition:

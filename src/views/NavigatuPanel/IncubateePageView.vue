@@ -1,11 +1,11 @@
 ﻿<template>
   <NavigatuLayout>
-    <!-- â”€â”€ LOADING STATE â”€â”€ -->
+    <!--  LOADING STATE  -->
     <div v-if="loading" class="d-flex align-center justify-center" style="min-height: 60vh">
       <v-progress-circular indeterminate color="primary" size="48" />
     </div>
 
-    <!-- â”€â”€ ERROR STATE â”€â”€ -->
+    <!--  ERROR STATE  -->
     <div v-else-if="error" class="d-flex align-center justify-center" style="min-height: 60vh">
       <div class="text-center">
         <v-icon icon="mdi-alert-circle-outline" size="52" color="#C62828" />
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <!-- â”€â”€ CONTENT (only renders once startup data is loaded) â”€â”€ -->
+    <!--  CONTENT (only renders once startup data is loaded)  -->
     <template v-else-if="startup">
       <!-- ===== HERO BANNER ===== -->
       <div class="profile-hero">
@@ -47,7 +47,7 @@
           </div>
 
           <v-row align="center" class="hero-inner">
-            <!-- Logo card â€” logo comes from Supabase Storage public URL -->
+            <!-- Logo card - logo comes from Supabase Storage public URL -->
             <v-col cols="12" md="3" class="d-flex justify-center justify-md-start">
               <div class="startup-logo-card">
                 <v-img
@@ -280,8 +280,8 @@
 
       <!-- ===== GALLERY ===== -->
       <!--
-          gallery   â†’ text[] of Supabase Storage public URLs
-          gallery_captions â†’ text[]
+          gallery   text[] of Supabase Storage public URLs
+          gallery_captions text[]
         -->
       <v-container
         v-if="startup.gallery && startup.gallery.length"
@@ -311,7 +311,7 @@
                 </div>
               </div>
             </v-col>
-            <!-- 2Ã—2 grid â€” remaining up to 4 images -->
+            <!-- 2—2 grid  remaining up to 4 images -->
             <v-col cols="12" md="6">
               <v-row>
                 <v-col v-for="(img, i) in startup.gallery.slice(1, 5)" :key="i" cols="6">
@@ -584,13 +584,13 @@ import { supabase } from '@/utils/supabase'
 const route = useRoute()
 const router = useRouter()
 
-// â”€â”€ Data state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  Data state
 const startup = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
-// â”€â”€ Fetch by slug â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// Column names match buildPayload() exactly â€” all snake_case
+//  Fetch by slug
+// Column names match buildPayload() exactly — all snake_case
 onMounted(async () => {
   const slug = route.params.slug
 
@@ -658,7 +658,7 @@ onMounted(() => {
   window.addEventListener('resize', handleViewportResize)
 })
 
-// â”€â”€ Anchor nav â€” automatically computed from actual data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  Anchor nav — automatically computed from actual data
 // Values dynamically calculate from achievements, partners, team, and testimonials arrays
 const anchorTabs = computed(() => [
   {
@@ -687,14 +687,14 @@ const anchorTabs = computed(() => [
   },
 ])
 
-// â”€â”€ Tags â€” filter out empty values from array â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  Tags — filter out empty values from array
 const getActiveTags = computed(() => {
   const tags = startup.value?.tags
   if (!Array.isArray(tags)) return []
   return tags.filter((tag) => tag && String(tag).trim().length > 0)
 })
 
-// â”€â”€ Testimonials carousel state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  Testimonials carousel state
 const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
 const testimonialIndex = ref(0)
 const enableTrackTransition = ref(true)
@@ -776,7 +776,7 @@ watch(
   },
 )
 
-// â”€â”€ Status icon fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  Status icon fallback
 function defaultStatusIcon(status) {
   return (
     {
@@ -788,7 +788,7 @@ function defaultStatusIcon(status) {
   )
 }
 
-// â”€â”€ Anchor nav scroll + intersection observer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  Anchor nav scroll + intersection observer
 const activeSection = ref('section-year-started')
 
 function scrollToSection(id) {
@@ -835,7 +835,7 @@ onUnmounted(() => {
   font-family: 'DM Sans', sans-serif !important;
 }
 
-/* â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Navbar  */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -907,7 +907,7 @@ onUnmounted(() => {
   transform: translateY(-1px);
 }
 
-/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  HERO  */
 .profile-hero {
   position: relative;
   min-height: 380px;
@@ -1058,7 +1058,7 @@ onUnmounted(() => {
   border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
-/* â”€â”€ ANCHOR NAV STRIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  ANCHOR NAV STRIP  */
 .anchor-strip {
   background: #ffffff;
   border-bottom: 2px solid #eef0f5;
@@ -1148,7 +1148,7 @@ onUnmounted(() => {
   }
 }
 
-/* â”€â”€ SHARED SECTION TYPOGRAPHY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  SHARED SECTION TYPOGRAPHY  */
 .section-eyebrow {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1184,7 +1184,7 @@ onUnmounted(() => {
   margin: 0;
 }
 
-/* â”€â”€ ABOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  ABOUT  */
 .about-startup-section {
   background: #ffffff;
 }
@@ -1267,7 +1267,7 @@ onUnmounted(() => {
   font-weight: 600 !important;
 }
 
-/* â”€â”€ ACHIEVEMENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  ACHIEVEMENTS  */
 .achievements-section {
   background: #f5f7fb;
 }
@@ -1336,7 +1336,7 @@ onUnmounted(() => {
   margin: 0;
 }
 
-/* â”€â”€ PARTNERSHIPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  PARTNERSHIPS  */
 .financials-section {
   background: #f5f7fb;
 }
@@ -1384,7 +1384,7 @@ onUnmounted(() => {
   margin-top: 1px;
 }
 
-/* â”€â”€ GALLERY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  GALLERY  */
 .gallery-section {
   background: #f5f7fb;
 }
@@ -1412,7 +1412,7 @@ onUnmounted(() => {
   font-size: 0.68rem;
 }
 
-/* â”€â”€ TEAM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  TEAM  */
 .team-section {
   background: #ffffff;
 }
@@ -1461,7 +1461,7 @@ onUnmounted(() => {
   gap: 4px;
 }
 
-/* â”€â”€ TESTIMONIALS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  TESTIMONIALS  */
 .testimonials-section {
   background: #f5f7fb;
 }
@@ -1555,7 +1555,7 @@ onUnmounted(() => {
   margin-top: 1px;
 }
 
-/* â”€â”€ CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  CTA  */
 .cta-section {
   background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
   padding: 72px 0;
@@ -1591,7 +1591,7 @@ onUnmounted(() => {
   color: #ffffff !important;
 }
 
-/* â”€â”€ FOOTER â”€â”€ */
+/*  FOOTER  */
 .footer-section {
   background: #06080f;
 }

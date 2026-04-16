@@ -766,7 +766,7 @@ const timeline = ref([
     title: 'NavigatÃº TBI Founded',
     desc: 'Established with DOST PCIEERD support at Caraga State University.',
     detail:
-      'NavigatÃº was formally established as a technology business incubator with initial funding of â‚±10.4M from DOST PCIEERD, housed at a purpose-built 200 mÂ² facility inside CSU, Butuan City.',
+      'Navigatu was formally established as a technology business incubator with initial funding of ₱10.4M from DOST PCIEERD, housed at a purpose-built 200 m² facility inside CSU, Butuan City.',
     color: '#1565c0',
   },
   {
