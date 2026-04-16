@@ -1,678 +1,574 @@
-<template>
-  <v-app>
-    <!-- ===================== NAVIGATION BAR ===================== -->
-    <v-app-bar
-      app
-      fixed
-      location="top"
-      flat
-      color="white"
-      border="b"
-      height="64"
-      :elevation="scrolled ? 3 : 0"
-      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
-    >
-      <v-container class="d-flex align-center pa-0" fluid>
-        <router-link
-          to="/navigatu"
-          class="d-flex align-center ml-4 ml-md-8"
-          style="text-decoration: none; color: inherit"
-        >
-          <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
-          <div>
-            <div class="nav-brand">NAVIGATÚ</div>
-            <div class="nav-sub">Technology Business Incubator</div>
-          </div>
-        </router-link>
-        <v-spacer />
-        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
-          <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
-          <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
-          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <div class="nav-search-hover">
-            <input
-              v-model="searchQuery"
-              class="nav-search-field"
-              type="text"
-              placeholder="Search..."
-              @keyup.enter="runNavbarSearch"
-            />
-            <v-btn
-              variant="text"
-              icon
-              size="small"
-              class="nav-search-icon-btn"
-              @click="runNavbarSearch"
-            >
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </div>
-        </div>
-        <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
-      </v-container>
-    </v-app-bar>
+﻿<template>
+  <NavigatuLayout>
+    <!-- ===== HERO ===== -->
+    <div class="svc-hero">
+      <!-- Layered background -->
+      <img
+        src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1400&q=60"
+        alt=""
+        class="svc-hero-bg-img"
+        aria-hidden="true"
+      />
+      <div class="svc-hero-veil" />
+      <div class="svc-hero-veil2" />
+      <div class="svc-hero-grid-lines" />
 
-    <!-- Mobile Drawer -->
-    <v-navigation-drawer v-model="drawer" temporary location="right" width="260">
-      <v-list nav class="pt-4">
-        <v-list-item
-          title="About"
-          prepend-icon="mdi-information-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/about-navigatu"
-        />
-        <v-list-item
-          title="Services"
-          prepend-icon="mdi-briefcase-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/services-navigatu"
-          active
-        />
-        <v-list-item
-          title="Coworking"
-          prepend-icon="mdi-office-building-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/coworking-navigatu"
-        />
-        <v-list-item
-          title="News"
-          prepend-icon="mdi-newspaper-variant-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/news-navigatu"
-        />
-        <v-list-item
-          title="Events"
-          prepend-icon="mdi-calendar-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/events-navigatu"
-        />
-      </v-list>
-    </v-navigation-drawer>
+      <!-- Floating particles (rendered via JS in onMounted) -->
+      <div class="svc-hero-dots" ref="heroDots" />
 
-    <v-main>
-      <!-- ===== HERO ===== -->
-      <div class="svc-hero">
-        <!-- Layered background -->
-        <img
-          src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1400&q=60"
-          alt=""
-          class="svc-hero-bg-img"
-          aria-hidden="true"
-        />
-        <div class="svc-hero-veil" />
-        <div class="svc-hero-veil2" />
-        <div class="svc-hero-grid-lines" />
+      <v-container class="svc-hero-inner">
+        <v-row align="center" :style="{ minHeight: '100%' }">
+          <!-- LEFT: Copy -->
+          <v-col cols="12" md="6" class="hero-left-col">
+            <div class="hero-pill mb-5">
+              <span class="hero-pulse" />
+              Butuan City, Caraga Region
+            </div>
 
-        <!-- Floating particles (rendered via JS in onMounted) -->
-        <div class="svc-hero-dots" ref="heroDots" />
+            <h1 class="svc-hero-title mb-5">
+              Programs Built for<br /><em>Real Startup Growth</em>
+            </h1>
 
-        <v-container class="svc-hero-inner">
-          <v-row align="center" :style="{ minHeight: '100%' }">
-            <!-- LEFT: Copy -->
-            <v-col cols="12" md="6" class="hero-left-col">
-              <div class="hero-pill mb-5">
-                <span class="hero-pulse" />
-                Butuan City, Caraga Region
-              </div>
-
-              <h1 class="svc-hero-title mb-5">
-                Programs Built for<br /><em>Real Startup Growth</em>
-              </h1>
-
-              <p class="svc-hero-body mb-9">
-                Navigatú TBI offers three flagship programs — each crafted to move you from idea to
-                validated, market-ready venture with hands-on mentorship and structured support.
-              </p>
-
-              <div class="d-flex flex-wrap ga-3 mb-10">
-                <button class="btn-hero-solid" @click="scrollTo('services-grid')">
-                  <v-icon size="16" class="mr-2">mdi-briefcase-outline</v-icon>
-                  Explore Programs
-                </button>
-                <button class="btn-hero-ghost" @click="scrollTo('incubation-journey')">
-                  <v-icon size="16" class="mr-2">mdi-map-outline</v-icon>
-                  See the Journey
-                </button>
-              </div>
-
-              <!-- Trust badges -->
-              <div class="hero-trust-row">
-                <span class="hero-trust-label">Recognized by</span>
-                <div class="hero-trust-divider" />
-                <div class="d-flex ga-2">
-                  <span class="hero-trust-badge">DOST</span>
-                  <span class="hero-trust-badge">DICT</span>
-                  <span class="hero-trust-badge">QSU</span>
-                </div>
-              </div>
-            </v-col>
-
-            <!-- RIGHT: Photo collage (desktop only) -->
-            <v-col cols="12" md="6" class="d-none d-md-flex justify-end">
-              <div class="hero-photo-stack">
-                <!-- Spinning accent ring -->
-                <div class="hero-accent-ring" />
-
-                <!-- Main photo -->
-                <div class="hero-photo-main">
-                  <img
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&q=80"
-                    alt="Navigatú team"
-                    class="hero-photo-img"
-                  />
-                  <div class="hero-photo-veil" />
-                  <div class="hero-photo-badge">
-                    <span class="hero-pulse" />
-                    <div>
-                      <div class="hero-badge-title">Live Programs</div>
-                      <div class="hero-badge-sub">Cohort now open</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Floating stat card -->
-                <div class="hero-stat-float">
-                  <div class="hero-stat-num">142</div>
-                  <div class="hero-stat-lbl">Incubatees Served</div>
-                </div>
-
-                <!-- Secondary photo -->
-                <div class="hero-photo-b">
-                  <img
-                    src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400&q=80"
-                    alt="Navigatú workspace"
-                    class="hero-photo-img"
-                  />
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== INDUSTRY FOCUS ===== -->
-      <div class="sec-white py-sec">
-        <v-container>
-          <div class="text-center mb-12">
-            <div class="eyebrow">What We Focus On</div>
-            <h2 class="sec-title">Industry <em>Focus Areas</em></h2>
-            <p class="sec-sub">
-              Click any area to learn how Navigatú supports that technology sector
+            <p class="svc-hero-body mb-9">
+              NavigatÃº TBI offers three flagship programs â€” each crafted to move you from idea to
+              validated, market-ready venture with hands-on mentorship and structured support.
             </p>
-          </div>
-          <v-row id="learn-more">
-            <v-col
-              v-for="(cat, i) in techCategories"
-              :key="cat.title"
-              cols="12"
-              sm="6"
-              md="3"
-              :class="['tc', { 'tc--in': animatedCards }]"
-              :style="{ animationDelay: `${i * 80}ms` }"
-            >
-              <div
-                class="tech-card"
-                :class="{ 'tech-card--sel': selectedTech === cat.title }"
-                @click="selectedTech = selectedTech === cat.title ? null : cat.title"
-              >
-                <div class="tech-icon" :style="{ background: cat.iconBg }">
-                  <v-icon :icon="cat.icon" :color="cat.color" size="22" />
-                </div>
-                <div class="tech-title">{{ cat.title }}</div>
-                <div class="tech-desc">{{ cat.desc }}</div>
-                <transition name="fx">
-                  <div v-if="selectedTech === cat.title" class="tech-detail">
-                    <div class="tech-divider" />
-                    <p class="tech-detail-text">{{ cat.detail }}</p>
-                    <div class="tech-tags mt-2">
-                      <span
-                        v-for="tag in cat.tags"
-                        :key="tag"
-                        class="tech-tag"
-                        :style="{ background: cat.color + '18', color: cat.color }"
-                        >{{ tag }}</span
-                      >
-                    </div>
-                  </div>
-                </transition>
+
+            <div class="d-flex flex-wrap ga-3 mb-10">
+              <button class="btn-hero-solid" @click="scrollTo('services-grid')">
+                <v-icon size="16" class="mr-2">mdi-briefcase-outline</v-icon>
+                Explore Programs
+              </button>
+              <button class="btn-hero-ghost" @click="scrollTo('incubation-journey')">
+                <v-icon size="16" class="mr-2">mdi-map-outline</v-icon>
+                See the Journey
+              </button>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="hero-trust-row">
+              <span class="hero-trust-label">Recognized by</span>
+              <div class="hero-trust-divider" />
+              <div class="d-flex ga-2">
+                <span class="hero-trust-badge">DOST</span>
+                <span class="hero-trust-badge">DICT</span>
+                <span class="hero-trust-badge">QSU</span>
               </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
+            </div>
+          </v-col>
 
-      <!-- ===== WHO CAN APPLY ===== -->
-      <div class="sec-offwhite py-sec">
-        <v-container>
-          <div class="text-center mb-12">
-            <div class="eyebrow">Eligibility</div>
-            <h2 class="sec-title">Who can <em>Apply</em></h2>
-            <p class="sec-sub">
-              Students, Faculty, Early-Stage startups, and Tech Entrepreneurs can apply
-            </p>
-          </div>
+          <!-- RIGHT: Photo collage (desktop only) -->
+          <v-col cols="12" md="6" class="d-none d-md-flex justify-end">
+            <div class="hero-photo-stack">
+              <!-- Spinning accent ring -->
+              <div class="hero-accent-ring" />
 
-          <v-row>
-            <v-col v-for="card in filteredApplyCards" :key="card.id" cols="12" sm="6" class="mb-2">
-              <div
-                class="wca-card"
-                :class="{ 'wca-card--open': expandedCard === card.id }"
-                @click="expandedCard = expandedCard === card.id ? null : card.id"
-                role="button"
-                :aria-expanded="expandedCard === card.id"
-                tabindex="0"
-                @keydown.enter="expandedCard = expandedCard === card.id ? null : card.id"
-                @keydown.space.prevent="expandedCard = expandedCard === card.id ? null : card.id"
-              >
-                <div class="wca-card-top">
-                  <div class="wca-header">
-                    <div class="wca-icon" :style="{ background: card.iconBg }">
-                      <v-icon :icon="card.icon" :color="card.iconColor" size="20" />
-                    </div>
-                    <div class="wca-title-group">
-                      <div class="wca-title">{{ card.title }}</div>
-                      <div class="wca-short">{{ card.tags[0] }}</div>
-                    </div>
-                    <div
-                      class="wca-toggle"
-                      :class="{ 'wca-toggle--open': expandedCard === card.id }"
-                    >
-                      <v-icon size="16" color="inherit">mdi-chevron-down</v-icon>
-                    </div>
-                  </div>
-                  <p class="wca-desc">{{ card.desc }}</p>
-                  <div class="wca-chips">
-                    <span v-for="tag in card.tags" :key="tag" class="wca-chip">{{ tag }}</span>
-                  </div>
-                </div>
-                <transition name="wca-expand">
-                  <div v-if="expandedCard === card.id" class="wca-expanded">
-                    <div class="wca-divider" />
-                    <div class="wca-expanded-inner">
-                      <div>
-                        <div class="wca-section-label">Requirements</div>
-                        <ul class="wca-req-list">
-                          <li v-for="req in card.requirements" :key="req" class="wca-req-item">
-                            <div class="wca-check" :style="{ background: card.iconBg }">
-                              <v-icon size="11" :color="card.iconColor">mdi-check</v-icon>
-                            </div>
-                            {{ req }}
-                          </li>
-                        </ul>
-                      </div>
-                      <div>
-                        <div class="wca-section-label">What you get</div>
-                        <div class="wca-perks">
-                          <div v-for="perk in card.perks" :key="perk.text" class="wca-perk">
-                            <div class="wca-perk-icon">
-                              <v-icon :icon="perk.icon" :color="card.iconColor" size="16" />
-                            </div>
-                            <div class="wca-perk-text">{{ perk.text }}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </transition>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== INCUBATION JOURNEY ===== -->
-      <div id="incubation-journey" class="journey-section">
-        <div class="journey-glow" />
-        <v-container class="position-relative">
-          <div class="text-center mb-16">
-            <div class="eyebrow" style="color: #f97316">How it works</div>
-            <h2 class="sec-title" style="color: #fff">The Incubation <em>Journey</em></h2>
-            <p class="sec-sub" style="color: rgba(255, 255, 255, 0.5)">
-              From idea to market-ready startup in four structured phases
-            </p>
-          </div>
-
-          <!-- Desktop -->
-          <div class="d-none d-md-block journey-desktop">
-            <div class="journey-rail" />
-            <v-row>
-              <v-col v-for="(step, i) in journeySteps" :key="step.phase" cols="3">
-                <div
-                  class="jcard"
-                  :class="{ 'jcard--open': activeJourneyStep === i }"
-                  @click="activeJourneyStep = activeJourneyStep === i ? null : i"
-                >
-                  <div class="jcard-bubble" :style="{ background: step.color }">
-                    <v-icon :icon="step.icon" color="white" size="20" />
-                  </div>
-                  <div class="jcard-num">Phase {{ i + 1 }}</div>
-                  <h4 class="jcard-title">{{ step.phase }}</h4>
-                  <div class="jcard-dur" :style="{ color: step.color }">
-                    <v-icon size="11" class="mr-1">mdi-clock-outline</v-icon>{{ step.duration }}
-                  </div>
-                  <p class="jcard-desc">{{ step.desc }}</p>
-                  <div class="jcard-tags mt-3">
-                    <span
-                      v-for="tag in step.tags"
-                      :key="tag"
-                      class="jtag"
-                      :style="{ background: step.color + '22', color: step.color }"
-                      >{{ tag }}</span
-                    >
-                  </div>
-                  <transition name="fx">
-                    <div v-if="activeJourneyStep === i" class="jcard-expand">
-                      <img :src="step.img" :alt="step.phase" class="jcard-img" />
-                      <p class="jcard-expand-text">{{ step.expandDetail }}</p>
-                    </div>
-                  </transition>
-                </div>
-              </v-col>
-            </v-row>
-          </div>
-
-          <!-- Mobile -->
-          <div class="d-md-none">
-            <div
-              v-for="(step, i) in journeySteps"
-              :key="step.phase"
-              class="jmobile"
-              :class="{ 'jmobile--open': mobileJourneyOpen === i }"
-            >
-              <div
-                class="jmobile-header"
-                @click="mobileJourneyOpen = mobileJourneyOpen === i ? null : i"
-              >
-                <div class="d-flex align-center gap-3">
-                  <div class="jbubble-sm" :style="{ background: step.color }">
-                    <v-icon :icon="step.icon" color="white" size="15" />
-                  </div>
+              <!-- Main photo -->
+              <div class="hero-photo-main">
+                <img
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&q=80"
+                  alt="NavigatÃº team"
+                  class="hero-photo-img"
+                />
+                <div class="hero-photo-veil" />
+                <div class="hero-photo-badge">
+                  <span class="hero-pulse" />
                   <div>
-                    <div class="jmobile-num">Phase {{ i + 1 }} · {{ step.duration }}</div>
-                    <div class="jmobile-title">{{ step.phase }}</div>
+                    <div class="hero-badge-title">Live Programs</div>
+                    <div class="hero-badge-sub">Cohort now open</div>
                   </div>
                 </div>
-                <v-icon
-                  :icon="mobileJourneyOpen === i ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                  color="white"
-                  size="20"
+              </div>
+
+              <!-- Floating stat card -->
+              <div class="hero-stat-float">
+                <div class="hero-stat-num">142</div>
+                <div class="hero-stat-lbl">Incubatees Served</div>
+              </div>
+
+              <!-- Secondary photo -->
+              <div class="hero-photo-b">
+                <img
+                  src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400&q=80"
+                  alt="NavigatÃº workspace"
+                  class="hero-photo-img"
                 />
               </div>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <!-- ===== INDUSTRY FOCUS ===== -->
+    <div class="sec-white py-sec">
+      <v-container>
+        <div class="text-center mb-12">
+          <div class="eyebrow">What We Focus On</div>
+          <h2 class="sec-title">Industry <em>Focus Areas</em></h2>
+          <p class="sec-sub">
+            Click any area to learn how NavigatÃº supports that technology sector
+          </p>
+        </div>
+        <v-row id="learn-more">
+          <v-col
+            v-for="(cat, i) in techCategories"
+            :key="cat.title"
+            cols="12"
+            sm="6"
+            md="3"
+            :class="['tc', { 'tc--in': animatedCards }]"
+            :style="{ animationDelay: `${i * 80}ms` }"
+          >
+            <div
+              class="tech-card"
+              :class="{ 'tech-card--sel': selectedTech === cat.title }"
+              @click="selectedTech = selectedTech === cat.title ? null : cat.title"
+            >
+              <div class="tech-icon" :style="{ background: cat.iconBg }">
+                <v-icon :icon="cat.icon" :color="cat.color" size="22" />
+              </div>
+              <div class="tech-title">{{ cat.title }}</div>
+              <div class="tech-desc">{{ cat.desc }}</div>
               <transition name="fx">
-                <div v-if="mobileJourneyOpen === i" class="jmobile-body">
-                  <img :src="step.img" :alt="step.phase" class="jmobile-img" />
-                  <p class="jmobile-desc">{{ step.desc }}</p>
-                  <div class="jcard-tags mt-2">
+                <div v-if="selectedTech === cat.title" class="tech-detail">
+                  <div class="tech-divider" />
+                  <p class="tech-detail-text">{{ cat.detail }}</p>
+                  <div class="tech-tags mt-2">
                     <span
-                      v-for="tag in step.tags"
+                      v-for="tag in cat.tags"
                       :key="tag"
-                      class="jtag"
-                      :style="{ background: step.color + '30', color: step.color }"
+                      class="tech-tag"
+                      :style="{ background: cat.color + '18', color: cat.color }"
                       >{{ tag }}</span
                     >
                   </div>
                 </div>
               </transition>
             </div>
-          </div>
-        </v-container>
-      </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
 
-      <!-- ===== SERVICES — REDESIGNED ===== -->
-      <div id="services-grid" class="sec-white py-sec">
-        <v-container>
-          <div class="text-center mb-14">
-            <div class="eyebrow" style="color: #16a34a">What we offer</div>
-            <h2 class="sec-title">NAVIGATÚ <em>Services</em></h2>
-            <p class="sec-sub">
-              Three flagship programs designed to take your venture from concept to market
-            </p>
-          </div>
+    <!-- ===== WHO CAN APPLY ===== -->
+    <div class="sec-offwhite py-sec">
+      <v-container>
+        <div class="text-center mb-12">
+          <div class="eyebrow">Eligibility</div>
+          <h2 class="sec-title">Who can <em>Apply</em></h2>
+          <p class="sec-sub">
+            Students, Faculty, Early-Stage startups, and Tech Entrepreneurs can apply
+          </p>
+        </div>
 
-          <!-- Program selector tabs -->
-          <div class="prog-tabs mb-10">
-            <button
-              v-for="svc in navServices"
-              :key="svc.slug"
-              class="prog-tab"
-              :class="{ 'prog-tab--active': activeSvc === svc.slug }"
-              :style="
-                activeSvc === svc.slug
-                  ? {
-                      '--ac': svc.color,
-                      borderColor: svc.color,
-                      color: svc.color,
-                      background: svc.color + '12',
-                    }
-                  : {}
-              "
-              @click="selectService(svc)"
+        <v-row>
+          <v-col v-for="card in filteredApplyCards" :key="card.id" cols="12" sm="6" class="mb-2">
+            <div
+              class="wca-card"
+              :class="{ 'wca-card--open': expandedCard === card.id }"
+              @click="expandedCard = expandedCard === card.id ? null : card.id"
+              role="button"
+              :aria-expanded="expandedCard === card.id"
+              tabindex="0"
+              @keydown.enter="expandedCard = expandedCard === card.id ? null : card.id"
+              @keydown.space.prevent="expandedCard = expandedCard === card.id ? null : card.id"
             >
-              <v-icon :icon="svc.icon" size="16" class="mr-2" />
-              {{ svc.title }}
-            </button>
-          </div>
-
-          <!-- Active service detail panel -->
-          <transition name="prog-switch" mode="out-in">
-            <div :key="activeSvc" class="prog-panel">
-              <v-row align="stretch" v-if="activeService">
-                <!-- Left: overview -->
-                <v-col cols="12" md="5">
-                  <div class="prog-overview" :style="{ borderTopColor: activeService.color }">
-                    <!-- Header -->
-                    <div class="prog-header">
-                      <div class="prog-icon-ring" :style="{ background: activeService.iconBg }">
-                        <v-icon :icon="activeService.icon" :color="activeService.color" size="28" />
-                      </div>
-                      <div>
-                        <div class="prog-kicker" :style="{ color: activeService.color }">
-                          {{ activeService.kicker }}
-                        </div>
-                        <h3 class="prog-title">{{ activeService.title }}</h3>
-                      </div>
-                    </div>
-
-                    <p class="prog-summary mt-5 mb-6">{{ activeService.summary }}</p>
-
-                    <!-- Tags -->
-                    <div class="prog-tags mb-6">
-                      <span
-                        v-for="tag in activeService.tags"
-                        :key="tag"
-                        class="prog-tag"
-                        :style="{
-                          background: activeService.color + '16',
-                          color: activeService.color,
-                          borderColor: activeService.color + '30',
-                        }"
-                        >{{ tag }}</span
-                      >
-                    </div>
-
-                    <!-- Detail blurb -->
-                    <div
-                      class="prog-detail-blurb"
-                      :style="{ borderLeftColor: activeService.color }"
-                    >
-                      {{ activeService.detail }}
-                    </div>
-
-                    <!-- Who is this for -->
-                    <div class="prog-who mt-6">
-                      <div class="prog-who-label">Best suited for</div>
-                      <div class="prog-who-tags mt-2">
-                        <span v-for="who in activeService.who" :key="who" class="prog-who-chip">{{
-                          who
-                        }}</span>
-                      </div>
-                    </div>
+              <div class="wca-card-top">
+                <div class="wca-header">
+                  <div class="wca-icon" :style="{ background: card.iconBg }">
+                    <v-icon :icon="card.icon" :color="card.iconColor" size="20" />
                   </div>
-                </v-col>
-
-                <!-- Right: inclusions + outcomes -->
-                <v-col cols="12" md="7">
-                  <div class="prog-right">
-                    <!-- Program Inclusions -->
-                    <div class="prog-section mb-6">
-                      <div class="prog-section-label">
-                        <v-icon size="15" class="mr-2" :color="activeService.color"
-                          >mdi-check-decagram-outline</v-icon
-                        >
-                        Program Inclusions
-                      </div>
-                      <div class="prog-inclusions mt-4">
-                        <div
-                          v-for="item in activeService.items"
-                          :key="item"
-                          class="prog-inclusion-item"
-                          :style="{ '--ac': activeService.color }"
-                        >
-                          <div
-                            class="prog-inclusion-dot"
-                            :style="{ background: activeService.color }"
-                          />
-                          <span>{{ item }}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Outcomes -->
-                    <div class="prog-section mb-6">
-                      <div class="prog-section-label">
-                        <v-icon size="15" class="mr-2" :color="activeService.color"
-                          >mdi-trending-up</v-icon
-                        >
-                        Expected Outcomes
-                      </div>
-                      <v-row class="mt-3">
-                        <v-col
-                          v-for="outcome in activeService.outcomes"
-                          :key="outcome.label"
-                          cols="6"
-                        >
-                          <div class="outcome-card" :style="{ '--ac': activeService.color }">
-                            <div class="outcome-icon" :style="{ background: activeService.iconBg }">
-                              <v-icon :icon="outcome.icon" :color="activeService.color" size="18" />
-                            </div>
-                            <div class="outcome-label mt-2">{{ outcome.label }}</div>
-                            <div class="outcome-desc">{{ outcome.desc }}</div>
-                          </div>
-                        </v-col>
-                      </v-row>
-                    </div>
-
-                    <!-- Duration badge -->
-                    <div
-                      class="prog-duration"
-                      :style="{
-                        background: activeService.color + '0e',
-                        borderColor: activeService.color + '28',
-                      }"
-                    >
-                      <v-icon :color="activeService.color" size="18" class="mr-2"
-                        >mdi-clock-outline</v-icon
-                      >
-                      <span class="prog-duration-label">Duration:</span>
-                      <span class="prog-duration-val" :style="{ color: activeService.color }">{{
-                        activeService.duration
-                      }}</span>
-                    </div>
+                  <div class="wca-title-group">
+                    <div class="wca-title">{{ card.title }}</div>
+                    <div class="wca-short">{{ card.tags[0] }}</div>
                   </div>
-                </v-col>
-              </v-row>
-            </div>
-          </transition>
-
-          <!-- Other programs quick-nav -->
-          <div class="prog-other-row mt-10">
-            <div class="prog-other-label">Other programs</div>
-            <div class="prog-other-cards">
-              <div
-                v-for="svc in otherServices"
-                :key="svc.slug"
-                class="prog-other-card"
-                @click="selectService(svc)"
-              >
-                <div class="prog-other-icon" :style="{ background: svc.iconBg }">
-                  <v-icon :icon="svc.icon" :color="svc.color" size="18" />
+                  <div class="wca-toggle" :class="{ 'wca-toggle--open': expandedCard === card.id }">
+                    <v-icon size="16" color="inherit">mdi-chevron-down</v-icon>
+                  </div>
                 </div>
-                <div class="prog-other-info">
-                  <div class="prog-other-title">{{ svc.title }}</div>
-                  <div class="prog-other-sub">{{ svc.kicker }}</div>
+                <p class="wca-desc">{{ card.desc }}</p>
+                <div class="wca-chips">
+                  <span v-for="tag in card.tags" :key="tag" class="wca-chip">{{ tag }}</span>
                 </div>
-                <v-icon size="16" color="#94a3b8">mdi-arrow-right</v-icon>
               </div>
+              <transition name="wca-expand">
+                <div v-if="expandedCard === card.id" class="wca-expanded">
+                  <div class="wca-divider" />
+                  <div class="wca-expanded-inner">
+                    <div>
+                      <div class="wca-section-label">Requirements</div>
+                      <ul class="wca-req-list">
+                        <li v-for="req in card.requirements" :key="req" class="wca-req-item">
+                          <div class="wca-check" :style="{ background: card.iconBg }">
+                            <v-icon size="11" :color="card.iconColor">mdi-check</v-icon>
+                          </div>
+                          {{ req }}
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <div class="wca-section-label">What you get</div>
+                      <div class="wca-perks">
+                        <div v-for="perk in card.perks" :key="perk.text" class="wca-perk">
+                          <div class="wca-perk-icon">
+                            <v-icon :icon="perk.icon" :color="card.iconColor" size="16" />
+                          </div>
+                          <div class="wca-perk-text">{{ perk.text }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </transition>
             </div>
-          </div>
-        </v-container>
-      </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
 
-      <!-- ===== MENTORS ===== -->
-      <div v-if="leaders.length" class="sec-offwhite py-sec">
-        <v-container>
-          <div class="text-center mb-12">
-            <div class="eyebrow" style="color: #7c3aed">Our Network</div>
-            <h2 class="sec-title">Meet the <em>Mentors</em></h2>
-            <p class="sec-sub">Industry experts and seasoned entrepreneurs guiding your journey</p>
-          </div>
+    <!-- ===== INCUBATION JOURNEY ===== -->
+    <div id="incubation-journey" class="journey-section">
+      <div class="journey-glow" />
+      <v-container class="position-relative">
+        <div class="text-center mb-16">
+          <div class="eyebrow" style="color: #f97316">How it works</div>
+          <h2 class="sec-title" style="color: #fff">The Incubation <em>Journey</em></h2>
+          <p class="sec-sub" style="color: rgba(255, 255, 255, 0.5)">
+            From idea to market-ready startup in four structured phases
+          </p>
+        </div>
 
-          <v-row justify="center">
-            <v-col v-for="leader in leaders" :key="leader.name" cols="12" sm="6" md="3">
-              <div class="mentor-card">
-                <!-- Photo zone -->
-                <div class="mentor-photo-zone">
-                  <img :src="leader.photo" :alt="leader.name" class="mentor-photo" />
-                  <div class="mentor-photo-veil" />
+        <!-- Desktop -->
+        <div class="d-none d-md-block journey-desktop">
+          <div class="journey-rail" />
+          <v-row>
+            <v-col v-for="(step, i) in journeySteps" :key="step.phase" cols="3">
+              <div
+                class="jcard"
+                :class="{ 'jcard--open': activeJourneyStep === i }"
+                @click="activeJourneyStep = activeJourneyStep === i ? null : i"
+              >
+                <div class="jcard-bubble" :style="{ background: step.color }">
+                  <v-icon :icon="step.icon" color="white" size="20" />
                 </div>
-
-                <!-- Info row -->
-                <div class="mentor-info">
-                  <div class="mentor-name">{{ leader.name }}</div>
-                  <div class="mentor-role">{{ leader.role }}</div>
-
-                  <!-- Decorative accent line -->
-                  <div class="mentor-accent-line" />
+                <div class="jcard-num">Phase {{ i + 1 }}</div>
+                <h4 class="jcard-title">{{ step.phase }}</h4>
+                <div class="jcard-dur" :style="{ color: step.color }">
+                  <v-icon size="11" class="mr-1">mdi-clock-outline</v-icon>{{ step.duration }}
                 </div>
+                <p class="jcard-desc">{{ step.desc }}</p>
+                <div class="jcard-tags mt-3">
+                  <span
+                    v-for="tag in step.tags"
+                    :key="tag"
+                    class="jtag"
+                    :style="{ background: step.color + '22', color: step.color }"
+                    >{{ tag }}</span
+                  >
+                </div>
+                <transition name="fx">
+                  <div v-if="activeJourneyStep === i" class="jcard-expand">
+                    <img :src="step.img" :alt="step.phase" class="jcard-img" />
+                    <p class="jcard-expand-text">{{ step.expandDetail }}</p>
+                  </div>
+                </transition>
               </div>
             </v-col>
           </v-row>
-        </v-container>
-      </div>
+        </div>
 
-      <!-- ===== CTA ===== -->
-      <div class="cta-section">
-        <div class="cta-glow" />
-        <v-container class="text-center position-relative">
-          <div class="cta-icon-ring mb-6">
-            <v-icon icon="mdi-rocket-launch" size="34" color="white" />
+        <!-- Mobile -->
+        <div class="d-md-none">
+          <div
+            v-for="(step, i) in journeySteps"
+            :key="step.phase"
+            class="jmobile"
+            :class="{ 'jmobile--open': mobileJourneyOpen === i }"
+          >
+            <div
+              class="jmobile-header"
+              @click="mobileJourneyOpen = mobileJourneyOpen === i ? null : i"
+            >
+              <div class="d-flex align-center gap-3">
+                <div class="jbubble-sm" :style="{ background: step.color }">
+                  <v-icon :icon="step.icon" color="white" size="15" />
+                </div>
+                <div>
+                  <div class="jmobile-num">Phase {{ i + 1 }} Â· {{ step.duration }}</div>
+                  <div class="jmobile-title">{{ step.phase }}</div>
+                </div>
+              </div>
+              <v-icon
+                :icon="mobileJourneyOpen === i ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                color="white"
+                size="20"
+              />
+            </div>
+            <transition name="fx">
+              <div v-if="mobileJourneyOpen === i" class="jmobile-body">
+                <img :src="step.img" :alt="step.phase" class="jmobile-img" />
+                <p class="jmobile-desc">{{ step.desc }}</p>
+                <div class="jcard-tags mt-2">
+                  <span
+                    v-for="tag in step.tags"
+                    :key="tag"
+                    class="jtag"
+                    :style="{ background: step.color + '30', color: step.color }"
+                    >{{ tag }}</span
+                  >
+                </div>
+              </div>
+            </transition>
           </div>
-          <h2 class="cta-title mb-4">Ready to Launch Your Startup?</h2>
-          <p class="cta-sub mb-10 mx-auto">
-            Join Navigatú TBI and get access to mentorship, funding, and a thriving community of
-            innovators.
+        </div>
+      </v-container>
+    </div>
+
+    <!-- ===== SERVICES â€” REDESIGNED ===== -->
+    <div id="services-grid" class="sec-white py-sec">
+      <v-container>
+        <div class="text-center mb-14">
+          <div class="eyebrow" style="color: #16a34a">What we offer</div>
+          <h2 class="sec-title">NAVIGATÃš <em>Services</em></h2>
+          <p class="sec-sub">
+            Three flagship programs designed to take your venture from concept to market
           </p>
-          <div class="d-flex justify-center flex-wrap gap-4">
-            <button class="btn-cta-ghost">
-              <v-icon size="17" class="mr-2">mdi-calendar-check-outline</v-icon>Schedule a Tour
-            </button>
+        </div>
+
+        <!-- Program selector tabs -->
+        <div class="prog-tabs mb-10">
+          <button
+            v-for="svc in navServices"
+            :key="svc.slug"
+            class="prog-tab"
+            :class="{ 'prog-tab--active': activeSvc === svc.slug }"
+            :style="
+              activeSvc === svc.slug
+                ? {
+                    '--ac': svc.color,
+                    borderColor: svc.color,
+                    color: svc.color,
+                    background: svc.color + '12',
+                  }
+                : {}
+            "
+            @click="selectService(svc)"
+          >
+            <v-icon :icon="svc.icon" size="16" class="mr-2" />
+            {{ svc.title }}
+          </button>
+        </div>
+
+        <!-- Active service detail panel -->
+        <transition name="prog-switch" mode="out-in">
+          <div :key="activeSvc" class="prog-panel">
+            <v-row align="stretch" v-if="activeService">
+              <!-- Left: overview -->
+              <v-col cols="12" md="5">
+                <div class="prog-overview" :style="{ borderTopColor: activeService.color }">
+                  <!-- Header -->
+                  <div class="prog-header">
+                    <div class="prog-icon-ring" :style="{ background: activeService.iconBg }">
+                      <v-icon :icon="activeService.icon" :color="activeService.color" size="28" />
+                    </div>
+                    <div>
+                      <div class="prog-kicker" :style="{ color: activeService.color }">
+                        {{ activeService.kicker }}
+                      </div>
+                      <h3 class="prog-title">{{ activeService.title }}</h3>
+                    </div>
+                  </div>
+
+                  <p class="prog-summary mt-5 mb-6">{{ activeService.summary }}</p>
+
+                  <!-- Tags -->
+                  <div class="prog-tags mb-6">
+                    <span
+                      v-for="tag in activeService.tags"
+                      :key="tag"
+                      class="prog-tag"
+                      :style="{
+                        background: activeService.color + '16',
+                        color: activeService.color,
+                        borderColor: activeService.color + '30',
+                      }"
+                      >{{ tag }}</span
+                    >
+                  </div>
+
+                  <!-- Detail blurb -->
+                  <div class="prog-detail-blurb" :style="{ borderLeftColor: activeService.color }">
+                    {{ activeService.detail }}
+                  </div>
+
+                  <!-- Who is this for -->
+                  <div class="prog-who mt-6">
+                    <div class="prog-who-label">Best suited for</div>
+                    <div class="prog-who-tags mt-2">
+                      <span v-for="who in activeService.who" :key="who" class="prog-who-chip">{{
+                        who
+                      }}</span>
+                    </div>
+                  </div>
+                </div>
+              </v-col>
+
+              <!-- Right: inclusions + outcomes -->
+              <v-col cols="12" md="7">
+                <div class="prog-right">
+                  <!-- Program Inclusions -->
+                  <div class="prog-section mb-6">
+                    <div class="prog-section-label">
+                      <v-icon size="15" class="mr-2" :color="activeService.color"
+                        >mdi-check-decagram-outline</v-icon
+                      >
+                      Program Inclusions
+                    </div>
+                    <div class="prog-inclusions mt-4">
+                      <div
+                        v-for="item in activeService.items"
+                        :key="item"
+                        class="prog-inclusion-item"
+                        :style="{ '--ac': activeService.color }"
+                      >
+                        <div
+                          class="prog-inclusion-dot"
+                          :style="{ background: activeService.color }"
+                        />
+                        <span>{{ item }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Outcomes -->
+                  <div class="prog-section mb-6">
+                    <div class="prog-section-label">
+                      <v-icon size="15" class="mr-2" :color="activeService.color"
+                        >mdi-trending-up</v-icon
+                      >
+                      Expected Outcomes
+                    </div>
+                    <v-row class="mt-3">
+                      <v-col
+                        v-for="outcome in activeService.outcomes"
+                        :key="outcome.label"
+                        cols="6"
+                      >
+                        <div class="outcome-card" :style="{ '--ac': activeService.color }">
+                          <div class="outcome-icon" :style="{ background: activeService.iconBg }">
+                            <v-icon :icon="outcome.icon" :color="activeService.color" size="18" />
+                          </div>
+                          <div class="outcome-label mt-2">{{ outcome.label }}</div>
+                          <div class="outcome-desc">{{ outcome.desc }}</div>
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Duration badge -->
+                  <div
+                    class="prog-duration"
+                    :style="{
+                      background: activeService.color + '0e',
+                      borderColor: activeService.color + '28',
+                    }"
+                  >
+                    <v-icon :color="activeService.color" size="18" class="mr-2"
+                      >mdi-clock-outline</v-icon
+                    >
+                    <span class="prog-duration-label">Duration:</span>
+                    <span class="prog-duration-val" :style="{ color: activeService.color }">{{
+                      activeService.duration
+                    }}</span>
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
           </div>
-        </v-container>
-      </div>
-    </v-main>
+        </transition>
+
+        <!-- Other programs quick-nav -->
+        <div class="prog-other-row mt-10">
+          <div class="prog-other-label">Other programs</div>
+          <div class="prog-other-cards">
+            <div
+              v-for="svc in otherServices"
+              :key="svc.slug"
+              class="prog-other-card"
+              @click="selectService(svc)"
+            >
+              <div class="prog-other-icon" :style="{ background: svc.iconBg }">
+                <v-icon :icon="svc.icon" :color="svc.color" size="18" />
+              </div>
+              <div class="prog-other-info">
+                <div class="prog-other-title">{{ svc.title }}</div>
+                <div class="prog-other-sub">{{ svc.kicker }}</div>
+              </div>
+              <v-icon size="16" color="#94a3b8">mdi-arrow-right</v-icon>
+            </div>
+          </div>
+        </div>
+      </v-container>
+    </div>
+
+    <!-- ===== MENTORS ===== -->
+    <div v-if="leaders.length" class="sec-offwhite py-sec">
+      <v-container>
+        <div class="text-center mb-12">
+          <div class="eyebrow" style="color: #7c3aed">Our Network</div>
+          <h2 class="sec-title">Meet the <em>Mentors</em></h2>
+          <p class="sec-sub">Industry experts and seasoned entrepreneurs guiding your journey</p>
+        </div>
+
+        <v-row justify="center">
+          <v-col v-for="leader in leaders" :key="leader.name" cols="12" sm="6" md="3">
+            <div class="mentor-card">
+              <!-- Photo zone -->
+              <div class="mentor-photo-zone">
+                <img :src="leader.photo" :alt="leader.name" class="mentor-photo" />
+                <div class="mentor-photo-veil" />
+              </div>
+
+              <!-- Info row -->
+              <div class="mentor-info">
+                <div class="mentor-name">{{ leader.name }}</div>
+                <div class="mentor-role">{{ leader.role }}</div>
+
+                <!-- Decorative accent line -->
+                <div class="mentor-accent-line" />
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <!-- ===== CTA ===== -->
+    <div class="cta-section">
+      <div class="cta-glow" />
+      <v-container class="text-center position-relative">
+        <div class="cta-icon-ring mb-6">
+          <v-icon icon="mdi-rocket-launch" size="34" color="white" />
+        </div>
+        <h2 class="cta-title mb-4">Ready to Launch Your Startup?</h2>
+        <p class="cta-sub mb-10 mx-auto">
+          Join NavigatÃº TBI and get access to mentorship, funding, and a thriving community of
+          innovators.
+        </p>
+        <div class="d-flex justify-center flex-wrap gap-4">
+          <button class="btn-cta-ghost">
+            <v-icon size="17" class="mr-2">mdi-calendar-check-outline</v-icon>Schedule a Tour
+          </button>
+        </div>
+      </v-container>
+    </div>
 
     <!-- APPLY DIALOG -->
     <v-dialog v-model="applyDialog" max-width="540" persistent>
       <v-card rounded="xl" class="pa-2">
         <v-card-title class="pa-6 pb-2 d-flex align-center justify-space-between">
-          <span class="text-h6 font-weight-bold">Apply to Navigatú TBI</span>
+          <span class="text-h6 font-weight-bold">Apply to NavigatÃº TBI</span>
           <v-btn icon size="small" variant="text" @click="closeApplyDialog"
             ><v-icon>mdi-close</v-icon></v-btn
           >
@@ -745,7 +641,7 @@
                 />
                 <v-textarea
                   v-model="applyForm.pitch"
-                  label="Brief Pitch (2–3 sentences)"
+                  label="Brief Pitch (2â€“3 sentences)"
                   variant="outlined"
                   rounded="lg"
                   rows="3"
@@ -757,16 +653,16 @@
                 <v-icon icon="mdi-information-outline" size="56" color="primary" class="mb-4" />
                 <h3 class="text-h6 font-weight-bold mb-2">Application is reviewed offline</h3>
                 <p class="text-body-2 text-medium-emphasis">
-                  This website does not accept online submissions. Please contact Navigatú TBI for
+                  This website does not accept online submissions. Please contact NavigatÃº TBI for
                   application instructions.
                 </p>
                 <v-card class="mt-4 pa-4 text-left" color="grey-lighten-4" rounded="lg" flat>
                   <div class="text-caption font-weight-bold mb-2 text-medium-emphasis">SUMMARY</div>
                   <div class="text-body-2">
-                    {{ applyForm.name || '—' }} · {{ applyForm.type || '—' }}
+                    {{ applyForm.name || 'â€”' }} Â· {{ applyForm.type || 'â€”' }}
                   </div>
                   <div class="text-body-2 text-medium-emphasis">
-                    {{ applyForm.venture || '—' }} · {{ applyForm.category || '—' }}
+                    {{ applyForm.venture || 'â€”' }} Â· {{ applyForm.category || 'â€”' }}
                   </div>
                 </v-card>
               </div>
@@ -790,82 +686,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- FOOTER -->
-    <footer class="footer-section">
-      <v-container class="py-12">
-        <v-row>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-brand mb-1">NAVIGATÚ</div>
-            <p class="footer-tag mb-4">Technology Business Incubator</p>
-            <p class="footer-desc">
-              Empowering the next generation of Filipino tech founders through mentorship,
-              innovation, and community.
-            </p>
-            <div class="d-flex gap-3 mt-5">
-              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
-            </div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Programs</div>
-            <div v-for="l in footerLinks.programs" :key="l" class="footer-link mb-3">{{ l }}</div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Company</div>
-            <div v-for="l in footerLinks.company" :key="l" class="footer-link mb-3">{{ l }}</div>
-          </v-col>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-col-title mb-4">Newsletter</div>
-            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
-            <div class="newsletter">
-              <input v-model="newsletterEmail" class="nl-input" placeholder="your@email.com" />
-              <button class="nl-btn" @click="subscribeNewsletter">
-                <v-icon size="17">mdi-send</v-icon>
-              </button>
-            </div>
-          </v-col>
-        </v-row>
-        <div class="footer-hr" />
-        <div class="d-flex flex-wrap justify-space-between align-center gap-2 pt-6">
-          <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
-          <p class="footer-copy">Empowering startups. Building futures.</p>
-        </div>
-      </v-container>
-    </footer>
-  </v-app>
+  </NavigatuLayout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
-// ── Scroll ──
-const scrolled = ref(false)
-const onScroll = () => {
-  scrolled.value = window.scrollY > 20
-}
-onMounted(() => window.addEventListener('scroll', onScroll))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
-
-const drawer = ref(false)
-const searchQuery = ref('')
 const router = useRouter()
 const route = useRoute()
-
-function runNavbarSearch() {
-  const query = searchQuery.value.trim()
-  if (!query) return
-  router.push({ path: '/news-navigatu', query: { q: query } })
-}
 
 function scrollTo(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 }
 
-// ── Hero particles ──
+// â”€â”€ Hero particles â”€â”€
 const heroDots = ref(null)
 
 onMounted(() => {
@@ -888,7 +725,7 @@ onMounted(() => {
   }
 })
 
-// ── Industry Focus ──
+// â”€â”€ Industry Focus â”€â”€
 const animatedCards = ref(false)
 onMounted(() =>
   setTimeout(() => {
@@ -931,12 +768,12 @@ const techCategories = ref([
     icon: 'mdi-cog-outline',
     color: '#7c3aed',
     iconBg: '#ede9fe',
-    detail: 'From CAD to digital twins — build next-gen engineering software.',
+    detail: 'From CAD to digital twins â€” build next-gen engineering software.',
     tags: ['CAD', 'Digital Twins', 'Manufacturing'],
   },
 ])
 
-// ── Who Can Apply ──
+// â”€â”€ Who Can Apply â”€â”€
 const activeApplyTab = ref('all')
 const expandedCard = ref(null)
 
@@ -1033,7 +870,7 @@ const filteredApplyCards = computed(() =>
     : applyCards.value.filter((c) => c.id === activeApplyTab.value),
 )
 
-// ── Journey ──
+// â”€â”€ Journey â”€â”€
 const activeJourneyStep = ref(null)
 const mobileJourneyOpen = ref(0)
 
@@ -1042,10 +879,10 @@ const journeySteps = ref([
     phase: 'Application & Screening',
     icon: 'mdi-file-document-outline',
     color: '#2563eb',
-    duration: 'Weeks 1–2',
+    duration: 'Weeks 1â€“2',
     desc: 'Submit your pitch deck and documents. Our committee evaluates team strength, technology, and market fit.',
     expandDetail:
-      'Our panel of industry experts reviews each application holistically — balancing innovation potential with execution readiness. Top applicants are invited for a live pitch session.',
+      'Our panel of industry experts reviews each application holistically â€” balancing innovation potential with execution readiness. Top applicants are invited for a live pitch session.',
     tags: ['Pitch Deck', 'Interview', 'Evaluation'],
     img: '/images/facilities/FacilityA.JPG',
   },
@@ -1053,10 +890,10 @@ const journeySteps = ref([
     phase: 'Onboarding & Validation',
     icon: 'mdi-clipboard-check-outline',
     color: '#059669',
-    duration: 'Months 1–2',
+    duration: 'Months 1â€“2',
     desc: 'Validate your business model with real customers. Participate in workshops, design sprints, and mentor check-ins.',
     expandDetail:
-      "Weekly structured sessions with mentors, plus access to NAVIGATÚ's customer discovery toolkit. Founders test assumptions before writing a single line of production code.",
+      "Weekly structured sessions with mentors, plus access to NAVIGATÃš's customer discovery toolkit. Founders test assumptions before writing a single line of production code.",
     tags: ['Customer Discovery', 'MVP Testing', 'Workshops'],
     img: '/images/facilities/FacilityB.jpg',
   },
@@ -1064,7 +901,7 @@ const journeySteps = ref([
     phase: 'Development & Acceleration',
     icon: 'mdi-rocket-launch-outline',
     color: '#ea580c',
-    duration: 'Months 3–5',
+    duration: 'Months 3â€“5',
     desc: 'Build, iterate, and accelerate. Access funding networks, legal support, and co-working facilities.',
     expandDetail:
       'Get paired with a technical mentor, tap into our investor network for pre-seed conversations, and use our 24/7 coworking space and premium software stack.',
@@ -1076,15 +913,15 @@ const journeySteps = ref([
     icon: 'mdi-trophy-outline',
     color: '#7c3aed',
     duration: 'Month 6',
-    desc: 'Showcase your startup to investors, industry partners, and media at Navigatú Demo Day.',
+    desc: 'Showcase your startup to investors, industry partners, and media at NavigatÃº Demo Day.',
     expandDetail:
-      'A high-profile public event attended by VCs, corporate partners, government agencies, and media. Graduates join the Alumni Network and stay connected to the Navigatú ecosystem.',
+      'A high-profile public event attended by VCs, corporate partners, government agencies, and media. Graduates join the Alumni Network and stay connected to the NavigatÃº ecosystem.',
     tags: ['Demo Day', 'Alumni Network', 'Press Coverage'],
     img: '/images/facilities/FacilityD.png',
   },
 ])
 
-// ── Services ──
+// â”€â”€ Services â”€â”€
 const activeSvc = ref('business-ideation')
 
 const navServices = ref([
@@ -1246,7 +1083,7 @@ watch(
   { immediate: true },
 )
 
-// ── Mentors (Supabase unchanged) ──
+// â”€â”€ Mentors (Supabase unchanged) â”€â”€
 const leaders = ref([])
 
 async function fetchMentors() {
@@ -1275,25 +1112,15 @@ async function fetchMentors() {
 
 onMounted(fetchMentors)
 
-// ── Success Stories ──
+// â”€â”€ Success Stories â”€â”€
 
-// ── Apply dialog ──
+// â”€â”€ Apply dialog â”€â”€
 const applyDialog = ref(false)
 const applyStep = ref(1)
 const applyForm = ref({ name: '', email: '', type: '', venture: '', category: '', pitch: '' })
 function closeApplyDialog() {
   applyDialog.value = false
   applyStep.value = 1
-}
-
-// ── Footer ──
-const newsletterEmail = ref('')
-const footerLinks = {
-  programs: ['Incubation', 'Pre-incubation', 'Acceleration', 'Alumni Network'],
-  company: ['About Us', 'Careers', 'News', 'Contact'],
-}
-function subscribeNewsletter() {
-  newsletterEmail.value = ''
 }
 </script>
 
@@ -1307,7 +1134,7 @@ function subscribeNewsletter() {
   font-family: 'Sora', sans-serif !important;
 }
 
-/* ── NAVBAR ── */
+/* â”€â”€ NAVBAR â”€â”€ */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -1354,7 +1181,7 @@ function subscribeNewsletter() {
   color: #3f4e63 !important;
 }
 
-/* ── BUTTONS ── */
+/* â”€â”€ BUTTONS â”€â”€ */
 .btn-solid {
   display: inline-flex;
   align-items: center;
@@ -1426,7 +1253,7 @@ function subscribeNewsletter() {
   opacity: 0.75;
 }
 
-/* ── SECTION HELPERS ── */
+/* â”€â”€ SECTION HELPERS â”€â”€ */
 .eyebrow {
   font-size: 0.68rem;
   font-weight: 700;
@@ -1466,9 +1293,7 @@ function subscribeNewsletter() {
   padding-bottom: 84px;
 }
 
-/* ══════════════════════════════════
-   HERO — Dark cinematic redesign
-   ══════════════════════════════════ */
+/* HERO: dark cinematic redesign */
 .svc-hero {
   background: #06080f;
   position: relative;
@@ -1690,7 +1515,7 @@ function subscribeNewsletter() {
   color: rgba(255, 255, 255, 0.42);
 }
 
-/* ── Photo collage ── */
+/* â”€â”€ Photo collage â”€â”€ */
 .hero-photo-stack {
   position: relative;
   width: 420px;
@@ -1845,7 +1670,7 @@ function subscribeNewsletter() {
   }
 }
 
-/* ── INDUSTRY FOCUS ── */
+/* â”€â”€ INDUSTRY FOCUS â”€â”€ */
 .tc {
   opacity: 0;
   transform: translateY(18px);
@@ -1928,7 +1753,7 @@ function subscribeNewsletter() {
   padding: 3px 10px;
 }
 
-/* ── WHO CAN APPLY ── */
+/* â”€â”€ WHO CAN APPLY â”€â”€ */
 .wca-card {
   border: 1.5px solid #e5eaf5;
   border-radius: 18px;
@@ -2096,7 +1921,7 @@ function subscribeNewsletter() {
   transform: translateY(-6px);
 }
 
-/* ── JOURNEY ── */
+/* â”€â”€ JOURNEY â”€â”€ */
 .journey-section {
   background: #080d1c;
   position: relative;
@@ -2269,7 +2094,7 @@ function subscribeNewsletter() {
   line-height: 1.75;
 }
 
-/* ── SERVICES / PROGRAMS — New Design ── */
+/* â”€â”€ SERVICES / PROGRAMS â€” New Design â”€â”€ */
 .prog-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -2556,7 +2381,7 @@ function subscribeNewsletter() {
   transform: translateY(8px);
 }
 
-/* ── MENTORS — Modern redesign ── */
+/* â”€â”€ MENTORS â€” Modern redesign â”€â”€ */
 .mentor-card {
   border-radius: 20px;
   overflow: hidden;
@@ -2591,7 +2416,7 @@ function subscribeNewsletter() {
   transform: scale(1.05);
 }
 
-/* Gradient veil — stronger at bottom so name stays readable */
+/* Gradient veil â€” stronger at bottom so name stays readable */
 .mentor-photo-veil {
   position: absolute;
   inset: 0;
@@ -2636,7 +2461,7 @@ function subscribeNewsletter() {
   }
 }
 
-/* ── CTA ── */
+/* â”€â”€ CTA â”€â”€ */
 .cta-section {
   background: #080d1c;
   position: relative;
@@ -2696,7 +2521,7 @@ function subscribeNewsletter() {
   transform: translateY(-2px);
 }
 
-/* ── FOOTER ── */
+/* â”€â”€ FOOTER â”€â”€ */
 .footer-section {
   background: #06080f;
 }
@@ -2803,7 +2628,7 @@ function subscribeNewsletter() {
   transform: translateY(-1px);
 }
 
-/* ── TRANSITIONS ── */
+/* â”€â”€ TRANSITIONS â”€â”€ */
 .fx-enter-active,
 .fx-leave-active {
   transition:

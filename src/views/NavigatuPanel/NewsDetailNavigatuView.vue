@@ -1,310 +1,158 @@
-<template>
-  <v-app>
-    <v-app-bar
-      app
-      fixed
-      location="top"
-      flat
-      color="white"
-      border="b"
-      height="64"
-      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
-    >
-      <v-container class="d-flex align-center pa-0" fluid>
-        <router-link
-          to="/navigatu"
-          class="d-flex align-center ml-4 ml-md-8"
-          style="text-decoration: none; color: inherit"
+﻿<template>
+  <NavigatuLayout>
+    <section class="detail-hero">
+      <v-container class="py-10 py-md-14">
+        <v-btn
+          variant="text"
+          color="white"
+          prepend-icon="mdi-arrow-left"
+          class="back-btn mb-6"
+          @click="router.push('/news-navigatu')"
         >
-          <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
-          <div>
-            <div class="nav-brand">NAVIGATÚ</div>
-            <div class="nav-sub">Technology Business Incubator</div>
-          </div>
-        </router-link>
+          Back to News
+        </v-btn>
 
-        <v-spacer />
-
-        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
-          <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
-          <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link nav-link--active" to="/news-navigatu">News</v-btn>
-          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <div class="nav-search-hover">
-            <input
-              v-model="navSearchQuery"
-              class="nav-search-field"
-              type="text"
-              placeholder="Search..."
-              @keyup.enter="runNavbarSearch"
-            />
-            <v-btn
-              variant="text"
-              icon
-              size="small"
-              class="nav-search-icon-btn"
-              @click="runNavbarSearch"
-            >
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </div>
-        </div>
-
-        <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
-      </v-container>
-    </v-app-bar>
-
-    <v-navigation-drawer v-model="drawer" temporary location="right" width="260">
-      <v-list nav class="pt-4">
-        <v-list-item title="About" prepend-icon="mdi-information-outline" to="/about-navigatu" />
-        <v-list-item
-          title="Services"
-          prepend-icon="mdi-briefcase-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/services-navigatu"
-        />
-        <v-list-item
-          title="Coworking"
-          prepend-icon="mdi-office-building-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/coworking-navigatu"
-        />
-        <v-list-item
-          title="News"
-          prepend-icon="mdi-newspaper-variant-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/news-navigatu"
-          active
-        />
-        <v-list-item
-          title="Events"
-          prepend-icon="mdi-calendar-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/events-navigatu"
-        />
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-main>
-      <section class="detail-hero">
-        <v-container class="py-10 py-md-14">
-          <v-btn
-            variant="text"
-            color="white"
-            prepend-icon="mdi-arrow-left"
-            class="back-btn mb-6"
-            @click="router.push('/news-navigatu')"
-          >
-            Back to News
-          </v-btn>
-
-          <template v-if="loading">
-            <v-skeleton-loader type="heading, paragraph, paragraph" class="hero-skeleton" />
-          </template>
-
-          <template v-else-if="article">
-            <v-chip size="small" class="mb-4" color="white" text-color="#1565C0" variant="flat">
-              {{ article.category }}
-            </v-chip>
-            <h1 class="detail-title">{{ article.title }}</h1>
-            <div class="meta-row mt-4">
-              <span class="meta-item">
-                <v-icon icon="mdi-calendar-outline" size="16" class="mr-1" />
-                {{ article.date }}
-              </span>
-              <span class="meta-dot">•</span>
-              <span class="meta-item">
-                <v-icon icon="mdi-account-circle-outline" size="16" class="mr-1" />
-                {{ article.author }}
-              </span>
-              <span class="meta-dot">•</span>
-              <span class="meta-item">
-                <v-icon icon="mdi-map-marker-outline" size="16" class="mr-1" />
-                {{ article.location }}
-              </span>
-            </div>
-          </template>
-        </v-container>
-      </section>
-
-      <v-container class="py-8 py-md-12">
         <template v-if="loading">
-          <v-skeleton-loader type="image" class="mb-8" />
-          <v-skeleton-loader type="paragraph, paragraph, paragraph, paragraph" />
+          <v-skeleton-loader type="heading, paragraph, paragraph" class="hero-skeleton" />
         </template>
 
-        <v-alert v-else-if="error" type="error" variant="tonal" rounded="lg" class="mb-6">
-          {{ error }}
-        </v-alert>
-
-        <v-alert v-else-if="!article" type="warning" variant="tonal" rounded="lg" class="mb-6">
-          This news article could not be found.
-        </v-alert>
-
-        <template v-else>
-          <v-card rounded="xl" elevation="0" class="cover-card mb-8">
-            <v-img :src="article.image" cover height="460" class="detail-image" />
-          </v-card>
-
-          <v-row>
-            <v-col cols="12" md="8">
-              <article class="article-body">
-                <p class="lead-text">{{ article.description }}</p>
-                <div class="body-text" style="white-space: pre-line">
-                  {{ article.fullDescription || article.description }}
-                </div>
-
-                <section v-if="galleryGroups.length" class="gallery-section mt-8">
-                  <div
-                    v-for="(group, index) in galleryGroups"
-                    :key="`news-gallery-group-${index}`"
-                    class="detail-extra-block"
-                  >
-                    <div
-                      class="inline-gallery-grid mb-4"
-                      :style="{ '--gallery-columns': getGalleryGridColumns(group.images.length) }"
-                    >
-                      <v-img
-                        v-for="(imageItem, ii) in group.images"
-                        :key="`news-gallery-group-${index}-image-${ii}`"
-                        :src="imageItem.image"
-                        cover
-                        class="inline-gallery-image"
-                      />
-                    </div>
-                    <p v-if="group.short_description" class="gallery-lead-text mb-3">
-                      {{ group.short_description }}
-                    </p>
-                    <div
-                      v-if="group.long_description"
-                      class="body-text"
-                      style="white-space: pre-line"
-                    >
-                      {{ group.long_description }}
-                    </div>
-                  </div>
-                </section>
-              </article>
-            </v-col>
-
-            <v-col cols="12" md="4">
-              <v-card rounded="xl" class="meta-card pa-5" elevation="0">
-                <h3 class="meta-card-title mb-4">Article Info</h3>
-                <div class="meta-list-item">
-                  <v-icon icon="mdi-shape-outline" size="16" color="#1565C0" class="mr-2" />
-                  <span>{{ article.category }}</span>
-                </div>
-                <div class="meta-list-item">
-                  <v-icon icon="mdi-calendar-outline" size="16" color="#1565C0" class="mr-2" />
-                  <span>{{ article.date }}</span>
-                </div>
-                <div class="meta-list-item">
-                  <v-icon
-                    icon="mdi-account-circle-outline"
-                    size="16"
-                    color="#1565C0"
-                    class="mr-2"
-                  />
-                  <span>{{ article.author }}</span>
-                </div>
-                <div class="meta-list-item">
-                  <v-icon icon="mdi-map-marker-outline" size="16" color="#1565C0" class="mr-2" />
-                  <span>{{ article.location }}</span>
-                </div>
-
-                <v-divider class="my-4" />
-
-                <div class="d-flex flex-wrap" style="gap: 8px">
-                  <v-chip
-                    v-for="tag in article.tags"
-                    :key="tag"
-                    size="small"
-                    variant="tonal"
-                    color="primary"
-                  >
-                    {{ tag }}
-                  </v-chip>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
+        <template v-else-if="article">
+          <v-chip size="small" class="mb-4" color="white" text-color="#1565C0" variant="flat">
+            {{ article.category }}
+          </v-chip>
+          <h1 class="detail-title">{{ article.title }}</h1>
+          <div class="meta-row mt-4">
+            <span class="meta-item">
+              <v-icon icon="mdi-calendar-outline" size="16" class="mr-1" />
+              {{ article.date }}
+            </span>
+            <span class="meta-dot">â€¢</span>
+            <span class="meta-item">
+              <v-icon icon="mdi-account-circle-outline" size="16" class="mr-1" />
+              {{ article.author }}
+            </span>
+            <span class="meta-dot">â€¢</span>
+            <span class="meta-item">
+              <v-icon icon="mdi-map-marker-outline" size="16" class="mr-1" />
+              {{ article.location }}
+            </span>
+          </div>
         </template>
       </v-container>
-    </v-main>
+    </section>
 
-    <!-- FOOTER -->
-    <footer class="footer-section">
-      <v-container class="py-12">
+    <v-container class="py-8 py-md-12">
+      <template v-if="loading">
+        <v-skeleton-loader type="image" class="mb-8" />
+        <v-skeleton-loader type="paragraph, paragraph, paragraph, paragraph" />
+      </template>
+
+      <v-alert v-else-if="error" type="error" variant="tonal" rounded="lg" class="mb-6">
+        {{ error }}
+      </v-alert>
+
+      <v-alert v-else-if="!article" type="warning" variant="tonal" rounded="lg" class="mb-6">
+        This news article could not be found.
+      </v-alert>
+
+      <template v-else>
+        <v-card rounded="xl" elevation="0" class="cover-card mb-8">
+          <v-img :src="article.image" cover height="460" class="detail-image" />
+        </v-card>
+
         <v-row>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-brand mb-1">NAVIGATÚ</div>
-            <p class="footer-tag mb-4">Technology Business Incubator</p>
-            <p class="footer-desc">
-              Empowering the next generation of Filipino tech founders through mentorship,
-              innovation, and community.
-            </p>
-            <div class="d-flex" style="gap: 12px">
-              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
-            </div>
+          <v-col cols="12" md="8">
+            <article class="article-body">
+              <p class="lead-text">{{ article.description }}</p>
+              <div class="body-text" style="white-space: pre-line">
+                {{ article.fullDescription || article.description }}
+              </div>
+
+              <section v-if="galleryGroups.length" class="gallery-section mt-8">
+                <div
+                  v-for="(group, index) in galleryGroups"
+                  :key="`news-gallery-group-${index}`"
+                  class="detail-extra-block"
+                >
+                  <div
+                    class="inline-gallery-grid mb-4"
+                    :style="{ '--gallery-columns': getGalleryGridColumns(group.images.length) }"
+                  >
+                    <v-img
+                      v-for="(imageItem, ii) in group.images"
+                      :key="`news-gallery-group-${index}-image-${ii}`"
+                      :src="imageItem.image"
+                      cover
+                      class="inline-gallery-image"
+                    />
+                  </div>
+                  <p v-if="group.short_description" class="gallery-lead-text mb-3">
+                    {{ group.short_description }}
+                  </p>
+                  <div
+                    v-if="group.long_description"
+                    class="body-text"
+                    style="white-space: pre-line"
+                  >
+                    {{ group.long_description }}
+                  </div>
+                </div>
+              </section>
+            </article>
           </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Programs</div>
-            <div class="footer-link mb-3">Incubation</div>
-            <div class="footer-link mb-3">Mentorship</div>
-            <div class="footer-link mb-3">Funding Access</div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Company</div>
-            <div class="footer-link mb-3">About</div>
-            <div class="footer-link mb-3">Services</div>
-            <div class="footer-link mb-3">Events</div>
-          </v-col>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-col-title mb-4">Newsletter</div>
-            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
-            <div class="newsletter">
-              <input class="nl-input" placeholder="your@email.com" />
-              <button class="nl-btn">
-                <v-icon size="17">mdi-send</v-icon>
-              </button>
-            </div>
+
+          <v-col cols="12" md="4">
+            <v-card rounded="xl" class="meta-card pa-5" elevation="0">
+              <h3 class="meta-card-title mb-4">Article Info</h3>
+              <div class="meta-list-item">
+                <v-icon icon="mdi-shape-outline" size="16" color="#1565C0" class="mr-2" />
+                <span>{{ article.category }}</span>
+              </div>
+              <div class="meta-list-item">
+                <v-icon icon="mdi-calendar-outline" size="16" color="#1565C0" class="mr-2" />
+                <span>{{ article.date }}</span>
+              </div>
+              <div class="meta-list-item">
+                <v-icon icon="mdi-account-circle-outline" size="16" color="#1565C0" class="mr-2" />
+                <span>{{ article.author }}</span>
+              </div>
+              <div class="meta-list-item">
+                <v-icon icon="mdi-map-marker-outline" size="16" color="#1565C0" class="mr-2" />
+                <span>{{ article.location }}</span>
+              </div>
+
+              <v-divider class="my-4" />
+
+              <div class="d-flex flex-wrap" style="gap: 8px">
+                <v-chip
+                  v-for="tag in article.tags"
+                  :key="tag"
+                  size="small"
+                  variant="tonal"
+                  color="primary"
+                >
+                  {{ tag }}
+                </v-chip>
+              </div>
+            </v-card>
           </v-col>
         </v-row>
-        <div class="footer-hr" />
-        <div class="d-flex flex-wrap justify-space-between align-center pt-6" style="gap: 8px">
-          <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
-          <p class="footer-copy">Empowering startups. Building futures.</p>
-        </div>
-      </v-container>
-    </footer>
-  </v-app>
+      </template>
+    </v-container>
+  </NavigatuLayout>
 </template>
 
 <script setup>
+import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
 const route = useRoute()
 const router = useRouter()
-const drawer = ref(false)
-const navSearchQuery = ref('')
 const loading = ref(false)
 const error = ref('')
 const article = ref(null)
-
-function runNavbarSearch() {
-  const query = navSearchQuery.value.trim()
-  if (!query) return
-  router.push({ path: '/news-navigatu', query: { q: query } })
-}
 
 function normalizeNewsItem(item) {
   return {
@@ -601,7 +449,7 @@ watch(() => route.params.id, fetchArticle)
   margin-bottom: 10px;
 }
 
-/* ── FOOTER ── */
+/* â”€â”€ FOOTER â”€â”€ */
 .footer-section {
   background: #06080f;
 }

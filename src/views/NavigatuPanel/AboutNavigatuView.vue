@@ -1,644 +1,488 @@
 <template>
-  <v-app>
-    <!-- ===================== NAVIGATION BAR ===================== -->
-    <v-app-bar
-      app
-      fixed
-      location="top"
-      flat
-      color="white"
-      border="b"
-      height="64"
-      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
-    >
-      <v-container class="d-flex align-center pa-0" fluid>
-        <router-link
-          to="/navigatu"
-          class="d-flex align-center ml-4 ml-md-8"
-          style="text-decoration: none; color: inherit"
-        >
-          <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
-          <div>
-            <div class="nav-brand">NAVIGATÚ</div>
-            <div class="nav-sub">Technology Business Incubator</div>
+  <NavigatuLayout>
+    <!-- ===== HERO ===== -->
+    <div class="about-hero">
+      <div class="hero-photo-panel">
+        <img
+          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=85"
+          alt="NavigatÃº team"
+          class="hero-photo-img"
+        />
+        <div class="hero-photo-veil" />
+      </div>
+
+      <div class="hero-left-panel py-sm-10 py-md-0">
+        <div class="hero-left-content px-4 px-sm-6 px-md-10 px-lg-16">
+          <div class="hero-pill mb-6">
+            <span class="live-dot" />
+            Butuan City, Caraga Region Â· Est. 2017
           </div>
-        </router-link>
-        <v-spacer />
-        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
-          <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
-          <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
-          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <div class="nav-search-hover">
-            <input
-              v-model="navSearchQuery"
-              class="nav-search-field"
-              type="text"
-              placeholder="Search..."
-              @keyup.enter="runNavbarSearch"
-            />
-            <v-btn
-              variant="text"
-              icon
-              size="small"
-              class="nav-search-icon-btn"
-              @click="runNavbarSearch"
-            >
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </div>
-        </div>
-        <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
-      </v-container>
-    </v-app-bar>
-
-    <!-- Mobile Drawer -->
-    <v-navigation-drawer v-model="drawer" temporary location="right" width="260">
-      <v-list nav class="pt-4">
-        <v-list-item
-          title="About"
-          prepend-icon="mdi-information-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/about-navigatu"
-          active
-        />
-        <v-list-item
-          title="Services"
-          prepend-icon="mdi-briefcase-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/services-navigatu"
-        />
-        <v-list-item
-          title="Coworking"
-          prepend-icon="mdi-office-building-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/coworking-navigatu"
-        />
-        <v-list-item
-          title="News"
-          prepend-icon="mdi-newspaper-variant-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/news-navigatu"
-        />
-        <v-list-item
-          title="Events"
-          prepend-icon="mdi-calendar-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/events-navigatu"
-        />
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-main>
-      <!-- ===== HERO ===== -->
-      <div class="about-hero">
-        <div class="hero-photo-panel">
-          <img
-            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=85"
-            alt="Navigatú team"
-            class="hero-photo-img"
-          />
-          <div class="hero-photo-veil" />
-        </div>
-
-        <div class="hero-left-panel py-sm-10 py-md-0">
-          <div class="hero-left-content px-4 px-sm-6 px-md-10 px-lg-16">
-            <div class="hero-pill mb-6">
-              <span class="live-dot" />
-              Butuan City, Caraga Region · Est. 2017
-            </div>
-            <div class="hero-heading-wrap mt-2">
-              <div class="hero-accent-bar" />
-              <div>
-                <p class="hero-overline">Technology Business Incubator</p>
-                <h1 class="hero-title">
-                  Turning bold<br />
-                  <em>ideas</em> into<br />
-                  real ventures.
-                </h1>
-              </div>
-            </div>
-            <p class="hero-body mt-6 mb-8">
-              Navigatú TBI is the premier technology business incubator in Southern Philippines —
-              empowering emerging Filipino technopreneurs to build, validate, and scale impactful
-              ventures through strategic partnerships, education, and a thriving startup ecosystem.
-            </p>
-            <div class="d-flex flex-wrap ga-3 mb-10">
-              <button class="btn-solid" @click="videoDialog = true">
-                <v-icon size="16" class="mr-2">mdi-play-circle-outline</v-icon>Watch Our Story
-              </button>
-              <button class="btn-line" @click="scrollTo('about-detail')">
-                <v-icon size="16" class="mr-2">mdi-arrow-down</v-icon>Learn More
-              </button>
+          <div class="hero-heading-wrap mt-2">
+            <div class="hero-accent-bar" />
+            <div>
+              <p class="hero-overline">Technology Business Incubator</p>
+              <h1 class="hero-title">
+                Turning bold<br />
+                <em>ideas</em> into<br />
+                real ventures.
+              </h1>
             </div>
           </div>
-        </div>
-
-        <div class="hero-edge-badge d-none d-md-flex">
-          <v-icon size="14" color="#1565C0" class="mr-1">mdi-lightning-bolt</v-icon>
-          Innovation Hub · Butuan City
-        </div>
-      </div>
-
-      <!-- ===== WHAT IS NAVIGATÚ ===== -->
-      <div id="about-detail" class="sec-white py-sec">
-        <v-container>
-          <v-row align="center">
-            <v-col cols="12" md="5" class="mb-8 mb-md-0">
-              <div class="about-img-stack">
-                <img
-                  src="/public/images/facilities/FacilityA.JPG"
-                  alt="Navigatú facility"
-                  class="about-img-main"
-                />
-                <div class="about-img-float">
-                  <img
-                    src="/public/images/facilities/FacilityD.png"
-                    alt="Team collaboration"
-                    class="about-img-sm"
-                  />
-                </div>
-                <div class="about-img-badge">
-                  <v-icon size="13" color="#1565c0" class="mr-1">mdi-map-marker-outline</v-icon>
-                  BUCAS, Butuan City
-                </div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="7" class="pl-md-14">
-              <div class="eyebrow">About Navigatú</div>
-              <h2 class="sec-title">What is <em>Navigatú TBI?</em></h2>
-              <p class="sec-body mt-5 mb-5">
-                <strong>Navigatú Technology Business Incubator (TBI)</strong> is a DOST
-                PCIEERD-supported startup incubator based at Butuan City, Agusan del Norte, Caraga.
-                Officially established in 2017, it operates as a flagship innovation facility under
-                Caraga State University (CSU), designed to nurture technology-based ventures in the
-                region.
-              </p>
-              <p class="sec-body mb-7">
-                Coined from the word navigation and is inspired by the rich history of Butuan's
-                Balangay Boats as the oldest wooden watercraft excavated in the region that showed
-                evidence of our trading relationships all throughout Southeast Asia in as early as
-                700 AD.
-              </p>
-
-              <!-- Key facts grid -->
-              <div class="facts-grid">
-                <div v-for="fact in keyFacts" :key="fact.label" class="fact-item">
-                  <div class="fact-icon" :style="{ background: fact.bg }">
-                    <v-icon :icon="fact.icon" :color="fact.color" size="18" />
-                  </div>
-                  <div>
-                    <div class="fact-val">{{ fact.val }}</div>
-                    <div class="fact-label">{{ fact.label }}</div>
-                  </div>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== VISION & MISSION ===== -->
-      <div class="sec-offwhite py-sec">
-        <v-container>
-          <div class="text-center mb-14">
-            <div class="eyebrow">Core Identity</div>
-            <h2 class="sec-title">Vision & <em>Mission</em></h2>
-            <p class="sec-sub">The guiding principles behind everything we do</p>
-          </div>
-
-          <!-- VISION -->
-          <v-row align="center" class="mb-12 mb-md-16">
-            <v-col cols="12" md="6" class="mb-8 mb-md-0">
-              <div class="vm-img-wrap">
-                <img src="/public/images/VisionImg.jpg" alt="Vision" class="vm-img" />
-                <div class="vm-float-chip vm-float-chip--blue">
-                  <v-icon size="13" class="mr-1">mdi-eye-outline</v-icon>Our Vision
-                </div>
-                <!-- Year badge -->
-                <div class="vm-year-badge">
-                  <span class="vm-year-num">7</span>
-                  <span class="vm-year-sub">Years</span>
-                </div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="6" class="pl-md-14">
-              <div class="vm-eyebrow" style="color: #1565c0">Vision</div>
-              <h2 class="vm-title">A Prime <em>Tech Incubator</em><br />in the South</h2>
-              <p class="vm-body mt-5 mb-7">
-                A prime technology business incubator of sustainable startups in Southern
-                Philippines.
-              </p>
-              <div class="vm-tag-row">
-                <span class="vm-tag vm-tag--blue">Sustainable Startups</span>
-                <span class="vm-tag vm-tag--blue">Southern Philippines</span>
-                <span class="vm-tag vm-tag--blue">Innovation Culture</span>
-              </div>
-            </v-col>
-          </v-row>
-
-          <!-- MISSION (image right) -->
-          <v-row align="center" class="flex-md-row-reverse">
-            <v-col cols="12" md="6" class="mb-8 mb-md-0">
-              <div class="vm-img-wrap">
-                <img src="/public/images/collage/CollageImg1.jpg" alt="Mission" class="vm-img" />
-                <div class="vm-float-chip vm-float-chip--green">
-                  <v-icon size="13" class="mr-1">mdi-bullseye-arrow</v-icon>Our Mission
-                </div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="6" class="pr-md-14">
-              <div class="vm-eyebrow" style="color: #059669">Mission</div>
-              <h2 class="vm-title">Empowering <em>Technopreneurs</em><br />for Impact</h2>
-              <p class="vm-body mt-5 mb-7">
-                Our mission is to contribute to the prominent success of emerging technopreneurships
-                in southern Philippines through strategic partnerships, relevant education and
-                training programs, networking, business-enabling assistance, and facilitate the
-                creation of spinoffs or startups from research and development, towards job creation
-                in specific sectors that are aligned in our regions unique areas of opportunity.
-              </p>
-              <div class="vm-tag-row">
-                <span class="vm-tag vm-tag--green">Strategic Partnerships</span>
-                <span class="vm-tag vm-tag--green">R&D Spinoffs</span>
-                <span class="vm-tag vm-tag--green">Job Creation</span>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== OBJECTIVES ===== -->
-      <div class="sec-white py-sec">
-        <v-container>
-          <div class="text-center mb-14">
-            <div class="eyebrow">What We Aim For</div>
-            <h2 class="sec-title">Our <em>Objectives</em></h2>
-            <p class="sec-sub">Six strategic goals that drive our work every day</p>
-          </div>
-
-          <v-row>
-            <v-col v-for="obj in objectives" :key="obj.title" cols="12" sm="6" md="4" class="mb-4">
-              <div class="obj-card">
-                <div class="obj-icon" :style="{ background: obj.bg }">
-                  <v-icon :icon="obj.icon" :color="obj.color" size="22" />
-                </div>
-                <h4 class="obj-title mt-3 mb-2">{{ obj.title }}</h4>
-                <p class="obj-short">{{ obj.short }}</p>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== CORE VALUES ===== -->
-      <div class="values-section py-sec">
-        <div class="values-glow" />
-        <v-container class="position-relative">
-          <div class="text-center mb-14">
-            <div class="eyebrow" style="color: rgba(255, 255, 255, 0.45)">What We Stand For</div>
-            <h2 class="sec-title" style="color: #fff">Core <em>Values</em></h2>
-            <p class="sec-sub" style="color: rgba(255, 255, 255, 0.45)">
-              The principles that guide every interaction, decision, and program we run
-            </p>
-          </div>
-          <v-row justify="center">
-            <v-col
-              v-for="val in coreValues"
-              :key="val.label"
-              cols="12"
-              sm="6"
-              md="4"
-              lg="2"
-              class="mb-4"
-            >
-              <div
-                class="val-card"
-                :class="{ 'val-card--active': activeValue === val.label }"
-                @click="activeValue = activeValue === val.label ? null : val.label"
-              >
-                <div
-                  class="val-icon-ring"
-                  :style="{ background: val.color + '22', borderColor: val.color + '44' }"
-                >
-                  <v-icon :icon="val.icon" :color="val.color" size="26" />
-                </div>
-                <div class="val-label mt-4">{{ val.label }}</div>
-                <transition name="fx">
-                  <p v-if="activeValue === val.label" class="val-desc mt-2">{{ val.desc }}</p>
-                </transition>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== SERVICES ===== -->
-      <div class="services-band py-12 py-md-14 py-xl-16">
-        <v-container>
-          <div class="text-center mb-14">
-            <div class="band-eyebrow">What We Offer</div>
-            <h2 class="band-title">Services <em>Offered</em></h2>
-            <p class="band-sub">
-              Three flagship programs to take your idea from concept to company
-            </p>
-          </div>
-
-          <v-row>
-            <v-col v-for="(svc, i) in services" :key="svc.title" cols="12" md="4">
-              <div
-                class="svc-card"
-                :class="{ 'svc-card--hover': hoveredSvc === i }"
-                @mouseenter="hoveredSvc = i"
-                @mouseleave="hoveredSvc = null"
-              >
-                <div class="svc-icon-zone" :style="{ background: svc.gradient }">
-                  <v-icon :icon="svc.icon" size="44" color="white" />
-                  <div class="svc-icon-glow" :style="{ background: svc.glowColor }" />
-                </div>
-                <div class="svc-body pa-6">
-                  <h3 class="svc-title mb-3">{{ svc.title }}</h3>
-                  <p class="svc-desc mb-5">{{ svc.description }}</p>
-                  <button class="svc-btn" :style="{ '--sc': svc.accentColor }">
-                    Learn More <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
-                  </button>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-
-          <div class="d-flex justify-end mt-8">
-            <button class="explore-services-btn" style="--sc: #1565c0" @click="goToServicesSection">
-              Explore All Services
-              <v-icon size="16" class="ml-2">mdi-arrow-right</v-icon>
+          <p class="hero-body mt-6 mb-8">
+            NavigatÃº TBI is the premier technology business incubator in Southern Philippines â€”
+            empowering emerging Filipino technopreneurs to build, validate, and scale impactful
+            ventures through strategic partnerships, education, and a thriving startup ecosystem.
+          </p>
+          <div class="d-flex flex-wrap ga-3 mb-10">
+            <button class="btn-solid" @click="videoDialog = true">
+              <v-icon size="16" class="mr-2">mdi-play-circle-outline</v-icon>Watch Our Story
+            </button>
+            <button class="btn-line" @click="scrollTo('about-detail')">
+              <v-icon size="16" class="mr-2">mdi-arrow-down</v-icon>Learn More
             </button>
           </div>
-        </v-container>
+        </div>
       </div>
 
-      <!-- ===== ACHIEVEMENTS ===== -->
-      <div class="ach-band py-sec">
-        <div class="ach-band-glow" />
-        <v-container class="position-relative">
-          <div class="text-center mb-14">
-            <div class="band-eyebrow" style="color: rgba(255, 255, 255, 0.45)">Milestones</div>
-            <h2 class="sec-title" style="color: #fff">NAVIGATÚ <em>Achievements</em></h2>
-            <p class="sec-sub" style="color: rgba(255, 255, 255, 0.45)">
-              7 years of operations, measurable impact
-            </p>
-          </div>
-          <v-row>
-            <v-col
-              v-for="item in achievements"
-              :key="item.label"
-              cols="12"
-              sm="6"
-              md="3"
-              class="mb-4"
-            >
-              <div
-                class="ach-card"
-                :class="{ 'ach-card--hover': hoveredAch === item.label }"
-                @mouseenter="hoveredAch = item.label"
-                @mouseleave="hoveredAch = null"
-              >
-                <div class="ach-top" :style="{ background: item.color }">
-                  <v-icon :icon="item.icon" size="36" color="white" />
-                </div>
-                <div class="ach-body">
-                  <div class="ach-label">{{ item.label }}</div>
-                  <div class="ach-value">{{ item.value }}</div>
-                  <p class="ach-desc">{{ item.desc }}</p>
-                </div>
-                <div class="ach-bar" :style="{ background: item.color }" />
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
+      <div class="hero-edge-badge d-none d-md-flex">
+        <v-icon size="14" color="#1565C0" class="mr-1">mdi-lightning-bolt</v-icon>
+        Innovation Hub Â· Butuan City
       </div>
+    </div>
 
-      <!-- ===== INCUBATEES ===== -->
-      <v-container fluid class="incubatees-section py-sec">
-        <v-container>
-          <div class="text-center mb-10">
-            <div class="eyebrow">Our Portfolio</div>
-            <h2 class="sec-title">NAVIGATÚ <em>Incubatees</em></h2>
-            <p class="sec-sub">Startups we have supported across 7 years of operations</p>
-          </div>
-
-          <div class="d-flex justify-center flex-wrap ga-2 mb-8">
-            <v-btn
-              v-for="filter in incubateeFilters"
-              :key="filter.value"
-              rounded="pill"
-              :variant="activeIncubateeFilter === filter.value ? 'flat' : 'outlined'"
-              :color="activeIncubateeFilter === filter.value ? 'primary' : 'grey-darken-1'"
-              size="small"
-              class="text-none"
-              @click="activeIncubateeFilter = filter.value"
-            >
-              {{ filter.label }}
-            </v-btn>
-          </div>
-
-          <v-row justify="center">
-            <v-col v-for="company in filteredIncubatees" :key="company.name" cols="6" sm="4" md="3">
-              <div
-                class="incubatee-card"
-                @click="$router.push(`/incubatees/${company.slug}`)"
-                @mouseenter="company.hovered = true"
-                @mouseleave="company.hovered = false"
-              >
-                <div class="incubatee-logo-area">
-                  <v-img :src="company.photo" height="150" contain class="incubatee-img" />
-                </div>
-                <div
-                  class="incubatee-label"
-                  :class="{ 'incubatee-label--visible': company.hovered }"
-                >
-                  <span class="incubatee-label-text">{{ company.name }}</span>
-                </div>
+    <!-- ===== WHAT IS NAVIGATÃš ===== -->
+    <div id="about-detail" class="sec-white py-sec">
+      <v-container>
+        <v-row align="center">
+          <v-col cols="12" md="5" class="mb-8 mb-md-0">
+            <div class="about-img-stack">
+              <img
+                src="/public/images/facilities/FacilityA.JPG"
+                alt="NavigatÃº facility"
+                class="about-img-main"
+              />
+              <div class="about-img-float">
+                <img
+                  src="/public/images/facilities/FacilityD.png"
+                  alt="Team collaboration"
+                  class="about-img-sm"
+                />
               </div>
-            </v-col>
-          </v-row>
-
-          <p v-if="!filteredIncubatees.length" class="sec-sub text-center mt-6">
-            No startups found for this filter.
-          </p>
-        </v-container>
-      </v-container>
-
-      <!-- ===== TIMELINE ===== -->
-      <div class="sec-white py-sec">
-        <v-container>
-          <div class="text-center mb-14">
-            <div class="eyebrow">Our Journey</div>
-            <h2 class="sec-title">Navigatú <em>Timeline</em></h2>
-            <p class="sec-sub">Key milestones from our founding to today</p>
-          </div>
-
-          <div class="timeline">
-            <div
-              v-for="(event, i) in timeline"
-              :key="event.year"
-              class="tl-item"
-              :class="i % 2 === 0 ? 'tl-item--left' : 'tl-item--right'"
-            >
-              <div
-                class="tl-content"
-                :class="{ 'tl-content--active': activeTimeline === i }"
-                @click="activeTimeline = activeTimeline === i ? null : i"
-              >
-                <div class="tl-year" :style="{ color: event.color }">{{ event.year }}</div>
-                <h4 class="tl-title">{{ event.title }}</h4>
-                <p class="tl-desc">{{ event.desc }}</p>
-                <transition name="fx">
-                  <div v-if="activeTimeline === i" class="tl-detail mt-3">
-                    <div class="tl-detail-divider" />
-                    <p class="tl-detail-text">{{ event.detail }}</p>
-                  </div>
-                </transition>
+              <div class="about-img-badge">
+                <v-icon size="13" color="#1565c0" class="mr-1">mdi-map-marker-outline</v-icon>
+                BUCAS, Butuan City
               </div>
-              <div class="tl-dot" :style="{ background: event.color }" />
-            </div>
-          </div>
-        </v-container>
-      </div>
-
-      <!-- ===== VIDEO DIALOG ===== -->
-      <v-dialog v-model="videoDialog" max-width="760" transition="dialog-bottom-transition">
-        <v-card rounded="xl" class="overflow-hidden pa-0">
-          <div
-            class="d-flex align-center justify-space-between pa-4 pb-3"
-            style="border-bottom: 1px solid #f1f5f9"
-          >
-            <span style="font-weight: 700; font-size: 0.95rem; font-family: 'Sora', sans-serif"
-              >Navigatú Story</span
-            >
-            <v-btn icon size="small" variant="text" @click="videoDialog = false"
-              ><v-icon>mdi-close</v-icon></v-btn
-            >
-          </div>
-          <div class="video-wrap">
-            <iframe
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              title="Navigatú Story"
-              allow="
-                accelerometer;
-                autoplay;
-                clipboard-write;
-                encrypted-media;
-                gyroscope;
-                picture-in-picture;
-              "
-              allowfullscreen
-              class="video-iframe"
-            />
-          </div>
-        </v-card>
-      </v-dialog>
-
-      <!-- ===== FAQ ===== -->
-      <div class="sec-offwhite py-sec">
-        <v-container>
-          <v-row justify="center">
-            <v-col cols="12" md="7">
-              <div class="text-center mb-12">
-                <div class="eyebrow" style="color: #ea580c">Got questions?</div>
-                <h2 class="sec-title">Frequently Asked <em>Questions</em></h2>
-              </div>
-              <div class="faq-list">
-                <div
-                  v-for="(faq, i) in faqs"
-                  :key="faq.q"
-                  class="faq-item"
-                  :class="{ 'faq-item--open': openFaq === i }"
-                  @click="openFaq = openFaq === i ? null : i"
-                >
-                  <div class="faq-row">
-                    <span class="faq-q">{{ faq.q }}</span>
-                    <v-icon class="faq-icon" size="18">{{
-                      openFaq === i ? 'mdi-minus' : 'mdi-plus'
-                    }}</v-icon>
-                  </div>
-                  <transition name="fx">
-                    <div v-if="openFaq === i" class="faq-ans">{{ faq.a }}</div>
-                  </transition>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-    </v-main>
-
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer-section">
-      <v-container class="py-8 py-md-10 py-xl-12">
-        <v-row>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-brand mb-1">NAVIGATÚ</div>
-            <p class="footer-tag mb-4">Technology Business Incubator</p>
-            <p class="footer-desc">
-              Empowering the next generation of Filipino tech founders through mentorship,
-              innovation, and community.
-            </p>
-            <div class="d-flex flex-wrap ga-3 mt-5">
-              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
             </div>
           </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Programs</div>
-            <div class="footer-link mb-3">Incubation</div>
-            <div class="footer-link mb-3">Mentorship</div>
-            <div class="footer-link mb-3">Funding Access</div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Company</div>
-            <div class="footer-link mb-3">About</div>
-            <div class="footer-link mb-3">Services</div>
-            <div class="footer-link mb-3">Events</div>
-          </v-col>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-col-title mb-4">Newsletter</div>
-            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
-            <div class="newsletter">
-              <input class="nl-input" placeholder="your@email.com" />
-              <button class="nl-btn"><v-icon size="17">mdi-send</v-icon></button>
+          <v-col cols="12" md="7" class="pl-md-14">
+            <div class="eyebrow">About NavigatÃº</div>
+            <h2 class="sec-title">What is <em>NavigatÃº TBI?</em></h2>
+            <p class="sec-body mt-5 mb-5">
+              <strong>NavigatÃº Technology Business Incubator (TBI)</strong> is a DOST
+              PCIEERD-supported startup incubator based at Butuan City, Agusan del Norte, Caraga.
+              Officially established in 2017, it operates as a flagship innovation facility under
+              Caraga State University (CSU), designed to nurture technology-based ventures in the
+              region.
+            </p>
+            <p class="sec-body mb-7">
+              Coined from the word navigation and is inspired by the rich history of Butuan's
+              Balangay Boats as the oldest wooden watercraft excavated in the region that showed
+              evidence of our trading relationships all throughout Southeast Asia in as early as 700
+              AD.
+            </p>
+
+            <!-- Key facts grid -->
+            <div class="facts-grid">
+              <div v-for="fact in keyFacts" :key="fact.label" class="fact-item">
+                <div class="fact-icon" :style="{ background: fact.bg }">
+                  <v-icon :icon="fact.icon" :color="fact.color" size="18" />
+                </div>
+                <div>
+                  <div class="fact-val">{{ fact.val }}</div>
+                  <div class="fact-label">{{ fact.label }}</div>
+                </div>
+              </div>
             </div>
           </v-col>
         </v-row>
-        <div class="footer-hr" />
-        <div class="d-flex flex-wrap justify-space-between align-center pt-4 pt-md-6 ga-2">
-          <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
-          <p class="footer-copy">Empowering startups. Building futures.</p>
+      </v-container>
+    </div>
+
+    <!-- ===== VISION & MISSION ===== -->
+    <div class="sec-offwhite py-sec">
+      <v-container>
+        <div class="text-center mb-14">
+          <div class="eyebrow">Core Identity</div>
+          <h2 class="sec-title">Vision & <em>Mission</em></h2>
+          <p class="sec-sub">The guiding principles behind everything we do</p>
+        </div>
+
+        <!-- VISION -->
+        <v-row align="center" class="mb-12 mb-md-16">
+          <v-col cols="12" md="6" class="mb-8 mb-md-0">
+            <div class="vm-img-wrap">
+              <img src="/public/images/VisionImg.jpg" alt="Vision" class="vm-img" />
+              <div class="vm-float-chip vm-float-chip--blue">
+                <v-icon size="13" class="mr-1">mdi-eye-outline</v-icon>Our Vision
+              </div>
+              <!-- Year badge -->
+              <div class="vm-year-badge">
+                <span class="vm-year-num">7</span>
+                <span class="vm-year-sub">Years</span>
+              </div>
+            </div>
+          </v-col>
+          <v-col cols="12" md="6" class="pl-md-14">
+            <div class="vm-eyebrow" style="color: #1565c0">Vision</div>
+            <h2 class="vm-title">A Prime <em>Tech Incubator</em><br />in the South</h2>
+            <p class="vm-body mt-5 mb-7">
+              A prime technology business incubator of sustainable startups in Southern Philippines.
+            </p>
+            <div class="vm-tag-row">
+              <span class="vm-tag vm-tag--blue">Sustainable Startups</span>
+              <span class="vm-tag vm-tag--blue">Southern Philippines</span>
+              <span class="vm-tag vm-tag--blue">Innovation Culture</span>
+            </div>
+          </v-col>
+        </v-row>
+
+        <!-- MISSION (image right) -->
+        <v-row align="center" class="flex-md-row-reverse">
+          <v-col cols="12" md="6" class="mb-8 mb-md-0">
+            <div class="vm-img-wrap">
+              <img src="/public/images/collage/CollageImg1.jpg" alt="Mission" class="vm-img" />
+              <div class="vm-float-chip vm-float-chip--green">
+                <v-icon size="13" class="mr-1">mdi-bullseye-arrow</v-icon>Our Mission
+              </div>
+            </div>
+          </v-col>
+          <v-col cols="12" md="6" class="pr-md-14">
+            <div class="vm-eyebrow" style="color: #059669">Mission</div>
+            <h2 class="vm-title">Empowering <em>Technopreneurs</em><br />for Impact</h2>
+            <p class="vm-body mt-5 mb-7">
+              Our mission is to contribute to the prominent success of emerging technopreneurships
+              in southern Philippines through strategic partnerships, relevant education and
+              training programs, networking, business-enabling assistance, and facilitate the
+              creation of spinoffs or startups from research and development, towards job creation
+              in specific sectors that are aligned in our regions unique areas of opportunity.
+            </p>
+            <div class="vm-tag-row">
+              <span class="vm-tag vm-tag--green">Strategic Partnerships</span>
+              <span class="vm-tag vm-tag--green">R&D Spinoffs</span>
+              <span class="vm-tag vm-tag--green">Job Creation</span>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <!-- ===== OBJECTIVES ===== -->
+    <div class="sec-white py-sec">
+      <v-container>
+        <div class="text-center mb-14">
+          <div class="eyebrow">What We Aim For</div>
+          <h2 class="sec-title">Our <em>Objectives</em></h2>
+          <p class="sec-sub">Six strategic goals that drive our work every day</p>
+        </div>
+
+        <v-row>
+          <v-col v-for="obj in objectives" :key="obj.title" cols="12" sm="6" md="4" class="mb-4">
+            <div class="obj-card">
+              <div class="obj-icon" :style="{ background: obj.bg }">
+                <v-icon :icon="obj.icon" :color="obj.color" size="22" />
+              </div>
+              <h4 class="obj-title mt-3 mb-2">{{ obj.title }}</h4>
+              <p class="obj-short">{{ obj.short }}</p>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <!-- ===== CORE VALUES ===== -->
+    <div class="values-section py-sec">
+      <div class="values-glow" />
+      <v-container class="position-relative">
+        <div class="text-center mb-14">
+          <div class="eyebrow" style="color: rgba(255, 255, 255, 0.45)">What We Stand For</div>
+          <h2 class="sec-title" style="color: #fff">Core <em>Values</em></h2>
+          <p class="sec-sub" style="color: rgba(255, 255, 255, 0.45)">
+            The principles that guide every interaction, decision, and program we run
+          </p>
+        </div>
+        <v-row justify="center">
+          <v-col
+            v-for="val in coreValues"
+            :key="val.label"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="2"
+            class="mb-4"
+          >
+            <div
+              class="val-card"
+              :class="{ 'val-card--active': activeValue === val.label }"
+              @click="activeValue = activeValue === val.label ? null : val.label"
+            >
+              <div
+                class="val-icon-ring"
+                :style="{ background: val.color + '22', borderColor: val.color + '44' }"
+              >
+                <v-icon :icon="val.icon" :color="val.color" size="26" />
+              </div>
+              <div class="val-label mt-4">{{ val.label }}</div>
+              <transition name="fx">
+                <p v-if="activeValue === val.label" class="val-desc mt-2">{{ val.desc }}</p>
+              </transition>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <!-- ===== SERVICES ===== -->
+    <div class="services-band py-12 py-md-14 py-xl-16">
+      <v-container>
+        <div class="text-center mb-14">
+          <div class="band-eyebrow">What We Offer</div>
+          <h2 class="band-title">Services <em>Offered</em></h2>
+          <p class="band-sub">Three flagship programs to take your idea from concept to company</p>
+        </div>
+
+        <v-row>
+          <v-col v-for="(svc, i) in services" :key="svc.title" cols="12" md="4">
+            <div
+              class="svc-card"
+              :class="{ 'svc-card--hover': hoveredSvc === i }"
+              @mouseenter="hoveredSvc = i"
+              @mouseleave="hoveredSvc = null"
+            >
+              <div class="svc-icon-zone" :style="{ background: svc.gradient }">
+                <v-icon :icon="svc.icon" size="44" color="white" />
+                <div class="svc-icon-glow" :style="{ background: svc.glowColor }" />
+              </div>
+              <div class="svc-body pa-6">
+                <h3 class="svc-title mb-3">{{ svc.title }}</h3>
+                <p class="svc-desc mb-5">{{ svc.description }}</p>
+                <button class="svc-btn" :style="{ '--sc': svc.accentColor }">
+                  Learn More <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
+                </button>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+
+        <div class="d-flex justify-end mt-8">
+          <button class="explore-services-btn" style="--sc: #1565c0" @click="goToServicesSection">
+            Explore All Services
+            <v-icon size="16" class="ml-2">mdi-arrow-right</v-icon>
+          </button>
         </div>
       </v-container>
-    </footer>
-  </v-app>
+    </div>
+
+    <!-- ===== ACHIEVEMENTS ===== -->
+    <div class="ach-band py-sec">
+      <div class="ach-band-glow" />
+      <v-container class="position-relative">
+        <div class="text-center mb-14">
+          <div class="band-eyebrow" style="color: rgba(255, 255, 255, 0.45)">Milestones</div>
+          <h2 class="sec-title" style="color: #fff">NAVIGATÃš <em>Achievements</em></h2>
+          <p class="sec-sub" style="color: rgba(255, 255, 255, 0.45)">
+            7 years of operations, measurable impact
+          </p>
+        </div>
+        <v-row>
+          <v-col
+            v-for="item in achievements"
+            :key="item.label"
+            cols="12"
+            sm="6"
+            md="3"
+            class="mb-4"
+          >
+            <div
+              class="ach-card"
+              :class="{ 'ach-card--hover': hoveredAch === item.label }"
+              @mouseenter="hoveredAch = item.label"
+              @mouseleave="hoveredAch = null"
+            >
+              <div class="ach-top" :style="{ background: item.color }">
+                <v-icon :icon="item.icon" size="36" color="white" />
+              </div>
+              <div class="ach-body">
+                <div class="ach-label">{{ item.label }}</div>
+                <div class="ach-value">{{ item.value }}</div>
+                <p class="ach-desc">{{ item.desc }}</p>
+              </div>
+              <div class="ach-bar" :style="{ background: item.color }" />
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <!-- ===== INCUBATEES ===== -->
+    <v-container fluid class="incubatees-section py-sec">
+      <v-container>
+        <div class="text-center mb-10">
+          <div class="eyebrow">Our Portfolio</div>
+          <h2 class="sec-title">NAVIGATÃš <em>Incubatees</em></h2>
+          <p class="sec-sub">Startups we have supported across 7 years of operations</p>
+        </div>
+
+        <div class="d-flex justify-center flex-wrap ga-2 mb-8">
+          <v-btn
+            v-for="filter in incubateeFilters"
+            :key="filter.value"
+            rounded="pill"
+            :variant="activeIncubateeFilter === filter.value ? 'flat' : 'outlined'"
+            :color="activeIncubateeFilter === filter.value ? 'primary' : 'grey-darken-1'"
+            size="small"
+            class="text-none"
+            @click="activeIncubateeFilter = filter.value"
+          >
+            {{ filter.label }}
+          </v-btn>
+        </div>
+
+        <v-row justify="center">
+          <v-col v-for="company in filteredIncubatees" :key="company.name" cols="6" sm="4" md="3">
+            <div
+              class="incubatee-card"
+              @click="$router.push(`/incubatees/${company.slug}`)"
+              @mouseenter="company.hovered = true"
+              @mouseleave="company.hovered = false"
+            >
+              <div class="incubatee-logo-area">
+                <v-img :src="company.photo" height="150" contain class="incubatee-img" />
+              </div>
+              <div class="incubatee-label" :class="{ 'incubatee-label--visible': company.hovered }">
+                <span class="incubatee-label-text">{{ company.name }}</span>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+
+        <p v-if="!filteredIncubatees.length" class="sec-sub text-center mt-6">
+          No startups found for this filter.
+        </p>
+      </v-container>
+    </v-container>
+
+    <!-- ===== TIMELINE ===== -->
+    <div class="sec-white py-sec">
+      <v-container>
+        <div class="text-center mb-14">
+          <div class="eyebrow">Our Journey</div>
+          <h2 class="sec-title">NavigatÃº <em>Timeline</em></h2>
+          <p class="sec-sub">Key milestones from our founding to today</p>
+        </div>
+
+        <div class="timeline">
+          <div
+            v-for="(event, i) in timeline"
+            :key="event.year"
+            class="tl-item"
+            :class="i % 2 === 0 ? 'tl-item--left' : 'tl-item--right'"
+          >
+            <div
+              class="tl-content"
+              :class="{ 'tl-content--active': activeTimeline === i }"
+              @click="activeTimeline = activeTimeline === i ? null : i"
+            >
+              <div class="tl-year" :style="{ color: event.color }">{{ event.year }}</div>
+              <h4 class="tl-title">{{ event.title }}</h4>
+              <p class="tl-desc">{{ event.desc }}</p>
+              <transition name="fx">
+                <div v-if="activeTimeline === i" class="tl-detail mt-3">
+                  <div class="tl-detail-divider" />
+                  <p class="tl-detail-text">{{ event.detail }}</p>
+                </div>
+              </transition>
+            </div>
+            <div class="tl-dot" :style="{ background: event.color }" />
+          </div>
+        </div>
+      </v-container>
+    </div>
+
+    <!-- ===== VIDEO DIALOG ===== -->
+    <v-dialog v-model="videoDialog" max-width="760" transition="dialog-bottom-transition">
+      <v-card rounded="xl" class="overflow-hidden pa-0">
+        <div
+          class="d-flex align-center justify-space-between pa-4 pb-3"
+          style="border-bottom: 1px solid #f1f5f9"
+        >
+          <span style="font-weight: 700; font-size: 0.95rem; font-family: 'Sora', sans-serif"
+            >NavigatÃº Story</span
+          >
+          <v-btn icon size="small" variant="text" @click="videoDialog = false"
+            ><v-icon>mdi-close</v-icon></v-btn
+          >
+        </div>
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="NavigatÃº Story"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+            "
+            allowfullscreen
+            class="video-iframe"
+          />
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <!-- ===== FAQ ===== -->
+    <div class="sec-offwhite py-sec">
+      <v-container>
+        <v-row justify="center">
+          <v-col cols="12" md="7">
+            <div class="text-center mb-12">
+              <div class="eyebrow" style="color: #ea580c">Got questions?</div>
+              <h2 class="sec-title">Frequently Asked <em>Questions</em></h2>
+            </div>
+            <div class="faq-list">
+              <div
+                v-for="(faq, i) in faqs"
+                :key="faq.q"
+                class="faq-item"
+                :class="{ 'faq-item--open': openFaq === i }"
+                @click="openFaq = openFaq === i ? null : i"
+              >
+                <div class="faq-row">
+                  <span class="faq-q">{{ faq.q }}</span>
+                  <v-icon class="faq-icon" size="18">{{
+                    openFaq === i ? 'mdi-minus' : 'mdi-plus'
+                  }}</v-icon>
+                </div>
+                <transition name="fx">
+                  <div v-if="openFaq === i" class="faq-ans">{{ faq.a }}</div>
+                </transition>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+  </NavigatuLayout>
 </template>
 
 <script setup>
+import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
-const drawer = ref(false)
-const navSearchQuery = ref('')
 const router = useRouter()
-
-function runNavbarSearch() {
-  const query = navSearchQuery.value.trim()
-  if (!query) return
-  router.push({ path: '/news-navigatu', query: { q: query } })
-}
 
 function goToServicesSection() {
   router.push({ path: '/services-navigatu', hash: '#learn-more' })
@@ -655,7 +499,7 @@ const openFaq = ref(null)
 const activeValue = ref(null)
 const activeTimeline = ref(null)
 
-// ── Key Facts ──
+// â”€â”€ Key Facts â”€â”€
 const keyFacts = ref([
   { label: 'Established', val: '2017', icon: 'mdi-calendar-star', bg: '#dbeafe', color: '#1565c0' },
   {
@@ -667,7 +511,7 @@ const keyFacts = ref([
   },
   {
     label: 'Facility Size',
-    val: '200 m²',
+    val: '200 mÂ²',
     icon: 'mdi-office-building-outline',
     bg: '#ede9fe',
     color: '#7c3aed',
@@ -675,7 +519,7 @@ const keyFacts = ref([
   { label: 'Funded By', val: 'DOST', icon: 'mdi-cash-multiple', bg: '#ffedd5', color: '#ea580c' },
 ])
 
-// ── Objectives ──
+// â”€â”€ Objectives â”€â”€
 const objectives = ref([
   {
     title: 'Advance Entrepreneurial Culture',
@@ -766,7 +610,7 @@ const objectives = ref([
   },
 ])
 
-// ── Core Values ──
+// â”€â”€ Core Values â”€â”€
 const coreValues = ref([
   {
     label: 'Innovation',
@@ -806,7 +650,7 @@ const coreValues = ref([
   },
 ])
 
-// ── Services ──
+// â”€â”€ Services â”€â”€
 const services = ref([
   {
     title: 'Business Ideation',
@@ -855,19 +699,19 @@ const services = ref([
   },
 ])
 
-// ── Achievements ──
+// â”€â”€ Achievements â”€â”€
 const achievements = ref([
   {
     label: 'Funding Received',
-    value: '₱10.4M',
+    value: 'â‚±10.4M',
     desc: 'Through DOST PCIEERD partnership to establish the facility and all related activities.',
     icon: 'mdi-cash-multiple',
     color: '#1565C0',
   },
   {
     label: 'Facility Established',
-    value: '200 m²',
-    desc: '10m × 20m facility purpose-built for tech-based startups in Butuan City.',
+    value: '200 mÂ²',
+    desc: '10m Ã— 20m facility purpose-built for tech-based startups in Butuan City.',
     icon: 'mdi-office-building-outline',
     color: '#00897B',
   },
@@ -880,7 +724,7 @@ const achievements = ref([
   },
   {
     label: 'Revenues Earned',
-    value: '₱20.2M',
+    value: 'â‚±20.2M',
     desc: 'Total revenues generated by graduated and active startup incubatees.',
     icon: 'mdi-sack',
     color: '#C62828',
@@ -895,14 +739,14 @@ const achievements = ref([
   {
     label: 'Human Capital',
     value: '108',
-    desc: '50 faculty certified · 16 MSMEs trained · 46 startups developed.',
+    desc: '50 faculty certified Â· 16 MSMEs trained Â· 46 startups developed.',
     icon: 'mdi-account-tie-outline',
     color: '#558B2F',
   },
   {
     label: 'Jobs Created',
     value: '28',
-    desc: 'Employees hired directly through Navigatú-incubated startup companies.',
+    desc: 'Employees hired directly through NavigatÃº-incubated startup companies.',
     icon: 'mdi-briefcase-check-outline',
     color: '#F9A825',
   },
@@ -915,14 +759,14 @@ const achievements = ref([
   },
 ])
 
-// ── Timeline ──
+// â”€â”€ Timeline â”€â”€
 const timeline = ref([
   {
     year: '2017',
-    title: 'Navigatú TBI Founded',
+    title: 'NavigatÃº TBI Founded',
     desc: 'Established with DOST PCIEERD support at Caraga State University.',
     detail:
-      'Navigatú was formally established as a technology business incubator with initial funding of ₱10.4M from DOST PCIEERD, housed at a purpose-built 200 m² facility inside CSU, Butuan City.',
+      'NavigatÃº was formally established as a technology business incubator with initial funding of â‚±10.4M from DOST PCIEERD, housed at a purpose-built 200 mÂ² facility inside CSU, Butuan City.',
     color: '#1565c0',
   },
   {
@@ -938,7 +782,7 @@ const timeline = ref([
     title: 'Partnership Expansion',
     desc: 'Signed MOAs with 8 local government and private sector partners.',
     detail:
-      'Strategic partnerships were formalized with DICT Caraga, DTI Agusan del Norte, and several private tech companies — expanding mentorship resources and funding pathways for incubatees.',
+      'Strategic partnerships were formalized with DICT Caraga, DTI Agusan del Norte, and several private tech companies â€” expanding mentorship resources and funding pathways for incubatees.',
     color: '#ea580c',
   },
   {
@@ -946,7 +790,7 @@ const timeline = ref([
     title: 'Hybrid Program Launch',
     desc: 'Pivoted to hybrid incubation in response to the pandemic.',
     detail:
-      'Navigatú rapidly adapted its programs to a blended online-offline model, enabling continuous operations during COVID-19 and demonstrating the resilience of its startup community.',
+      'NavigatÃº rapidly adapted its programs to a blended online-offline model, enabling continuous operations during COVID-19 and demonstrating the resilience of its startup community.',
     color: '#7c3aed',
   },
   {
@@ -959,15 +803,15 @@ const timeline = ref([
   },
   {
     year: '2024',
-    title: '₱20.2M Revenue Milestone',
-    desc: 'Incubatee-generated revenues surpassed ₱20 million.',
+    title: 'â‚±20.2M Revenue Milestone',
+    desc: 'Incubatee-generated revenues surpassed â‚±20 million.',
     detail:
-      "A landmark milestone reflecting the commercial success of Navigatú graduates — validating the incubator's approach of combining rigorous mentorship with real-world market validation.",
+      "A landmark milestone reflecting the commercial success of NavigatÃº graduates â€” validating the incubator's approach of combining rigorous mentorship with real-world market validation.",
     color: '#dc2626',
   },
 ])
 
-// ── Incubatees (Supabase) ──
+// â”€â”€ Incubatees (Supabase) â”€â”€
 const incubatees = ref([])
 const incubateeFilters = [
   { label: 'All', value: 'all' },
@@ -1003,11 +847,11 @@ async function fetchIncubatees() {
 
 onMounted(fetchIncubatees)
 
-// ── FAQs ──
+// â”€â”€ FAQs â”€â”€
 const faqs = ref([
   {
-    q: 'What is Navigatú TBI?',
-    a: 'Navigatú Technology Business Incubator is a DOST PCIEERD-supported startup incubator at Caraga State University in Butuan City, established in 2017 to nurture technology-based ventures in Southern Philippines.',
+    q: 'What is NavigatÃº TBI?',
+    a: 'NavigatÃº Technology Business Incubator is a DOST PCIEERD-supported startup incubator at Caraga State University in Butuan City, established in 2017 to nurture technology-based ventures in Southern Philippines.',
   },
   {
     q: 'Who can apply to the incubation program?',
@@ -1019,11 +863,11 @@ const faqs = ref([
   },
   {
     q: 'Is there an equity or fee requirement?',
-    a: 'Navigatú TBI does not take equity from incubatees. Some programs may have a modest participation fee depending on the specific services availed.',
+    a: 'NavigatÃº TBI does not take equity from incubatees. Some programs may have a modest participation fee depending on the specific services availed.',
   },
   {
     q: 'Do I need a registered business to apply?',
-    a: 'No — you can apply as an individual or informal team. We assist with business registration and legal structuring as part of the program itself.',
+    a: 'No â€” you can apply as an individual or informal team. We assist with business registration and legal structuring as part of the program itself.',
   },
   {
     q: 'Can teams outside Butuan City apply?',
@@ -1031,7 +875,7 @@ const faqs = ref([
   },
   {
     q: 'What happens after the program ends?',
-    a: 'Graduates join the Navigatú Alumni Network with continued access to mentorship, investor introductions, and co-working facilities at discounted rates.',
+    a: 'Graduates join the NavigatÃº Alumni Network with continued access to mentorship, investor introductions, and co-working facilities at discounted rates.',
   },
 ])
 </script>
@@ -1046,7 +890,7 @@ const faqs = ref([
   font-family: 'Sora', sans-serif !important;
 }
 
-/* ── NAVBAR ── */
+/* â”€â”€ NAVBAR â”€â”€ */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -1093,7 +937,7 @@ const faqs = ref([
   color: #3f4e63 !important;
 }
 
-/* ── BUTTONS ── */
+/* â”€â”€ BUTTONS â”€â”€ */
 .btn-solid {
   display: inline-flex;
   align-items: center;
@@ -1161,7 +1005,7 @@ const faqs = ref([
   margin: 0 auto;
 }
 
-/* ── SECTION HELPERS ── */
+/* â”€â”€ SECTION HELPERS â”€â”€ */
 .eyebrow {
   font-size: 0.68rem;
   font-weight: 700;
@@ -1206,7 +1050,7 @@ const faqs = ref([
   padding-bottom: 84px;
 }
 
-/* ── HERO ── */
+/* â”€â”€ HERO â”€â”€ */
 .about-hero {
   position: relative;
   min-height: 100vh;
@@ -1346,7 +1190,7 @@ const faqs = ref([
   }
 }
 
-/* ── ABOUT SECTION ── */
+/* â”€â”€ ABOUT SECTION â”€â”€ */
 .about-img-stack {
   position: relative;
 }
@@ -1424,7 +1268,7 @@ const faqs = ref([
   margin-top: 2px;
 }
 
-/* ── VISION / MISSION ── */
+/* â”€â”€ VISION / MISSION â”€â”€ */
 .vm-section {
   background: #fff;
 }
@@ -1530,7 +1374,7 @@ const faqs = ref([
   color: #065f46;
 }
 
-/* ── OBJECTIVES ── */
+/* â”€â”€ OBJECTIVES â”€â”€ */
 .obj-card {
   background: #fff;
   border: 1.5px solid #e5eaf5;
@@ -1568,7 +1412,7 @@ const faqs = ref([
   line-height: 1.7;
 }
 
-/* ── CORE VALUES ── */
+/* â”€â”€ CORE VALUES â”€â”€ */
 .values-section {
   background: #080d1c;
   position: relative;
@@ -1627,7 +1471,7 @@ const faqs = ref([
   margin: 0;
 }
 
-/* ── SERVICES ── */
+/* â”€â”€ SERVICES â”€â”€ */
 .services-band {
   background: #f8faff;
 }
@@ -1720,7 +1564,7 @@ const faqs = ref([
   color: #fff;
 }
 
-/* ── ACHIEVEMENTS ── */
+/* â”€â”€ ACHIEVEMENTS â”€â”€ */
 .ach-band {
   background: #080d1c;
   position: relative;
@@ -1792,7 +1636,7 @@ const faqs = ref([
   flex-shrink: 0;
 }
 
-/* ── INCUBATEES ── */
+/* â”€â”€ INCUBATEES â”€â”€ */
 .incubatees-section {
   background: #f5f7fb;
 }
@@ -1849,7 +1693,7 @@ const faqs = ref([
   text-align: center;
 }
 
-/* ── TIMELINE ── */
+/* â”€â”€ TIMELINE â”€â”€ */
 .timeline {
   position: relative;
   max-width: 800px;
@@ -1958,7 +1802,7 @@ const faqs = ref([
   }
 }
 
-/* ── VIDEO ── */
+/* â”€â”€ VIDEO â”€â”€ */
 .video-wrap {
   position: relative;
   padding-bottom: 56.25%;
@@ -1972,7 +1816,7 @@ const faqs = ref([
   border: none;
 }
 
-/* ── FAQ ── */
+/* â”€â”€ FAQ â”€â”€ */
 .faq-list {
   display: flex;
   flex-direction: column;
@@ -2016,7 +1860,7 @@ const faqs = ref([
   line-height: 1.8;
 }
 
-/* ── FOOTER ── */
+/* â”€â”€ FOOTER â”€â”€ */
 .footer-section {
   background: #06080f;
 }
@@ -2123,7 +1967,7 @@ const faqs = ref([
   transform: translateY(-1px);
 }
 
-/* ── TRANSITIONS ── */
+/* â”€â”€ TRANSITIONS â”€â”€ */
 .fx-enter-active,
 .fx-leave-active {
   transition:

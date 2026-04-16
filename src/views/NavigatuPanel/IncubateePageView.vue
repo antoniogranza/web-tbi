@@ -1,759 +1,596 @@
-<template>
-  <v-app>
-    <!-- ===================== NAVIGATION BAR ===================== -->
-    <v-app-bar
-      app
-      fixed
-      location="top"
-      flat
-      color="white"
-      border="b"
-      height="64"
-      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
-    >
-      <v-container class="d-flex align-center pa-0" fluid>
-        <router-link
-          to="/navigatu"
-          class="d-flex align-center ml-4 ml-md-8"
-          style="text-decoration: none; color: inherit"
-        >
-          <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
-          <div>
-            <div class="nav-brand">NAVIGATÚ</div>
-            <div class="nav-sub">Technology Business Incubator</div>
-          </div>
-        </router-link>
+﻿<template>
+  <NavigatuLayout>
+    <!-- â”€â”€ LOADING STATE â”€â”€ -->
+    <div v-if="loading" class="d-flex align-center justify-center" style="min-height: 60vh">
+      <v-progress-circular indeterminate color="primary" size="48" />
+    </div>
 
-        <v-spacer />
+    <!-- â”€â”€ ERROR STATE â”€â”€ -->
+    <div v-else-if="error" class="d-flex align-center justify-center" style="min-height: 60vh">
+      <div class="text-center">
+        <v-icon icon="mdi-alert-circle-outline" size="52" color="#C62828" />
+        <p class="mt-4" style="color: #888; font-size: 0.9rem">{{ error }}</p>
+        <v-btn variant="tonal" color="primary" class="mt-4" to="/about-navigatu">
+          Back to Incubatees
+        </v-btn>
+      </div>
+    </div>
 
-        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
-          <v-btn variant="text" class="nav-link nav-link--active" to="/about-navigatu">About</v-btn>
-          <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
-          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <div class="nav-search-hover">
-            <input
-              v-model="navSearchQuery"
-              class="nav-search-field"
-              type="text"
-              placeholder="Search..."
-              @keyup.enter="runNavbarSearch"
-            />
+    <!-- â”€â”€ CONTENT (only renders once startup data is loaded) â”€â”€ -->
+    <template v-else-if="startup">
+      <!-- ===== HERO BANNER ===== -->
+      <div class="profile-hero">
+        <div class="hero-bg-img">
+          <!-- hero_bg from DB; falls back to a solid colour overlay if empty -->
+          <v-img
+            v-if="startup.hero_bg"
+            :src="startup.hero_bg"
+            height="100%"
+            cover
+            class="hero-bg-layer"
+          />
+        </div>
+        <div class="hero-overlay" />
+
+        <v-container class="hero-content-wrap">
+          <div class="breadcrumb-row mb-6">
             <v-btn
               variant="text"
-              icon
+              prepend-icon="mdi-arrow-left"
+              color="white"
               size="small"
-              class="nav-search-icon-btn"
-              @click="runNavbarSearch"
+              class="breadcrumb-btn"
+              to="/about-navigatu"
             >
-              <v-icon>mdi-magnify</v-icon>
+              Back to Incubatees
             </v-btn>
           </div>
-        </div>
 
-        <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
-      </v-container>
-    </v-app-bar>
+          <v-row align="center" class="hero-inner">
+            <!-- Logo card â€” logo comes from Supabase Storage public URL -->
+            <v-col cols="12" md="3" class="d-flex justify-center justify-md-start">
+              <div class="startup-logo-card">
+                <v-img
+                  v-if="startup.logo"
+                  :src="startup.logo"
+                  height="130"
+                  contain
+                  class="startup-logo-img"
+                />
+                <v-icon v-else icon="mdi-rocket-launch-outline" size="64" color="#1565C0" />
+              </div>
+            </v-col>
 
-    <v-navigation-drawer v-model="drawer" temporary location="right" width="260">
-      <v-list nav class="pt-4">
-        <v-list-item
-          title="About"
-          prepend-icon="mdi-information-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/about-navigatu"
-          active
-        />
-        <v-list-item
-          title="Services"
-          prepend-icon="mdi-briefcase-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/services-navigatu"
-        />
-        <v-list-item
-          title="Coworking"
-          prepend-icon="mdi-office-building-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/coworking-navigatu"
-        />
-        <v-list-item
-          title="News"
-          prepend-icon="mdi-newspaper-variant-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/news-navigatu"
-        />
-        <v-list-item
-          title="Events"
-          prepend-icon="mdi-calendar-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/events-navigatu"
-        />
-      </v-list>
-    </v-navigation-drawer>
+            <!-- Title & meta -->
+            <v-col cols="12" md="9" class="hero-text-col">
+              <div class="startup-category-chip mb-3">
+                <v-icon icon="mdi-tag-outline" size="13" class="mr-1" />
+                <!-- category column -->
+                {{ startup.category }}
+              </div>
+              <!-- name column -->
+              <h1 class="startup-name">{{ startup.name }}</h1>
+              <!-- tagline column -->
+              <p class="startup-tagline">{{ startup.tagline }}</p>
 
-    <v-main>
-      <!-- ── LOADING STATE ── -->
-      <div v-if="loading" class="d-flex align-center justify-center" style="min-height: 60vh">
-        <v-progress-circular indeterminate color="primary" size="48" />
-      </div>
+              <div class="hero-meta-row mt-4">
+                <div class="hero-meta-item">
+                  <v-icon icon="mdi-calendar-start" size="16" class="mr-1" />
+                  <!-- year_founded column -->
+                  Founded {{ startup.year_founded }}
+                </div>
+                <div v-if="startup.location" class="hero-meta-divider" />
+                <div v-if="startup.location" class="hero-meta-item">
+                  <v-icon icon="mdi-map-marker-outline" size="16" class="mr-1" />
+                  <!-- location column -->
+                  {{ startup.location }}
+                </div>
+              </div>
 
-      <!-- ── ERROR STATE ── -->
-      <div v-else-if="error" class="d-flex align-center justify-center" style="min-height: 60vh">
-        <div class="text-center">
-          <v-icon icon="mdi-alert-circle-outline" size="52" color="#C62828" />
-          <p class="mt-4" style="color: #888; font-size: 0.9rem">{{ error }}</p>
-          <v-btn variant="tonal" color="primary" class="mt-4" to="/about-navigatu">
-            Back to Incubatees
-          </v-btn>
-        </div>
-      </div>
-
-      <!-- ── CONTENT (only renders once startup data is loaded) ── -->
-      <template v-else-if="startup">
-        <!-- ===== HERO BANNER ===== -->
-        <div class="profile-hero">
-          <div class="hero-bg-img">
-            <!-- hero_bg from DB; falls back to a solid colour overlay if empty -->
-            <v-img
-              v-if="startup.hero_bg"
-              :src="startup.hero_bg"
-              height="100%"
-              cover
-              class="hero-bg-layer"
-            />
-          </div>
-          <div class="hero-overlay" />
-
-          <v-container class="hero-content-wrap">
-            <div class="breadcrumb-row mb-6">
-              <v-btn
-                variant="text"
-                prepend-icon="mdi-arrow-left"
-                color="white"
-                size="small"
-                class="breadcrumb-btn"
-                to="/about-navigatu"
-              >
-                Back to Incubatees
-              </v-btn>
-            </div>
-
-            <v-row align="center" class="hero-inner">
-              <!-- Logo card — logo comes from Supabase Storage public URL -->
-              <v-col cols="12" md="3" class="d-flex justify-center justify-md-start">
-                <div class="startup-logo-card">
-                  <v-img
-                    v-if="startup.logo"
-                    :src="startup.logo"
-                    height="130"
-                    contain
-                    class="startup-logo-img"
+              <div class="mt-4 d-flex align-center flex-wrap gap-3">
+                <!-- status column + status_icon column -->
+                <span class="status-chip" :class="`status-chip--${startup.status}`">
+                  <v-icon
+                    :icon="startup.status_icon || defaultStatusIcon(startup.status)"
+                    size="13"
+                    class="mr-1"
                   />
-                  <v-icon v-else icon="mdi-rocket-launch-outline" size="64" color="#1565C0" />
-                </div>
-              </v-col>
+                  {{ startup.status_label || startup.status }}
+                </span>
 
-              <!-- Title & meta -->
-              <v-col cols="12" md="9" class="hero-text-col">
-                <div class="startup-category-chip mb-3">
-                  <v-icon icon="mdi-tag-outline" size="13" class="mr-1" />
-                  <!-- category column -->
-                  {{ startup.category }}
-                </div>
-                <!-- name column -->
-                <h1 class="startup-name">{{ startup.name }}</h1>
-                <!-- tagline column -->
-                <p class="startup-tagline">{{ startup.tagline }}</p>
+                <!-- website column -->
+                <v-btn
+                  v-if="startup.website"
+                  :href="startup.website"
+                  target="_blank"
+                  variant="outlined"
+                  color="white"
+                  rounded="lg"
+                  size="small"
+                  prepend-icon="mdi-web"
+                  class="website-btn"
+                >
+                  Visit Website
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
 
-                <div class="hero-meta-row mt-4">
-                  <div class="hero-meta-item">
-                    <v-icon icon="mdi-calendar-start" size="16" class="mr-1" />
-                    <!-- year_founded column -->
-                    Founded {{ startup.year_founded }}
-                  </div>
-                  <div v-if="startup.location" class="hero-meta-divider" />
-                  <div v-if="startup.location" class="hero-meta-item">
-                    <v-icon icon="mdi-map-marker-outline" size="16" class="mr-1" />
-                    <!-- location column -->
-                    {{ startup.location }}
-                  </div>
-                </div>
-
-                <div class="mt-4 d-flex align-center flex-wrap gap-3">
-                  <!-- status column + status_icon column -->
-                  <span class="status-chip" :class="`status-chip--${startup.status}`">
-                    <v-icon
-                      :icon="startup.status_icon || defaultStatusIcon(startup.status)"
-                      size="13"
-                      class="mr-1"
-                    />
-                    {{ startup.status_label || startup.status }}
-                  </span>
-
-                  <!-- website column -->
-                  <v-btn
-                    v-if="startup.website"
-                    :href="startup.website"
-                    target="_blank"
-                    variant="outlined"
-                    color="white"
-                    rounded="lg"
-                    size="small"
-                    prepend-icon="mdi-web"
-                    class="website-btn"
-                  >
-                    Visit Website
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-          </v-container>
-        </div>
-
-        <!-- ===== ANCHOR NAV STRIP ===== -->
-        <!--
+      <!-- ===== ANCHOR NAV STRIP ===== -->
+      <!--
           Values driven from quick_stats (jsonb column).
           quick_stats is an array of { label, value, icon, color, iconBg }
           saved by the admin form. We use the same 4-stat order.
         -->
-        <div class="anchor-strip" ref="anchorStripRef">
-          <v-container>
-            <div class="anchor-tabs-row">
-              <button
-                v-for="tab in anchorTabs"
-                :key="tab.id"
-                class="anchor-tab"
-                :class="{ 'anchor-tab--active': activeSection === tab.id }"
-                @click="scrollToSection(tab.id)"
-              >
-                <v-icon :icon="tab.icon" size="18" class="anchor-tab-icon" />
-                <span class="anchor-tab-label">{{ tab.label }}</span>
-                <span class="anchor-tab-value">{{ tab.value }}</span>
-              </button>
-            </div>
-          </v-container>
-        </div>
+      <div class="anchor-strip" ref="anchorStripRef">
+        <v-container>
+          <div class="anchor-tabs-row">
+            <button
+              v-for="tab in anchorTabs"
+              :key="tab.id"
+              class="anchor-tab"
+              :class="{ 'anchor-tab--active': activeSection === tab.id }"
+              @click="scrollToSection(tab.id)"
+            >
+              <v-icon :icon="tab.icon" size="18" class="anchor-tab-icon" />
+              <span class="anchor-tab-label">{{ tab.label }}</span>
+              <span class="anchor-tab-value">{{ tab.value }}</span>
+            </button>
+          </div>
+        </v-container>
+      </div>
 
-        <!-- ===== ABOUT THE STARTUP ===== -->
-        <v-container fluid class="about-startup-section py-14" id="section-year-started">
-          <v-container>
-            <v-row align="start">
-              <v-col cols="12" md="7">
-                <p class="section-eyebrow">Overview</p>
-                <h2 class="section-heading mb-5">
-                  About <span class="accent-text">{{ startup.name }}</span>
-                </h2>
-                <!-- description_long column -->
-                <p class="body-text mb-4">{{ startup.description_long }}</p>
-                <!-- description_extra column -->
-                <p v-if="startup.description_extra" class="body-text">
-                  {{ startup.description_extra }}
-                </p>
+      <!-- ===== ABOUT THE STARTUP ===== -->
+      <v-container fluid class="about-startup-section py-14" id="section-year-started">
+        <v-container>
+          <v-row align="start">
+            <v-col cols="12" md="7">
+              <p class="section-eyebrow">Overview</p>
+              <h2 class="section-heading mb-5">
+                About <span class="accent-text">{{ startup.name }}</span>
+              </h2>
+              <!-- description_long column -->
+              <p class="body-text mb-4">{{ startup.description_long }}</p>
+              <!-- description_extra column -->
+              <p v-if="startup.description_extra" class="body-text">
+                {{ startup.description_extra }}
+              </p>
 
-                <!-- Problem / Solution — problem + solution columns -->
-                <v-row class="mt-8">
-                  <v-col v-if="startup.problem" cols="12" sm="6">
-                    <div class="ps-card ps-card--problem">
-                      <div class="ps-card-icon">
-                        <v-icon icon="mdi-alert-circle-outline" size="22" color="#C62828" />
-                      </div>
-                      <h4 class="ps-card-title">The Problem</h4>
-                      <p class="ps-card-body">{{ startup.problem }}</p>
+              <!-- Problem / Solution â€” problem + solution columns -->
+              <v-row class="mt-8">
+                <v-col v-if="startup.problem" cols="12" sm="6">
+                  <div class="ps-card ps-card--problem">
+                    <div class="ps-card-icon">
+                      <v-icon icon="mdi-alert-circle-outline" size="22" color="#C62828" />
                     </div>
-                  </v-col>
-                  <v-col v-if="startup.solution" cols="12" sm="6">
-                    <div class="ps-card ps-card--solution">
-                      <div class="ps-card-icon">
-                        <v-icon icon="mdi-lightbulb-on-outline" size="22" color="#1565C0" />
-                      </div>
-                      <h4 class="ps-card-title">Our Solution</h4>
-                      <p class="ps-card-body">{{ startup.solution }}</p>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-col>
-
-              <!-- Sidebar details — details jsonb column -->
-              <v-col cols="12" md="5" class="pl-md-8">
-                <div class="info-sidebar">
-                  <h4 class="sidebar-heading mb-4">Startup Details</h4>
-                  <div v-for="detail in startup.details" :key="detail.label" class="detail-row">
-                    <v-icon
-                      :icon="detail.icon || 'mdi-information-outline'"
-                      size="18"
-                      :color="detail.color || '#1565C0'"
-                      class="detail-icon"
-                    />
-                    <div class="detail-content">
-                      <span class="detail-label">{{ detail.label }}</span>
-                      <span class="detail-value">{{ detail.value }}</span>
-                    </div>
+                    <h4 class="ps-card-title">The Problem</h4>
+                    <p class="ps-card-body">{{ startup.problem }}</p>
                   </div>
-
-                  <!-- tags column (text[]) — filter out empty values -->
-                  <div v-if="getActiveTags.length" class="mt-6">
-                    <p class="sidebar-heading mb-3">Focus Areas</p>
-                    <div class="d-flex flex-wrap gap-2">
-                      <v-chip
-                        v-for="tag in getActiveTags"
-                        :key="tag"
-                        size="small"
-                        variant="tonal"
-                        color="primary"
-                        class="tag-chip"
-                        >{{ tag }}</v-chip
-                      >
+                </v-col>
+                <v-col v-if="startup.solution" cols="12" sm="6">
+                  <div class="ps-card ps-card--solution">
+                    <div class="ps-card-icon">
+                      <v-icon icon="mdi-lightbulb-on-outline" size="22" color="#1565C0" />
                     </div>
+                    <h4 class="ps-card-title">Our Solution</h4>
+                    <p class="ps-card-body">{{ startup.solution }}</p>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+
+            <!-- Sidebar details â€” details jsonb column -->
+            <v-col cols="12" md="5" class="pl-md-8">
+              <div class="info-sidebar">
+                <h4 class="sidebar-heading mb-4">Startup Details</h4>
+                <div v-for="detail in startup.details" :key="detail.label" class="detail-row">
+                  <v-icon
+                    :icon="detail.icon || 'mdi-information-outline'"
+                    size="18"
+                    :color="detail.color || '#1565C0'"
+                    class="detail-icon"
+                  />
+                  <div class="detail-content">
+                    <span class="detail-label">{{ detail.label }}</span>
+                    <span class="detail-value">{{ detail.value }}</span>
                   </div>
                 </div>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-container>
 
-        <!-- ===== LATEST ACHIEVEMENTS ===== -->
-        <!--
+                <!-- tags column (text[]) â€” filter out empty values -->
+                <div v-if="getActiveTags.length" class="mt-6">
+                  <p class="sidebar-heading mb-3">Focus Areas</p>
+                  <div class="d-flex flex-wrap gap-2">
+                    <v-chip
+                      v-for="tag in getActiveTags"
+                      :key="tag"
+                      size="small"
+                      variant="tonal"
+                      color="primary"
+                      class="tag-chip"
+                      >{{ tag }}</v-chip
+                    >
+                  </div>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-container>
+
+      <!-- ===== LATEST ACHIEVEMENTS ===== -->
+      <!--
           achievements jsonb column
           Each item: { title, desc, photo, year, category, icon, color }
           photo is a Supabase Storage public URL
         -->
-        <v-container
-          v-if="startup.achievements && startup.achievements.length"
-          fluid
-          class="achievements-section py-14"
-          id="section-milestones"
-        >
-          <v-container>
-            <p class="section-eyebrow text-center">Milestones</p>
-            <h2 class="section-heading text-center mb-2">
-              Latest <span class="accent-text">Achievements</span>
-            </h2>
-            <p class="section-sub text-center mb-10">
-              Key milestones and recognitions earned along the journey
-            </p>
+      <v-container
+        v-if="startup.achievements && startup.achievements.length"
+        fluid
+        class="achievements-section py-14"
+        id="section-milestones"
+      >
+        <v-container>
+          <p class="section-eyebrow text-center">Milestones</p>
+          <h2 class="section-heading text-center mb-2">
+            Latest <span class="accent-text">Achievements</span>
+          </h2>
+          <p class="section-sub text-center mb-10">
+            Key milestones and recognitions earned along the journey
+          </p>
 
-            <v-row>
-              <v-col v-for="ach in startup.achievements" :key="ach.title" cols="12" sm="6" md="4">
-                <v-card class="ach-card h-100" rounded="xl" elevation="0">
-                  <div class="ach-photo-wrap">
-                    <v-img v-if="ach.photo" :src="ach.photo" height="190" cover class="ach-photo" />
-                    <!-- Fallback placeholder when no photo uploaded -->
-                    <div v-else class="ach-photo-placeholder">
-                      <v-icon
-                        :icon="ach.icon || 'mdi-flag-checkered'"
-                        size="48"
-                        :color="ach.color || '#1565C0'"
-                      />
-                    </div>
-                    <div class="ach-year-badge">{{ ach.year }}</div>
+          <v-row>
+            <v-col v-for="ach in startup.achievements" :key="ach.title" cols="12" sm="6" md="4">
+              <v-card class="ach-card h-100" rounded="xl" elevation="0">
+                <div class="ach-photo-wrap">
+                  <v-img v-if="ach.photo" :src="ach.photo" height="190" cover class="ach-photo" />
+                  <!-- Fallback placeholder when no photo uploaded -->
+                  <div v-else class="ach-photo-placeholder">
+                    <v-icon
+                      :icon="ach.icon || 'mdi-flag-checkered'"
+                      size="48"
+                      :color="ach.color || '#1565C0'"
+                    />
                   </div>
-
-                  <div class="ach-body pa-5">
-                    <div class="ach-icon-row mb-2">
-                      <v-icon
-                        :icon="ach.icon || 'mdi-flag-checkered'"
-                        size="18"
-                        :color="ach.color || '#1565C0'"
-                      />
-                      <span class="ach-category" :style="{ color: ach.color || '#1565C0' }">
-                        {{ ach.category }}
-                      </span>
-                    </div>
-                    <h4 class="ach-title mb-2">{{ ach.title }}</h4>
-                    <p class="ach-desc">{{ ach.desc }}</p>
-                  </div>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-container>
-        <!-- Empty anchor target so the strip still works even with no achievements -->
-        <div v-else id="section-milestones" style="height: 0" />
-
-        <!-- ===== GALLERY ===== -->
-        <!--
-          gallery   → text[] of Supabase Storage public URLs
-          gallery_captions → text[]
-        -->
-        <v-container
-          v-if="startup.gallery && startup.gallery.length"
-          fluid
-          class="gallery-section py-14"
-        >
-          <v-container>
-            <p class="section-eyebrow text-center">Gallery</p>
-            <h2 class="section-heading text-center mb-2">
-              Moments & <span class="accent-text">Highlights</span>
-            </h2>
-            <p class="section-sub text-center mb-10">Behind the scenes of our journey</p>
-
-            <v-row>
-              <!-- Featured large photo -->
-              <v-col cols="12" md="6">
-                <div class="gallery-main">
-                  <v-img
-                    :src="startup.gallery[0]"
-                    height="340"
-                    cover
-                    rounded="xl"
-                    class="gallery-main-img"
-                  />
-                  <div class="gallery-caption">
-                    {{ startup.gallery_captions?.[0] }}
-                  </div>
+                  <div class="ach-year-badge">{{ ach.year }}</div>
                 </div>
-              </v-col>
-              <!-- 2×2 grid — remaining up to 4 images -->
-              <v-col cols="12" md="6">
-                <v-row>
-                  <v-col v-for="(img, i) in startup.gallery.slice(1, 5)" :key="i" cols="6">
-                    <div class="gallery-thumb">
-                      <v-img :src="img" height="158" cover rounded="lg" class="gallery-thumb-img" />
-                      <div class="gallery-caption gallery-caption--sm">
-                        {{ startup.gallery_captions?.[i + 1] }}
-                      </div>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-container>
 
-        <!-- ===== PARTNERSHIPS ===== -->
-        <!--
+                <div class="ach-body pa-5">
+                  <div class="ach-icon-row mb-2">
+                    <v-icon
+                      :icon="ach.icon || 'mdi-flag-checkered'"
+                      size="18"
+                      :color="ach.color || '#1565C0'"
+                    />
+                    <span class="ach-category" :style="{ color: ach.color || '#1565C0' }">
+                      {{ ach.category }}
+                    </span>
+                  </div>
+                  <h4 class="ach-title mb-2">{{ ach.title }}</h4>
+                  <p class="ach-desc">{{ ach.desc }}</p>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-container>
+      <!-- Empty anchor target so the strip still works even with no achievements -->
+      <div v-else id="section-milestones" style="height: 0" />
+
+      <!-- ===== GALLERY ===== -->
+      <!--
+          gallery   â†’ text[] of Supabase Storage public URLs
+          gallery_captions â†’ text[]
+        -->
+      <v-container
+        v-if="startup.gallery && startup.gallery.length"
+        fluid
+        class="gallery-section py-14"
+      >
+        <v-container>
+          <p class="section-eyebrow text-center">Gallery</p>
+          <h2 class="section-heading text-center mb-2">
+            Moments & <span class="accent-text">Highlights</span>
+          </h2>
+          <p class="section-sub text-center mb-10">Behind the scenes of our journey</p>
+
+          <v-row>
+            <!-- Featured large photo -->
+            <v-col cols="12" md="6">
+              <div class="gallery-main">
+                <v-img
+                  :src="startup.gallery[0]"
+                  height="340"
+                  cover
+                  rounded="xl"
+                  class="gallery-main-img"
+                />
+                <div class="gallery-caption">
+                  {{ startup.gallery_captions?.[0] }}
+                </div>
+              </div>
+            </v-col>
+            <!-- 2Ã—2 grid â€” remaining up to 4 images -->
+            <v-col cols="12" md="6">
+              <v-row>
+                <v-col v-for="(img, i) in startup.gallery.slice(1, 5)" :key="i" cols="6">
+                  <div class="gallery-thumb">
+                    <v-img :src="img" height="158" cover rounded="lg" class="gallery-thumb-img" />
+                    <div class="gallery-caption gallery-caption--sm">
+                      {{ startup.gallery_captions?.[i + 1] }}
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-container>
+
+      <!-- ===== PARTNERSHIPS ===== -->
+      <!--
           partners jsonb column
           Each item: { name, type, icon, color, logoBg, chipLabel, chipColor }
         -->
-        <v-container
-          v-if="startup.partners && startup.partners.length"
-          fluid
-          class="financials-section py-14"
-          id="section-partnerships"
-        >
-          <v-container>
-            <p class="section-eyebrow text-center">Network</p>
-            <h2 class="section-heading text-center mb-2">
-              {{ startup.name }} <span class="accent-text">Partners</span>
-            </h2>
-            <p class="section-sub text-center mb-10">Organizations that power our growth</p>
+      <v-container
+        v-if="startup.partners && startup.partners.length"
+        fluid
+        class="financials-section py-14"
+        id="section-partnerships"
+      >
+        <v-container>
+          <p class="section-eyebrow text-center">Network</p>
+          <h2 class="section-heading text-center mb-2">
+            {{ startup.name }} <span class="accent-text">Partners</span>
+          </h2>
+          <p class="section-sub text-center mb-10">Organizations that power our growth</p>
 
-            <v-row justify="center">
-              <v-col
-                v-for="partner in startup.partners"
-                :key="partner.name"
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <div class="partner-card">
-                  <div
-                    class="partner-logo-wrap"
-                    :style="{ background: partner.logoBg || '#E3F2FD' }"
-                  >
-                    <v-icon
-                      :icon="partner.icon || 'mdi-handshake-outline'"
-                      size="28"
-                      :color="partner.color || '#1565C0'"
-                    />
-                  </div>
-                  <div class="partner-info">
-                    <div class="partner-name">{{ partner.name }}</div>
-                    <div class="partner-type">{{ partner.type }}</div>
-                  </div>
+          <v-row justify="center">
+            <v-col v-for="partner in startup.partners" :key="partner.name" cols="12" sm="6" md="4">
+              <div class="partner-card">
+                <div class="partner-logo-wrap" :style="{ background: partner.logoBg || '#E3F2FD' }">
+                  <v-icon
+                    :icon="partner.icon || 'mdi-handshake-outline'"
+                    size="28"
+                    :color="partner.color || '#1565C0'"
+                  />
                 </div>
-              </v-col>
-            </v-row>
-          </v-container>
+                <div class="partner-info">
+                  <div class="partner-name">{{ partner.name }}</div>
+                  <div class="partner-type">{{ partner.type }}</div>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
         </v-container>
-        <div v-else id="section-partnerships" style="height: 0" />
+      </v-container>
+      <div v-else id="section-partnerships" style="height: 0" />
 
-        <!-- ===== TEAM ===== -->
-        <!--
+      <!-- ===== TEAM ===== -->
+      <!--
           team jsonb column
           Each item: { name, role, photo, linkedin, email }
           photo is a Supabase Storage public URL
         -->
-        <v-container
-          v-if="startup.team && startup.team.length"
-          fluid
-          class="team-section py-14"
-          id="section-team"
-        >
-          <v-container>
-            <p class="section-eyebrow text-center">People</p>
-            <h2 class="section-heading text-center mb-2">
-              Meet the <span class="accent-text">Team</span>
-            </h2>
-            <p class="section-sub text-center mb-10">The minds behind the innovation</p>
+      <v-container
+        v-if="startup.team && startup.team.length"
+        fluid
+        class="team-section py-14"
+        id="section-team"
+      >
+        <v-container>
+          <p class="section-eyebrow text-center">People</p>
+          <h2 class="section-heading text-center mb-2">
+            Meet the <span class="accent-text">Team</span>
+          </h2>
+          <p class="section-sub text-center mb-10">The minds behind the innovation</p>
 
-            <v-row justify="center">
-              <v-col v-for="member in startup.team" :key="member.name" cols="6" sm="4" md="3">
-                <div class="team-card">
-                  <div class="team-photo-wrap">
-                    <v-img
-                      v-if="member.photo"
-                      :src="member.photo"
-                      height="180"
-                      cover
-                      class="team-photo"
-                    />
-                    <div v-else class="team-photo-fallback">
-                      <v-avatar size="72" color="blue-lighten-4">
-                        <v-icon icon="mdi-account" size="44" color="#1565C0" />
-                      </v-avatar>
-                    </div>
-                  </div>
-                  <div class="team-info pa-3 text-center">
-                    <div class="team-name">{{ member.name }}</div>
-                    <div class="team-role">{{ member.role }}</div>
-                    <div class="team-socials mt-2" v-if="member.linkedin || member.email">
-                      <v-btn
-                        v-if="member.linkedin && member.linkedin !== '#'"
-                        :href="member.linkedin"
-                        target="_blank"
-                        icon="mdi-linkedin"
-                        size="x-small"
-                        variant="text"
-                        color="#1565C0"
-                      />
-                      <v-btn
-                        v-if="member.email"
-                        :href="`mailto:${member.email}`"
-                        icon="mdi-email-outline"
-                        size="x-small"
-                        variant="text"
-                        color="#555"
-                      />
-                    </div>
+          <v-row justify="center">
+            <v-col v-for="member in startup.team" :key="member.name" cols="6" sm="4" md="3">
+              <div class="team-card">
+                <div class="team-photo-wrap">
+                  <v-img
+                    v-if="member.photo"
+                    :src="member.photo"
+                    height="180"
+                    cover
+                    class="team-photo"
+                  />
+                  <div v-else class="team-photo-fallback">
+                    <v-avatar size="72" color="blue-lighten-4">
+                      <v-icon icon="mdi-account" size="44" color="#1565C0" />
+                    </v-avatar>
                   </div>
                 </div>
-              </v-col>
-            </v-row>
-          </v-container>
+                <div class="team-info pa-3 text-center">
+                  <div class="team-name">{{ member.name }}</div>
+                  <div class="team-role">{{ member.role }}</div>
+                  <div class="team-socials mt-2" v-if="member.linkedin || member.email">
+                    <v-btn
+                      v-if="member.linkedin && member.linkedin !== '#'"
+                      :href="member.linkedin"
+                      target="_blank"
+                      icon="mdi-linkedin"
+                      size="x-small"
+                      variant="text"
+                      color="#1565C0"
+                    />
+                    <v-btn
+                      v-if="member.email"
+                      :href="`mailto:${member.email}`"
+                      icon="mdi-email-outline"
+                      size="x-small"
+                      variant="text"
+                      color="#555"
+                    />
+                  </div>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
         </v-container>
-        <div v-else id="section-team" style="height: 0" />
+      </v-container>
+      <div v-else id="section-team" style="height: 0" />
 
-        <!-- ===== TESTIMONIALS ===== -->
-        <!--
+      <!-- ===== TESTIMONIALS ===== -->
+      <!--
           testimonials jsonb column
           Each item: { name, role, photo, quote }
           photo is a Supabase Storage public URL
         -->
-        <v-container
-          v-if="startup.testimonials && startup.testimonials.length"
-          fluid
-          class="testimonials-section py-14"
-          id="section-testimonials"
-        >
-          <v-container>
-            <p class="section-eyebrow text-center">Voices</p>
-            <h2 class="section-heading text-center mb-2">
-              What They <span class="accent-text">Say</span>
-            </h2>
-            <p class="section-sub text-center mb-12">Success stories in their own words</p>
+      <v-container
+        v-if="startup.testimonials && startup.testimonials.length"
+        fluid
+        class="testimonials-section py-14"
+        id="section-testimonials"
+      >
+        <v-container>
+          <p class="section-eyebrow text-center">Voices</p>
+          <h2 class="section-heading text-center mb-2">
+            What They <span class="accent-text">Say</span>
+          </h2>
+          <p class="section-sub text-center mb-12">Success stories in their own words</p>
 
-            <div v-if="shouldUseTestimonialsCarousel" class="testimonials-carousel-shell">
-              <div class="testimonials-viewport">
+          <div v-if="shouldUseTestimonialsCarousel" class="testimonials-carousel-shell">
+            <div class="testimonials-viewport">
+              <div
+                class="testimonials-track"
+                :style="testimonialTrackStyle"
+                @transitionend="handleTestimonialTrackTransitionEnd"
+              >
                 <div
-                  class="testimonials-track"
-                  :style="testimonialTrackStyle"
-                  @transitionend="handleTestimonialTrackTransitionEnd"
+                  v-for="(t, i) in carouselTestimonials"
+                  :key="`${t.name}-${i}`"
+                  class="testimonials-track-item"
+                  :style="{ '--visible-cards': visibleTestimonialCards }"
                 >
-                  <div
-                    v-for="(t, i) in carouselTestimonials"
-                    :key="`${t.name}-${i}`"
-                    class="testimonials-track-item"
-                    :style="{ '--visible-cards': visibleTestimonialCards }"
-                  >
-                    <div class="testi-card">
-                      <div class="quote-mark">"</div>
-                      <p class="testi-text">{{ t.quote }}</p>
-                      <div class="testi-author-row mt-5">
-                        <div class="testi-avatar-wrap">
-                          <v-img
-                            v-if="t.photo"
-                            :src="t.photo"
-                            height="48"
-                            width="48"
-                            cover
-                            rounded="circle"
-                            class="testi-avatar"
-                          />
-                          <v-avatar v-else size="48" color="blue-lighten-4">
-                            <v-icon icon="mdi-account" size="28" color="#1565C0" />
-                          </v-avatar>
-                        </div>
-                        <div class="testi-author-info ml-3">
-                          <div class="testi-name">{{ t.name }}</div>
-                          <div class="testi-role">{{ t.role }}</div>
-                        </div>
+                  <div class="testi-card">
+                    <div class="quote-mark">"</div>
+                    <p class="testi-text">{{ t.quote }}</p>
+                    <div class="testi-author-row mt-5">
+                      <div class="testi-avatar-wrap">
+                        <v-img
+                          v-if="t.photo"
+                          :src="t.photo"
+                          height="48"
+                          width="48"
+                          cover
+                          rounded="circle"
+                          class="testi-avatar"
+                        />
+                        <v-avatar v-else size="48" color="blue-lighten-4">
+                          <v-icon icon="mdi-account" size="28" color="#1565C0" />
+                        </v-avatar>
+                      </div>
+                      <div class="testi-author-info ml-3">
+                        <div class="testi-name">{{ t.name }}</div>
+                        <div class="testi-role">{{ t.role }}</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <v-row v-else>
-              <v-col v-for="(t, i) in startup.testimonials" :key="t.name" cols="12" md="4">
-                <div class="testi-card" :class="i === 1 ? 'testi-card--featured' : ''">
-                  <div class="quote-mark">"</div>
-                  <p class="testi-text">{{ t.quote }}</p>
-                  <div class="testi-author-row mt-5">
-                    <div class="testi-avatar-wrap">
-                      <v-img
-                        v-if="t.photo"
-                        :src="t.photo"
-                        height="48"
-                        width="48"
-                        cover
-                        rounded="circle"
-                        class="testi-avatar"
-                      />
-                      <v-avatar v-else size="48" color="blue-lighten-4">
-                        <v-icon icon="mdi-account" size="28" color="#1565C0" />
-                      </v-avatar>
-                    </div>
-                    <div class="testi-author-info ml-3">
-                      <div class="testi-name">{{ t.name }}</div>
-                      <div class="testi-role">{{ t.role }}</div>
-                    </div>
+          <v-row v-else>
+            <v-col v-for="(t, i) in startup.testimonials" :key="t.name" cols="12" md="4">
+              <div class="testi-card" :class="i === 1 ? 'testi-card--featured' : ''">
+                <div class="quote-mark">"</div>
+                <p class="testi-text">{{ t.quote }}</p>
+                <div class="testi-author-row mt-5">
+                  <div class="testi-avatar-wrap">
+                    <v-img
+                      v-if="t.photo"
+                      :src="t.photo"
+                      height="48"
+                      width="48"
+                      cover
+                      rounded="circle"
+                      class="testi-avatar"
+                    />
+                    <v-avatar v-else size="48" color="blue-lighten-4">
+                      <v-icon icon="mdi-account" size="28" color="#1565C0" />
+                    </v-avatar>
+                  </div>
+                  <div class="testi-author-info ml-3">
+                    <div class="testi-name">{{ t.name }}</div>
+                    <div class="testi-role">{{ t.role }}</div>
                   </div>
                 </div>
-              </v-col>
-            </v-row>
-          </v-container>
+              </div>
+            </v-col>
+          </v-row>
         </v-container>
-        <div v-else id="section-testimonials" style="height: 0" />
-
-        <!-- ===== CALL TO ACTION ===== -->
-        <div class="cta-section">
-          <v-container>
-            <v-row justify="center">
-              <v-col cols="12" md="8" class="text-center">
-                <h2 class="cta-title mb-4">
-                  Interested in Working with
-                  <span class="cta-accent">{{ startup.name }}</span
-                  >?
-                </h2>
-                <p class="cta-sub mb-8">
-                  Connect with the team or learn more about their products and services.
-                </p>
-                <div class="d-flex justify-center flex-wrap gap-4">
-                  <!-- contact_email column -->
-                  <v-btn
-                    v-if="startup.contact_email"
-                    color="white"
-                    rounded="lg"
-                    size="large"
-                    class="cta-btn-primary"
-                    prepend-icon="mdi-email-outline"
-                    :href="`mailto:${startup.contact_email}`"
-                  >
-                    Contact Team
-                  </v-btn>
-                  <!-- website column -->
-                  <v-btn
-                    v-if="startup.website"
-                    variant="outlined"
-                    color="white"
-                    rounded="lg"
-                    size="large"
-                    class="cta-btn-outline"
-                    prepend-icon="mdi-web"
-                    :href="startup.website"
-                    target="_blank"
-                  >
-                    Visit Website
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-          </v-container>
-        </div> </template
-      ><!-- end v-else-if startup -->
-    </v-main>
-
-    <!-- FOOTER -->
-    <footer class="footer-section">
-      <v-container class="py-12">
-        <v-row>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-brand mb-1">NAVIGATÚ</div>
-            <p class="footer-tag mb-4">Technology Business Incubator</p>
-            <p class="footer-desc">
-              Empowering the next generation of Filipino tech founders through mentorship,
-              innovation, and community.
-            </p>
-            <div class="d-flex" style="gap: 12px">
-              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
-            </div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Programs</div>
-            <div class="footer-link mb-3">Incubation</div>
-            <div class="footer-link mb-3">Mentorship</div>
-            <div class="footer-link mb-3">Funding Access</div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Company</div>
-            <div class="footer-link mb-3">About</div>
-            <div class="footer-link mb-3">Services</div>
-            <div class="footer-link mb-3">Events</div>
-          </v-col>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-col-title mb-4">Newsletter</div>
-            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
-            <div class="newsletter">
-              <input class="nl-input" placeholder="your@email.com" />
-              <button class="nl-btn">
-                <v-icon size="17">mdi-send</v-icon>
-              </button>
-            </div>
-          </v-col>
-        </v-row>
-        <div class="footer-hr" />
-        <div class="d-flex flex-wrap justify-space-between align-center pt-6" style="gap: 8px">
-          <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
-          <p class="footer-copy">Empowering startups. Building futures.</p>
-        </div>
       </v-container>
-    </footer>
-  </v-app>
+      <div v-else id="section-testimonials" style="height: 0" />
+
+      <!-- ===== CALL TO ACTION ===== -->
+      <div class="cta-section">
+        <v-container>
+          <v-row justify="center">
+            <v-col cols="12" md="8" class="text-center">
+              <h2 class="cta-title mb-4">
+                Interested in Working with
+                <span class="cta-accent">{{ startup.name }}</span
+                >?
+              </h2>
+              <p class="cta-sub mb-8">
+                Connect with the team or learn more about their products and services.
+              </p>
+              <div class="d-flex justify-center flex-wrap gap-4">
+                <!-- contact_email column -->
+                <v-btn
+                  v-if="startup.contact_email"
+                  color="white"
+                  rounded="lg"
+                  size="large"
+                  class="cta-btn-primary"
+                  prepend-icon="mdi-email-outline"
+                  :href="`mailto:${startup.contact_email}`"
+                >
+                  Contact Team
+                </v-btn>
+                <!-- website column -->
+                <v-btn
+                  v-if="startup.website"
+                  variant="outlined"
+                  color="white"
+                  rounded="lg"
+                  size="large"
+                  class="cta-btn-outline"
+                  prepend-icon="mdi-web"
+                  :href="startup.website"
+                  target="_blank"
+                >
+                  Visit Website
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div> </template
+    ><!-- end v-else-if startup -->
+  </NavigatuLayout>
 </template>
 
 <script setup>
+import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
-const drawer = ref(false)
-const navSearchQuery = ref('')
 const route = useRoute()
 const router = useRouter()
 
-function runNavbarSearch() {
-  const query = navSearchQuery.value.trim()
-  if (!query) return
-  router.push({ path: '/news-navigatu', query: { q: query } })
-}
-
-// ── Data state ─────────────────────────────────────────────────────────────
+// â”€â”€ Data state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const startup = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
-// ── Fetch by slug ──────────────────────────────────────────────────────────
-// Column names match buildPayload() exactly — all snake_case
+// â”€â”€ Fetch by slug â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Column names match buildPayload() exactly â€” all snake_case
 onMounted(async () => {
   const slug = route.params.slug
 
@@ -821,7 +658,7 @@ onMounted(() => {
   window.addEventListener('resize', handleViewportResize)
 })
 
-// ── Anchor nav — automatically computed from actual data ───────────────────
+// â”€â”€ Anchor nav â€” automatically computed from actual data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Values dynamically calculate from achievements, partners, team, and testimonials arrays
 const anchorTabs = computed(() => [
   {
@@ -850,14 +687,14 @@ const anchorTabs = computed(() => [
   },
 ])
 
-// ── Tags — filter out empty values from array ──────────────────────────────
+// â”€â”€ Tags â€” filter out empty values from array â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const getActiveTags = computed(() => {
   const tags = startup.value?.tags
   if (!Array.isArray(tags)) return []
   return tags.filter((tag) => tag && String(tag).trim().length > 0)
 })
 
-// ── Testimonials carousel state ───────────────────────────────────────────
+// â”€â”€ Testimonials carousel state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
 const testimonialIndex = ref(0)
 const enableTrackTransition = ref(true)
@@ -939,7 +776,7 @@ watch(
   },
 )
 
-// ── Status icon fallback ───────────────────────────────────────────────────
+// â”€â”€ Status icon fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function defaultStatusIcon(status) {
   return (
     {
@@ -951,7 +788,7 @@ function defaultStatusIcon(status) {
   )
 }
 
-// ── Anchor nav scroll + intersection observer ──────────────────────────────
+// â”€â”€ Anchor nav scroll + intersection observer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const activeSection = ref('section-year-started')
 
 function scrollToSection(id) {
@@ -998,7 +835,7 @@ onUnmounted(() => {
   font-family: 'DM Sans', sans-serif !important;
 }
 
-/* ── Navbar ──────────────────────────────────────────────────────────────────── */
+/* â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -1070,7 +907,7 @@ onUnmounted(() => {
   transform: translateY(-1px);
 }
 
-/* ── HERO ────────────────────────────────────────────────────────────────────── */
+/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .profile-hero {
   position: relative;
   min-height: 380px;
@@ -1221,7 +1058,7 @@ onUnmounted(() => {
   border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
-/* ── ANCHOR NAV STRIP ────────────────────────────────────────────────────────── */
+/* â”€â”€ ANCHOR NAV STRIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .anchor-strip {
   background: #ffffff;
   border-bottom: 2px solid #eef0f5;
@@ -1311,7 +1148,7 @@ onUnmounted(() => {
   }
 }
 
-/* ── SHARED SECTION TYPOGRAPHY ────────────────────────────────────────────────── */
+/* â”€â”€ SHARED SECTION TYPOGRAPHY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .section-eyebrow {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1347,7 +1184,7 @@ onUnmounted(() => {
   margin: 0;
 }
 
-/* ── ABOUT ───────────────────────────────────────────────────────────────────── */
+/* â”€â”€ ABOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .about-startup-section {
   background: #ffffff;
 }
@@ -1430,7 +1267,7 @@ onUnmounted(() => {
   font-weight: 600 !important;
 }
 
-/* ── ACHIEVEMENTS ────────────────────────────────────────────────────────────── */
+/* â”€â”€ ACHIEVEMENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .achievements-section {
   background: #f5f7fb;
 }
@@ -1499,7 +1336,7 @@ onUnmounted(() => {
   margin: 0;
 }
 
-/* ── PARTNERSHIPS ────────────────────────────────────────────────────────────── */
+/* â”€â”€ PARTNERSHIPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .financials-section {
   background: #f5f7fb;
 }
@@ -1547,7 +1384,7 @@ onUnmounted(() => {
   margin-top: 1px;
 }
 
-/* ── GALLERY ─────────────────────────────────────────────────────────────────── */
+/* â”€â”€ GALLERY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .gallery-section {
   background: #f5f7fb;
 }
@@ -1575,7 +1412,7 @@ onUnmounted(() => {
   font-size: 0.68rem;
 }
 
-/* ── TEAM ────────────────────────────────────────────────────────────────────── */
+/* â”€â”€ TEAM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .team-section {
   background: #ffffff;
 }
@@ -1624,7 +1461,7 @@ onUnmounted(() => {
   gap: 4px;
 }
 
-/* ── TESTIMONIALS ────────────────────────────────────────────────────────────── */
+/* â”€â”€ TESTIMONIALS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .testimonials-section {
   background: #f5f7fb;
 }
@@ -1718,7 +1555,7 @@ onUnmounted(() => {
   margin-top: 1px;
 }
 
-/* ── CTA ─────────────────────────────────────────────────────────────────────── */
+/* â”€â”€ CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cta-section {
   background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
   padding: 72px 0;
@@ -1754,7 +1591,7 @@ onUnmounted(() => {
   color: #ffffff !important;
 }
 
-/* ── FOOTER ── */
+/* â”€â”€ FOOTER â”€â”€ */
 .footer-section {
   background: #06080f;
 }

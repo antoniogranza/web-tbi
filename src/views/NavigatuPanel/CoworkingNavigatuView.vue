@@ -1,548 +1,376 @@
 <template>
-  <v-app>
-    <!-- ===================== NAVIGATION BAR ===================== -->
-    <v-app-bar
-      app
-      fixed
-      location="top"
-      flat
-      color="white"
-      border="b"
-      height="64"
-      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
-    >
-      <v-container class="d-flex align-center pa-0" fluid>
-        <router-link
-          to="/navigatu"
-          class="d-flex align-center ml-4 ml-md-8"
-          style="text-decoration: none; color: inherit"
-        >
-          <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
-          <div>
-            <div class="nav-brand">NAVIGATÚ</div>
-            <div class="nav-sub">Technology Business Incubator</div>
-          </div>
-        </router-link>
-
-        <v-spacer />
-
-        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
-          <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
-          <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
-          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <div class="nav-search-hover">
-            <input
-              v-model="navSearchQuery"
-              class="nav-search-field"
-              type="text"
-              placeholder="Search..."
-              @keyup.enter="runNavbarSearch"
-            />
-            <v-btn
-              variant="text"
-              icon
-              size="small"
-              class="nav-search-icon-btn"
-              @click="runNavbarSearch"
-            >
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </div>
-        </div>
-
-        <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
-      </v-container>
-    </v-app-bar>
-
-    <!-- Mobile Drawer -->
-    <v-navigation-drawer v-model="drawer" temporary location="right" width="260">
-      <v-list nav class="pt-4">
-        <v-list-item
-          title="About"
-          prepend-icon="mdi-information-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/about-navigatu"
-        />
-        <v-list-item
-          title="Services"
-          prepend-icon="mdi-briefcase-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/services-navigatu"
-        />
-        <v-list-item
-          title="Coworking"
-          prepend-icon="mdi-office-building-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/coworking-navigatu"
-          active
-        />
-        <v-list-item
-          title="News"
-          prepend-icon="mdi-newspaper-variant-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/news-navigatu"
-        />
-        <v-list-item
-          title="Events"
-          prepend-icon="mdi-calendar-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/events-navigatu"
-        />
-      </v-list>
-    </v-navigation-drawer>
-
+  <NavigatuLayout>
     <!-- ===================== MAIN CONTENT ===================== -->
-    <v-main>
-      <!-- ===== HERO SECTION ===== -->
-      <section class="hero-section">
-        <div class="hero-noise" />
-        <div class="hero-grid-pattern" />
-        <div class="hero-glow-left" />
-        <div class="hero-glow-right" />
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero-section">
+      <div class="hero-noise" />
+      <div class="hero-grid-pattern" />
+      <div class="hero-glow-left" />
+      <div class="hero-glow-right" />
 
-        <v-container class="hero-inner">
-          <v-row align="center" justify="center">
-            <!-- Left: Text -->
-            <v-col cols="12" md="5" class="hero-left-col">
-              <div class="hero-badge mb-5">
-                <span class="hero-badge-dot" />
-                <span>Butuan City, Caraga Region</span>
-              </div>
-              <h1 class="hero-title">
-                NAVIGATÚ
-                <span class="hero-title-em">Facility</span>
-              </h1>
-              <p class="hero-body mt-4 mb-8">
-                The Innovation and Technopreneurship Hub (iTecH) of Caraga State University — where
-                ideas become ventures and ventures become legacies.
-              </p>
-              <div class="d-flex flex-wrap" style="gap: 14px">
-                <button class="btn-primary-hero">
-                  <v-icon size="16" class="mr-2">mdi-rocket-launch-outline</v-icon>
-                  Get Started
-                </button>
-                <button class="btn-ghost-hero">
-                  <v-icon size="16" class="mr-2">mdi-play-circle-outline</v-icon>
-                  Take a Tour
-                </button>
-              </div>
-            </v-col>
-
-            <!-- Right: Image collage -->
-            <v-col cols="12" md="7">
-              <div class="hero-collage">
-                <div class="hero-collage-main">
-                  <v-img
-                    src="/images/collage/CollageImg1.jpg"
-                    height="280"
-                    cover
-                    class="collage-main-img"
-                  />
-                  <div class="collage-live-badge">
-                    <span class="badge-dot-green" />
-                    Live Workspace
-                  </div>
-                </div>
-                <div class="hero-collage-grid">
-                  <div class="collage-stat-card">
-                    <div class="csc-num">60+</div>
-                    <div class="csc-label">Startups Launched</div>
-                    <v-icon
-                      icon="mdi-rocket-launch"
-                      size="28"
-                      color="rgba(255,255,255,0.2)"
-                      class="csc-deco"
-                    />
-                  </div>
-                  <v-img
-                    src="/images/collage/CollageImg2.JPG"
-                    height="125"
-                    cover
-                    rounded="lg"
-                    class="collage-sm-img"
-                  />
-                  <v-img
-                    src="/images/collage/CollageImg3.JPG"
-                    height="105"
-                    cover
-                    rounded="lg"
-                    class="collage-sm-img"
-                  />
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </section>
-
-      <!-- ===== FACILITY OFFERED SECTION ===== -->
-      <section class="facility-section py-16">
-        <v-container>
-          <div class="text-center mb-4">
-            <div class="eyebrow-label">Our Spaces</div>
-            <h2 class="section-title">Facility <span class="section-title-em">Offered</span></h2>
-            <p class="section-sub mt-3">
-              Purpose-built spaces for <strong>Pitching Competitions</strong>,
-              <strong>Startup Incubation</strong>, and <strong>Workshops</strong>
+      <v-container class="hero-inner">
+        <v-row align="center" justify="center">
+          <!-- Left: Text -->
+          <v-col cols="12" md="5" class="hero-left-col">
+            <div class="hero-badge mb-5">
+              <span class="hero-badge-dot" />
+              <span>Butuan City, Caraga Region</span>
+            </div>
+            <h1 class="hero-title">
+              NAVIGATÃš
+              <span class="hero-title-em">Facility</span>
+            </h1>
+            <p class="hero-body mt-4 mb-8">
+              The Innovation and Technopreneurship Hub (iTecH) of Caraga State University â€” where
+              ideas become ventures and ventures become legacies.
             </p>
-          </div>
-
-          <!-- Tab filter -->
-          <div class="facility-filter-row mb-10">
-            <button
-              v-for="f in facilityFilters"
-              :key="f.key"
-              class="fac-filter-pill"
-              :class="{ 'fac-filter-pill--on': activeFacilityFilter === f.key }"
-              @click="activeFacilityFilter = f.key"
-            >
-              <v-icon :icon="f.icon" size="14" class="mr-1" />
-              {{ f.label }}
-            </button>
-          </div>
-
-          <v-row>
-            <v-col
-              v-for="(facility, idx) in filteredFacilities"
-              :key="facility.name"
-              cols="12"
-              sm="6"
-              class="mb-4"
-            >
-              <div
-                class="facility-card"
-                :class="{ 'facility-card--active': activeFacility === idx }"
-                @mouseenter="activeFacility = idx"
-                @mouseleave="activeFacility = null"
-                @click="openFacilityDetail(facility)"
-              >
-                <!-- Image -->
-                <v-img :src="facility.photo" height="300" cover class="facility-base-img" />
-
-                <!-- Gradient overlay always present -->
-                <div class="facility-gradient" />
-
-                <!-- Hover overlay -->
-                <div
-                  class="facility-overlay"
-                  :class="{ 'facility-overlay--visible': activeFacility === idx }"
-                >
-                  <div class="fac-overlay-icon">
-                    <v-icon :icon="facility.icon" size="28" color="white" />
-                  </div>
-                  <h3 class="facility-overlay-name">{{ facility.name }}</h3>
-                  <p class="facility-overlay-desc">{{ facility.desc }}</p>
-                  <div class="fac-chips mt-3">
-                    <span v-for="tag in facility.tags" :key="tag" class="fac-chip">{{ tag }}</span>
-                  </div>
-                  <button class="fac-overlay-btn mt-4">
-                    View Details <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
-                  </button>
-                </div>
-
-                <!-- Bottom label always visible -->
-                <div
-                  class="facility-label"
-                  :class="{ 'facility-label--hidden': activeFacility === idx }"
-                >
-                  <div class="fac-label-icon">
-                    <v-icon :icon="facility.icon" size="14" color="white" />
-                  </div>
-                  <span>{{ facility.name }}</span>
-                  <span class="fac-label-cap ml-2">{{ facility.capacity }}</span>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </section>
-
-      <!-- Facility Detail Dialog -->
-      <v-dialog v-model="facilityDialog" max-width="580" transition="dialog-bottom-transition">
-        <v-card
-          v-if="activeFacilityDetail"
-          rounded="xl"
-          class="overflow-hidden facility-dialog-card"
-        >
-          <v-img :src="activeFacilityDetail.photo" height="220" cover>
-            <div class="fac-dialog-overlay pa-6 d-flex align-end" style="height: 100%">
-              <div>
-                <div class="fac-dialog-badge mb-2">
-                  <v-icon :icon="activeFacilityDetail.icon" size="14" class="mr-1" color="white" />
-                  {{ activeFacilityDetail.capacity }}
-                </div>
-                <h3 class="fac-dialog-title">{{ activeFacilityDetail.name }}</h3>
-              </div>
-              <v-spacer />
-              <v-btn icon variant="text" color="white" @click="facilityDialog = false">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </div>
-          </v-img>
-          <div class="pa-6">
-            <p class="fac-dialog-desc mb-5">{{ activeFacilityDetail.fullDesc }}</p>
-            <v-divider class="mb-4" />
-            <div class="fac-dialog-features">
-              <div v-for="feat in activeFacilityDetail.features" :key="feat" class="fac-feat-item">
-                <v-icon icon="mdi-check-circle" size="16" color="#1565C0" class="mr-2" />
-                <span>{{ feat }}</span>
-              </div>
-            </div>
-          </div>
-        </v-card>
-      </v-dialog>
-
-      <!-- ===== COWORKING PERKS ===== -->
-      <section class="perks-section py-16">
-        <div class="perks-bg-orb perks-orb-1" />
-        <div class="perks-bg-orb perks-orb-2" />
-        <v-container class="position-relative">
-          <div class="text-center mb-14">
-            <div class="eyebrow-label" style="color: #f97316">Why Choose Us</div>
-            <h2 class="section-title" style="color: #fff">
-              Why Work at <span class="section-title-em" style="color: #f97316">Navigatu</span>
-            </h2>
-            <p class="section-sub mt-3" style="color: rgba(255, 255, 255, 0.45)">
-              Everything you need to build, collaborate, and grow
-            </p>
-          </div>
-          <v-row>
-            <v-col v-for="(perk, i) in perks" :key="perk.title" cols="12" sm="6" md="3">
-              <div
-                class="perk-card"
-                :class="{ 'perk-card--open': activePerk === i }"
-                @click="activePerk = activePerk === i ? null : i"
-              >
-                <div class="perk-icon-wrap" :style="{ background: perk.iconBg }">
-                  <v-icon :icon="perk.icon" :color="perk.color" size="22" />
-                </div>
-                <h4 class="perk-title mt-4 mb-2">{{ perk.title }}</h4>
-                <p class="perk-desc">{{ perk.desc }}</p>
-                <transition name="fx">
-                  <div v-if="activePerk === i" class="perk-detail mt-3">
-                    <div class="perk-divider mb-3" />
-                    <p class="perk-detail-text">{{ perk.detail }}</p>
-                  </div>
-                </transition>
-                <div class="perk-card-footer mt-4">
-                  <span class="perk-value" :style="{ color: perk.color }">{{ perk.value }}</span>
-                  <v-icon
-                    :icon="activePerk === i ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                    size="16"
-                    color="rgba(255,255,255,0.3)"
-                  />
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </section>
-
-      <!-- ===== STAFF TESTIMONIALS ===== -->
-      <section class="testimonials-section py-16">
-        <v-container>
-          <div class="text-center mb-4">
-            <div class="eyebrow-label" style="color: #7c3aed">People & Culture</div>
-            <h2 class="section-title">
-              <span class="testimonial-bold">NAVIGATÚ</span>
-              <span class="testimonial-italic"> Staff Voices</span>
-            </h2>
-            <p class="section-sub mt-3">Stories from the people who make iTecH extraordinary</p>
-          </div>
-
-          <!-- Testimonial tabs -->
-          <div class="testi-selector mb-10">
-            <div
-              v-for="(t, i) in testimonials"
-              :key="i"
-              class="testi-avatar-btn"
-              :class="{ 'testi-avatar-btn--active': activeTestimonial === i }"
-              @click="activeTestimonial = i"
-            >
-              <v-img :src="t.photo" width="52" height="52" cover rounded="circle" />
-              <span class="testi-avatar-name">{{ t.name }}</span>
-            </div>
-          </div>
-
-          <v-row justify="center">
-            <v-col cols="12" md="10">
-              <transition name="testi-fade" mode="out-in">
-                <div :key="activeTestimonial" class="testimonial-panel">
-                  <v-row no-gutters align="stretch">
-                    <v-col cols="12" sm="4">
-                      <div class="testi-photo-col">
-                        <v-img
-                          :src="testimonials[activeTestimonial].photo"
-                          height="300"
-                          cover
-                          class="testi-photo"
-                        />
-                        <div class="testi-photo-overlay" />
-                        <div class="testi-role-badge">
-                          <v-icon icon="mdi-briefcase-outline" size="12" class="mr-1" />
-                          {{ testimonials[activeTestimonial].role }}
-                        </div>
-                      </div>
-                    </v-col>
-                    <v-col cols="12" sm="8">
-                      <div class="testi-content pa-8 pa-md-10">
-                        <div class="testi-quote-mark">"</div>
-                        <p class="testi-text mt-2">{{ testimonials[activeTestimonial].quote }}</p>
-                        <div class="testi-author mt-6">
-                          <span class="author-name">{{
-                            testimonials[activeTestimonial].name
-                          }}</span>
-                          <span class="author-role">{{
-                            testimonials[activeTestimonial].role
-                          }}</span>
-                        </div>
-                        <div class="testi-stars mt-4">
-                          <v-icon
-                            v-for="n in 5"
-                            :key="n"
-                            icon="mdi-star"
-                            size="14"
-                            color="#f59e0b"
-                          />
-                        </div>
-                      </div>
-                    </v-col>
-                  </v-row>
-                </div>
-              </transition>
-            </v-col>
-          </v-row>
-
-          <!-- Nav dots -->
-          <div class="testi-dots mt-8">
-            <button
-              v-for="(t, i) in testimonials"
-              :key="i"
-              class="testi-dot"
-              :class="{ 'testi-dot--active': activeTestimonial === i }"
-              @click="activeTestimonial = i"
-            />
-          </div>
-        </v-container>
-      </section>
-
-      <!-- ===== GALLERY STRIP ===== -->
-      <section class="gallery-section py-14">
-        <v-container>
-          <div class="text-center mb-10">
-            <div class="eyebrow-label">Inside iTecH</div>
-            <h2 class="section-title">
-              A Glimpse of <span class="section-title-em">Our Space</span>
-            </h2>
-          </div>
-          <div class="gallery-grid">
-            <div v-for="(img, i) in galleryImages" :key="i" class="gallery-item" :class="img.span">
-              <v-img :src="img.src" cover class="gallery-img" :height="img.h" />
-              <div class="gallery-hover">
-                <v-icon icon="mdi-magnify-plus-outline" size="28" color="white" />
-              </div>
-            </div>
-          </div>
-        </v-container>
-      </section>
-
-      <!-- ===== CTA BANNER ===== -->
-      <section class="cta-section">
-        <div class="cta-noise" />
-        <div class="cta-glow" />
-        <v-container class="text-center position-relative py-16">
-          <div class="cta-icon-ring mb-6">
-            <v-icon icon="mdi-office-building-outline" size="32" color="white" />
-          </div>
-          <h2 class="cta-title mb-4">Ready to Work from Navigatu?</h2>
-          <p class="cta-sub mb-10 mx-auto">
-            Join a growing community of founders, researchers, and innovators at Caraga's premier
-            tech hub.
-          </p>
-          <div class="d-flex justify-center flex-wrap" style="gap: 16px">
-            <button class="btn-cta-solid">
-              <v-icon size="16" class="mr-2">mdi-calendar-plus-outline</v-icon>
-              Book a Tour
-            </button>
-            <button class="btn-cta-ghost">
-              <v-icon size="16" class="mr-2">mdi-phone-outline</v-icon>
-              Contact Us
-            </button>
-          </div>
-        </v-container>
-      </section>
-    </v-main>
-
-    <!-- FOOTER -->
-    <footer class="footer-section">
-      <v-container class="py-12">
-        <v-row>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-brand mb-1">NAVIGATÚ</div>
-            <p class="footer-tag mb-4">Technology Business Incubator</p>
-            <p class="footer-desc">
-              Empowering the next generation of Filipino tech founders through mentorship,
-              innovation, and community.
-            </p>
-            <div class="d-flex" style="gap: 12px">
-              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
-            </div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Programs</div>
-            <div class="footer-link mb-3">Incubation</div>
-            <div class="footer-link mb-3">Mentorship</div>
-            <div class="footer-link mb-3">Funding Access</div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Company</div>
-            <div class="footer-link mb-3">About</div>
-            <div class="footer-link mb-3">Services</div>
-            <div class="footer-link mb-3">Events</div>
-          </v-col>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-col-title mb-4">Newsletter</div>
-            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
-            <div class="newsletter">
-              <input class="nl-input" placeholder="your@email.com" />
-              <button class="nl-btn">
-                <v-icon size="17">mdi-send</v-icon>
+            <div class="d-flex flex-wrap" style="gap: 14px">
+              <button class="btn-primary-hero">
+                <v-icon size="16" class="mr-2">mdi-rocket-launch-outline</v-icon>
+                Get Started
+              </button>
+              <button class="btn-ghost-hero">
+                <v-icon size="16" class="mr-2">mdi-play-circle-outline</v-icon>
+                Take a Tour
               </button>
             </div>
           </v-col>
+
+          <!-- Right: Image collage -->
+          <v-col cols="12" md="7">
+            <div class="hero-collage">
+              <div class="hero-collage-main">
+                <v-img
+                  src="/images/collage/CollageImg1.jpg"
+                  height="280"
+                  cover
+                  class="collage-main-img"
+                />
+                <div class="collage-live-badge">
+                  <span class="badge-dot-green" />
+                  Live Workspace
+                </div>
+              </div>
+              <div class="hero-collage-grid">
+                <div class="collage-stat-card">
+                  <div class="csc-num">60+</div>
+                  <div class="csc-label">Startups Launched</div>
+                  <v-icon
+                    icon="mdi-rocket-launch"
+                    size="28"
+                    color="rgba(255,255,255,0.2)"
+                    class="csc-deco"
+                  />
+                </div>
+                <v-img
+                  src="/images/collage/CollageImg2.JPG"
+                  height="125"
+                  cover
+                  rounded="lg"
+                  class="collage-sm-img"
+                />
+                <v-img
+                  src="/images/collage/CollageImg3.JPG"
+                  height="105"
+                  cover
+                  rounded="lg"
+                  class="collage-sm-img"
+                />
+              </div>
+            </div>
+          </v-col>
         </v-row>
-        <div class="footer-hr" />
-        <div class="d-flex flex-wrap justify-space-between align-center pt-6" style="gap: 8px">
-          <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
-          <p class="footer-copy">Empowering startups. Building futures.</p>
+      </v-container>
+    </section>
+
+    <!-- ===== FACILITY OFFERED SECTION ===== -->
+    <section class="facility-section py-16">
+      <v-container>
+        <div class="text-center mb-4">
+          <div class="eyebrow-label">Our Spaces</div>
+          <h2 class="section-title">Facility <span class="section-title-em">Offered</span></h2>
+          <p class="section-sub mt-3">
+            Purpose-built spaces for <strong>Pitching Competitions</strong>,
+            <strong>Startup Incubation</strong>, and <strong>Workshops</strong>
+          </p>
+        </div>
+
+        <!-- Tab filter -->
+        <div class="facility-filter-row mb-10">
+          <button
+            v-for="f in facilityFilters"
+            :key="f.key"
+            class="fac-filter-pill"
+            :class="{ 'fac-filter-pill--on': activeFacilityFilter === f.key }"
+            @click="activeFacilityFilter = f.key"
+          >
+            <v-icon :icon="f.icon" size="14" class="mr-1" />
+            {{ f.label }}
+          </button>
+        </div>
+
+        <v-row>
+          <v-col
+            v-for="(facility, idx) in filteredFacilities"
+            :key="facility.name"
+            cols="12"
+            sm="6"
+            class="mb-4"
+          >
+            <div
+              class="facility-card"
+              :class="{ 'facility-card--active': activeFacility === idx }"
+              @mouseenter="activeFacility = idx"
+              @mouseleave="activeFacility = null"
+              @click="openFacilityDetail(facility)"
+            >
+              <!-- Image -->
+              <v-img :src="facility.photo" height="300" cover class="facility-base-img" />
+
+              <!-- Gradient overlay always present -->
+              <div class="facility-gradient" />
+
+              <!-- Hover overlay -->
+              <div
+                class="facility-overlay"
+                :class="{ 'facility-overlay--visible': activeFacility === idx }"
+              >
+                <div class="fac-overlay-icon">
+                  <v-icon :icon="facility.icon" size="28" color="white" />
+                </div>
+                <h3 class="facility-overlay-name">{{ facility.name }}</h3>
+                <p class="facility-overlay-desc">{{ facility.desc }}</p>
+                <div class="fac-chips mt-3">
+                  <span v-for="tag in facility.tags" :key="tag" class="fac-chip">{{ tag }}</span>
+                </div>
+                <button class="fac-overlay-btn mt-4">
+                  View Details <v-icon size="13" class="ml-1">mdi-arrow-right</v-icon>
+                </button>
+              </div>
+
+              <!-- Bottom label always visible -->
+              <div
+                class="facility-label"
+                :class="{ 'facility-label--hidden': activeFacility === idx }"
+              >
+                <div class="fac-label-icon">
+                  <v-icon :icon="facility.icon" size="14" color="white" />
+                </div>
+                <span>{{ facility.name }}</span>
+                <span class="fac-label-cap ml-2">{{ facility.capacity }}</span>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </section>
+
+    <!-- Facility Detail Dialog -->
+    <v-dialog v-model="facilityDialog" max-width="580" transition="dialog-bottom-transition">
+      <v-card v-if="activeFacilityDetail" rounded="xl" class="overflow-hidden facility-dialog-card">
+        <v-img :src="activeFacilityDetail.photo" height="220" cover>
+          <div class="fac-dialog-overlay pa-6 d-flex align-end" style="height: 100%">
+            <div>
+              <div class="fac-dialog-badge mb-2">
+                <v-icon :icon="activeFacilityDetail.icon" size="14" class="mr-1" color="white" />
+                {{ activeFacilityDetail.capacity }}
+              </div>
+              <h3 class="fac-dialog-title">{{ activeFacilityDetail.name }}</h3>
+            </div>
+            <v-spacer />
+            <v-btn icon variant="text" color="white" @click="facilityDialog = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </div>
+        </v-img>
+        <div class="pa-6">
+          <p class="fac-dialog-desc mb-5">{{ activeFacilityDetail.fullDesc }}</p>
+          <v-divider class="mb-4" />
+          <div class="fac-dialog-features">
+            <div v-for="feat in activeFacilityDetail.features" :key="feat" class="fac-feat-item">
+              <v-icon icon="mdi-check-circle" size="16" color="#1565C0" class="mr-2" />
+              <span>{{ feat }}</span>
+            </div>
+          </div>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <!-- ===== COWORKING PERKS ===== -->
+    <section class="perks-section py-16">
+      <div class="perks-bg-orb perks-orb-1" />
+      <div class="perks-bg-orb perks-orb-2" />
+      <v-container class="position-relative">
+        <div class="text-center mb-14">
+          <div class="eyebrow-label" style="color: #f97316">Why Choose Us</div>
+          <h2 class="section-title" style="color: #fff">
+            Why Work at <span class="section-title-em" style="color: #f97316">Navigatu</span>
+          </h2>
+          <p class="section-sub mt-3" style="color: rgba(255, 255, 255, 0.45)">
+            Everything you need to build, collaborate, and grow
+          </p>
+        </div>
+        <v-row>
+          <v-col v-for="(perk, i) in perks" :key="perk.title" cols="12" sm="6" md="3">
+            <div
+              class="perk-card"
+              :class="{ 'perk-card--open': activePerk === i }"
+              @click="activePerk = activePerk === i ? null : i"
+            >
+              <div class="perk-icon-wrap" :style="{ background: perk.iconBg }">
+                <v-icon :icon="perk.icon" :color="perk.color" size="22" />
+              </div>
+              <h4 class="perk-title mt-4 mb-2">{{ perk.title }}</h4>
+              <p class="perk-desc">{{ perk.desc }}</p>
+              <transition name="fx">
+                <div v-if="activePerk === i" class="perk-detail mt-3">
+                  <div class="perk-divider mb-3" />
+                  <p class="perk-detail-text">{{ perk.detail }}</p>
+                </div>
+              </transition>
+              <div class="perk-card-footer mt-4">
+                <span class="perk-value" :style="{ color: perk.color }">{{ perk.value }}</span>
+                <v-icon
+                  :icon="activePerk === i ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                  size="16"
+                  color="rgba(255,255,255,0.3)"
+                />
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </section>
+
+    <!-- ===== STAFF TESTIMONIALS ===== -->
+    <section class="testimonials-section py-16">
+      <v-container>
+        <div class="text-center mb-4">
+          <div class="eyebrow-label" style="color: #7c3aed">People & Culture</div>
+          <h2 class="section-title">
+            <span class="testimonial-bold">NAVIGATÃš</span>
+            <span class="testimonial-italic"> Staff Voices</span>
+          </h2>
+          <p class="section-sub mt-3">Stories from the people who make iTecH extraordinary</p>
+        </div>
+
+        <!-- Testimonial tabs -->
+        <div class="testi-selector mb-10">
+          <div
+            v-for="(t, i) in testimonials"
+            :key="i"
+            class="testi-avatar-btn"
+            :class="{ 'testi-avatar-btn--active': activeTestimonial === i }"
+            @click="activeTestimonial = i"
+          >
+            <v-img :src="t.photo" width="52" height="52" cover rounded="circle" />
+            <span class="testi-avatar-name">{{ t.name }}</span>
+          </div>
+        </div>
+
+        <v-row justify="center">
+          <v-col cols="12" md="10">
+            <transition name="testi-fade" mode="out-in">
+              <div :key="activeTestimonial" class="testimonial-panel">
+                <v-row no-gutters align="stretch">
+                  <v-col cols="12" sm="4">
+                    <div class="testi-photo-col">
+                      <v-img
+                        :src="testimonials[activeTestimonial].photo"
+                        height="300"
+                        cover
+                        class="testi-photo"
+                      />
+                      <div class="testi-photo-overlay" />
+                      <div class="testi-role-badge">
+                        <v-icon icon="mdi-briefcase-outline" size="12" class="mr-1" />
+                        {{ testimonials[activeTestimonial].role }}
+                      </div>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="8">
+                    <div class="testi-content pa-8 pa-md-10">
+                      <div class="testi-quote-mark">"</div>
+                      <p class="testi-text mt-2">{{ testimonials[activeTestimonial].quote }}</p>
+                      <div class="testi-author mt-6">
+                        <span class="author-name">{{ testimonials[activeTestimonial].name }}</span>
+                        <span class="author-role">{{ testimonials[activeTestimonial].role }}</span>
+                      </div>
+                      <div class="testi-stars mt-4">
+                        <v-icon v-for="n in 5" :key="n" icon="mdi-star" size="14" color="#f59e0b" />
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+              </div>
+            </transition>
+          </v-col>
+        </v-row>
+
+        <!-- Nav dots -->
+        <div class="testi-dots mt-8">
+          <button
+            v-for="(t, i) in testimonials"
+            :key="i"
+            class="testi-dot"
+            :class="{ 'testi-dot--active': activeTestimonial === i }"
+            @click="activeTestimonial = i"
+          />
         </div>
       </v-container>
-    </footer>
-  </v-app>
+    </section>
+
+    <!-- ===== GALLERY STRIP ===== -->
+    <section class="gallery-section py-14">
+      <v-container>
+        <div class="text-center mb-10">
+          <div class="eyebrow-label">Inside iTecH</div>
+          <h2 class="section-title">
+            A Glimpse of <span class="section-title-em">Our Space</span>
+          </h2>
+        </div>
+        <div class="gallery-grid">
+          <div v-for="(img, i) in galleryImages" :key="i" class="gallery-item" :class="img.span">
+            <v-img :src="img.src" cover class="gallery-img" :height="img.h" />
+            <div class="gallery-hover">
+              <v-icon icon="mdi-magnify-plus-outline" size="28" color="white" />
+            </div>
+          </div>
+        </div>
+      </v-container>
+    </section>
+
+    <!-- ===== CTA BANNER ===== -->
+    <section class="cta-section">
+      <div class="cta-noise" />
+      <div class="cta-glow" />
+      <v-container class="text-center position-relative py-16">
+        <div class="cta-icon-ring mb-6">
+          <v-icon icon="mdi-office-building-outline" size="32" color="white" />
+        </div>
+        <h2 class="cta-title mb-4">Ready to Work from Navigatu?</h2>
+        <p class="cta-sub mb-10 mx-auto">
+          Join a growing community of founders, researchers, and innovators at Caraga's premier tech
+          hub.
+        </p>
+        <div class="d-flex justify-center flex-wrap" style="gap: 16px">
+          <button class="btn-cta-solid">
+            <v-icon size="16" class="mr-2">mdi-calendar-plus-outline</v-icon>
+            Book a Tour
+          </button>
+          <button class="btn-cta-ghost">
+            <v-icon size="16" class="mr-2">mdi-phone-outline</v-icon>
+            Contact Us
+          </button>
+        </div>
+      </v-container>
+    </section>
+  </NavigatuLayout>
 </template>
 
 <script setup>
+import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-
-const drawer = ref(false)
-const navSearchQuery = ref('')
-const router = useRouter()
-
-function runNavbarSearch() {
-  const query = navSearchQuery.value.trim()
-  if (!query) return
-  router.push({ path: '/news-navigatu', query: { q: query } })
-}
 
 const activeTestimonial = ref(0)
 const activeFacility = ref(null)
@@ -601,7 +429,7 @@ const facilities = ref([
     name: 'Open Innovation Lab',
     desc: 'A fully-equipped lab for prototyping and development, complete with workstations, tools, and ping-pong for breaks.',
     fullDesc:
-      'Where ideas meet execution. The Innovation Lab houses dedicated hardware prototyping stations, 3D printing access, IoT development kits, and dual-monitor workstations — everything a deep-tech startup needs to move from sketch to working prototype.',
+      'Where ideas meet execution. The Innovation Lab houses dedicated hardware prototyping stations, 3D printing access, IoT development kits, and dual-monitor workstations â€” everything a deep-tech startup needs to move from sketch to working prototype.',
     icon: 'mdi-test-tube',
     photo: '/images/facilities/FacilityC.jpg',
     capacity: '16 workstations',
@@ -617,10 +445,10 @@ const facilities = ref([
     ],
   },
   {
-    name: 'Inspiration Wall — iTecH',
-    desc: 'The iconic "Embark on a Voyage of Innovation" mural — the heart and soul of the Navigatú spirit.',
+    name: 'Inspiration Wall â€” iTecH',
+    desc: 'The iconic "Embark on a Voyage of Innovation" mural â€” the heart and soul of the NavigatÃº spirit.',
     fullDesc:
-      "More than a mural, the Inspiration Wall is iTecH's manifesto made visual. Founders, mentors, and visiting partners have left their mark here — post-its, signatures, milestones celebrated. It's a living artifact of every breakthrough made within these walls.",
+      "More than a mural, the Inspiration Wall is iTecH's manifesto made visual. Founders, mentors, and visiting partners have left their mark here â€” post-its, signatures, milestones celebrated. It's a living artifact of every breakthrough made within these walls.",
     icon: 'mdi-wall',
     photo: '/images/facilities/FacilityD.png',
     capacity: 'Shared space',
@@ -652,7 +480,7 @@ const perks = ref([
     title: 'Lightning-Fast WiFi',
     desc: 'Symmetric 1 Gbps fiber for seamless video calls, cloud uploads, and dev work.',
     detail:
-      'Our dedicated 1 Gbps symmetric fiber is shared across a managed network with QoS policies ensuring every seat gets consistent speeds — even during events.',
+      'Our dedicated 1 Gbps symmetric fiber is shared across a managed network with QoS policies ensuring every seat gets consistent speeds â€” even during events.',
     icon: 'mdi-wifi',
     color: '#2563eb',
     iconBg: 'rgba(37,99,235,0.15)',
@@ -660,9 +488,9 @@ const perks = ref([
   },
   {
     title: 'Flexible Hours',
-    desc: "24/7 access for members — work when you're most productive, day or night.",
+    desc: "24/7 access for members â€” work when you're most productive, day or night.",
     detail:
-      'Key-card access for members provides entry anytime. The facility is staffed during business hours (8AM–6PM) and accessible via smart lock after hours.',
+      'Key-card access for members provides entry anytime. The facility is staffed during business hours (8AMâ€“6PM) and accessible via smart lock after hours.',
     icon: 'mdi-clock-outline',
     color: '#059669',
     iconBg: 'rgba(5,150,105,0.15)',
@@ -682,7 +510,7 @@ const perks = ref([
     title: 'Meeting & Event Rooms',
     desc: 'Bookable private rooms for investor calls, team syncs, and workshop facilitation.',
     detail:
-      'Two private meeting rooms (8-person and 4-person) plus a 50-person event hall — all bookable through the member portal with AV equipment included.',
+      'Two private meeting rooms (8-person and 4-person) plus a 50-person event hall â€” all bookable through the member portal with AV equipment included.',
     icon: 'mdi-presentation',
     color: '#ea580c',
     iconBg: 'rgba(234,88,12,0.15)',
@@ -700,14 +528,14 @@ const testimonials = ref([
   },
   {
     quote:
-      "Being part of Navigatú has transformed how I see entrepreneurship. The mentorship, the community, and the facilities here are second to none in the region. iTecH isn't just a workspace — it's a launchpad.",
+      "Being part of NavigatÃº has transformed how I see entrepreneurship. The mentorship, the community, and the facilities here are second to none in the region. iTecH isn't just a workspace â€” it's a launchpad.",
     name: 'Marco',
     role: 'Program Manager, TBI',
     photo: '/images/testimonials/TestimonialB.png',
   },
   {
     quote:
-      'The energy inside iTecH is contagious. Every day I walk in, I am reminded of the mission we share — to cultivate the next generation of Filipino innovators. The space makes that mission feel real and achievable.',
+      'The energy inside iTecH is contagious. Every day I walk in, I am reminded of the mission we share â€” to cultivate the next generation of Filipino innovators. The space makes that mission feel real and achievable.',
     name: 'Carla',
     role: 'Innovation Lead, TBI',
     photo: '/images/testimonials/TestimonialC.jpg',
@@ -727,7 +555,7 @@ const galleryImages = ref([
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Sora:wght@300;400;500;600;700&display=swap');
 
-/* ── RESET / BASE ─────────────────────────────────────────────────── */
+/* â”€â”€ RESET / BASE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 * {
   box-sizing: border-box;
 }
@@ -735,7 +563,7 @@ const galleryImages = ref([
   font-family: 'Sora', sans-serif !important;
 }
 
-/* ── NAVBAR (unchanged) ────────────────────────────────────────────── */
+/* â”€â”€ NAVBAR (unchanged) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -802,7 +630,7 @@ const galleryImages = ref([
   width: 100%;
 }
 
-/* ── SHARED HELPERS ───────────────────────────────────────────────── */
+/* â”€â”€ SHARED HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .eyebrow-label {
   font-size: 0.68rem;
   font-weight: 700;
@@ -833,7 +661,7 @@ const galleryImages = ref([
   margin-right: auto;
 }
 
-/* ── BUTTON SYSTEM ─────────────────────────────────────────────────── */
+/* â”€â”€ BUTTON SYSTEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .btn-primary-hero {
   display: inline-flex;
   align-items: center;
@@ -874,7 +702,7 @@ const galleryImages = ref([
   transform: translateY(-2px);
 }
 
-/* ── HERO ──────────────────────────────────────────────────────────── */
+/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .hero-section {
   background: #f0f4ff;
   background-image:
@@ -1047,7 +875,7 @@ const galleryImages = ref([
   border-radius: 12px;
 }
 
-/* ── FACILITY SECTION ─────────────────────────────────────────────── */
+/* â”€â”€ FACILITY SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .facility-section {
   background: #f8faff;
 }
@@ -1284,7 +1112,7 @@ const galleryImages = ref([
   font-weight: 500;
 }
 
-/* ── PERKS SECTION ────────────────────────────────────────────────── */
+/* â”€â”€ PERKS SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .perks-section {
   background: #080d1c;
   position: relative;
@@ -1376,7 +1204,7 @@ const galleryImages = ref([
   letter-spacing: 0.3px;
 }
 
-/* ── TESTIMONIALS ─────────────────────────────────────────────────── */
+/* â”€â”€ TESTIMONIALS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .testimonials-section {
   background: #fff;
 }
@@ -1524,7 +1352,7 @@ const galleryImages = ref([
   border-radius: 4px;
 }
 
-/* ── GALLERY ──────────────────────────────────────────────────────── */
+/* â”€â”€ GALLERY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .gallery-section {
   background: #f8faff;
 }
@@ -1565,7 +1393,7 @@ const galleryImages = ref([
   opacity: 1;
 }
 
-/* ── CTA ──────────────────────────────────────────────────────────── */
+/* â”€â”€ CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cta-section {
   background: #080d1c;
   position: relative;
@@ -1649,7 +1477,7 @@ const galleryImages = ref([
   transform: translateY(-2px);
 }
 
-/* ── FOOTER (unchanged) ───────────────────────────────────────────── */
+/* â”€â”€ FOOTER (unchanged) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .footer-section {
   background: #06080f;
 }
@@ -1750,7 +1578,7 @@ const galleryImages = ref([
   cursor: pointer;
 }
 
-/* ── TRANSITIONS ──────────────────────────────────────────────────── */
+/* â”€â”€ TRANSITIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .fx-enter-active,
 .fx-leave-active {
   transition:
@@ -1777,7 +1605,7 @@ const galleryImages = ref([
   transform: translateX(-20px);
 }
 
-/* ── MOBILE ───────────────────────────────────────────────────────── */
+/* â”€â”€ MOBILE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 599px) {
   .hero-section {
     min-height: unset;

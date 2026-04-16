@@ -1,400 +1,247 @@
-<template>
-  <v-app>
-    <!-- ===================== NAVIGATION BAR ===================== -->
-    <v-app-bar
-      app
-      fixed
-      location="top"
-      flat
-      color="white"
-      border="b"
-      height="64"
-      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1200; transition: box-shadow 0.3s"
-    >
-      <v-container class="d-flex align-center pa-0" fluid>
-        <router-link
-          to="/navigatu"
-          class="d-flex align-center ml-4 ml-md-8"
-          style="text-decoration: none; color: inherit"
-        >
-          <v-img src="/images/NaviLogo.jpg" width="55" height="55" class="mr-3" cover />
-          <div>
-            <div class="nav-brand">NAVIGATÚ</div>
-            <div class="nav-sub">Technology Business Incubator</div>
-          </div>
-        </router-link>
-
-        <v-spacer />
-
-        <div class="d-none d-md-flex align-center mr-6" style="gap: 4px">
-          <v-btn variant="text" class="nav-link" to="/about-navigatu">About</v-btn>
-          <v-btn variant="text" class="nav-link" to="/services-navigatu">Services</v-btn>
-          <v-btn variant="text" class="nav-link" to="/coworking-navigatu">Coworking</v-btn>
-          <v-btn variant="text" class="nav-link" to="/news-navigatu">News</v-btn>
-          <v-btn variant="text" class="nav-link" to="/events-navigatu">Events</v-btn>
-          <div class="nav-search-hover">
-            <input
-              v-model="searchQuery"
-              class="nav-search-field"
-              type="text"
-              placeholder="Search..."
-              @keyup.enter="runNavbarSearch"
-            />
-            <v-btn
-              variant="text"
-              icon
-              size="small"
-              class="nav-search-icon-btn"
-              @click="runNavbarSearch"
-            >
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </div>
-        </div>
-
-        <v-app-bar-nav-icon class="d-flex d-md-none mr-2" @click="drawer = !drawer" />
-      </v-container>
-    </v-app-bar>
-
-    <!-- Mobile Drawer -->
-    <v-navigation-drawer v-model="drawer" temporary location="right" width="260">
-      <v-list nav class="pt-4">
-        <v-list-item title="About" prepend-icon="mdi-information-outline" to="/about-navigatu" />
-        <v-list-item
-          title="Services"
-          prepend-icon="mdi-briefcase-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/services-navigatu"
-        />
-        <v-list-item
-          title="Coworking"
-          prepend-icon="mdi-office-building-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/coworking-navigatu"
-        />
-        <v-list-item
-          title="News"
-          prepend-icon="mdi-newspaper-variant-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/news-navigatu"
-          active
-        />
-        <v-list-item
-          title="Events"
-          prepend-icon="mdi-calendar-outline"
-          rounded="lg"
-          class="mb-1"
-          to="/events-navigatu"
-        />
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-main>
-      <!-- ===== PAGE HERO ===== -->
-      <div class="news-hero">
-        <div class="hero-pattern" />
-        <v-container class="hero-inner py-16">
-          <v-row align="center">
-            <v-col cols="12" md="7">
-              <div class="hero-eyebrow mb-3">
-                <v-icon icon="mdi-newspaper-variant-outline" size="14" class="mr-1" />
-                Latest Updates
-              </div>
-              <h1 class="hero-title">NAVIGATÚ <span class="hero-title-italic">News</span></h1>
-              <p class="hero-sub mt-3">
-                Stay up to date with the latest announcements, breakthroughs, and stories from
-                Navigatú TBI and our growing startup ecosystem.
-              </p>
-            </v-col>
-            <v-col cols="12" md="5" class="d-flex justify-end d-none d-md-flex">
-              <div class="hero-deco-number">{{ news.length }}</div>
-              <div class="hero-deco-label">Stories<br />Published</div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== FILTER & SEARCH BAR ===== -->
-      <div class="filter-bar">
-        <v-container>
-          <v-row align="center" justify="space-between">
-            <!-- Category chips -->
-            <v-col cols="12" md="7" class="d-flex flex-wrap align-center" style="gap: 8px">
-              <button
-                v-for="cat in displayCategories"
-                :key="cat"
-                class="cat-chip"
-                :class="{ 'cat-chip--active': activeCategory === cat }"
-                @click="activeCategory = cat"
-              >
-                {{ cat }}
-              </button>
-            </v-col>
-
-            <!-- Search -->
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="searchQuery"
-                placeholder="Search news..."
-                prepend-inner-icon="mdi-magnify"
-                variant="outlined"
-                density="compact"
-                rounded="lg"
-                hide-details
-                bg-color="white"
-                class="search-field"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-
-      <!-- ===== FEATURED NEWS (first item) ===== -->
-      <v-container fluid class="featured-section pt-12 pb-6" v-if="featuredItem">
-        <v-container>
-          <p class="section-eyebrow mb-4">
-            <v-icon icon="mdi-star-four-points" size="13" class="mr-1" />
-            Featured Story
-          </p>
-          <v-card
-            class="featured-card"
-            rounded="xl"
-            elevation="0"
-            @click="openDetail(featuredItem)"
-          >
-            <v-row no-gutters align="stretch">
-              <!-- Image side -->
-              <v-col cols="12" md="6">
-                <div class="featured-img-wrap">
-                  <v-img :src="featuredItem.image" height="100%" cover class="featured-img" />
-                  <div class="featured-cat-badge">{{ featuredItem.category }}</div>
-                </div>
-              </v-col>
-
-              <!-- Text side -->
-              <v-col cols="12" md="6">
-                <div class="featured-content pa-8 pa-md-10">
-                  <div class="featured-meta mb-4">
-                    <v-icon icon="mdi-map-marker-outline" size="15" class="mr-1" />
-                    {{ featuredItem.location }}
-                    <span class="meta-sep">·</span>
-                    <v-icon icon="mdi-calendar-outline" size="15" class="mr-1" />
-                    {{ featuredItem.date }}
-                  </div>
-                  <h2 class="featured-title mb-4">{{ featuredItem.title }}</h2>
-                  <p class="featured-desc mb-6">{{ featuredItem.description }}</p>
-                  <div class="d-flex align-center justify-space-between">
-                    <div class="author-row">
-                      <v-icon
-                        icon="mdi-account-circle-outline"
-                        size="15"
-                        color="#607D8B"
-                        class="mr-1"
-                      />
-                      <span class="author-name">{{ featuredItem.author }}</span>
-                    </div>
-                    <v-btn
-                      variant="outlined"
-                      color="primary"
-                      rounded="lg"
-                      size="small"
-                      append-icon="mdi-arrow-right"
-                      class="read-btn"
-                      >Read More</v-btn
-                    >
-                  </div>
-                </div>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-container>
-      </v-container>
-
-      <!-- ===== NEWS GRID ===== -->
-      <v-container fluid class="news-grid-section py-8 pb-16">
-        <v-container>
-          <!-- Results count -->
-          <div class="d-flex align-center justify-space-between mb-6">
-            <p class="results-count">
-              Showing <strong>{{ filteredNews.length }}</strong>
-              {{ activeCategory !== 'All' ? `"${activeCategory}"` : '' }} stories
+﻿<template>
+  <NavigatuLayout>
+    <!-- ===== PAGE HERO ===== -->
+    <div class="news-hero">
+      <div class="hero-pattern" />
+      <v-container class="hero-inner py-16">
+        <v-row align="center">
+          <v-col cols="12" md="7">
+            <div class="hero-eyebrow mb-3">
+              <v-icon icon="mdi-newspaper-variant-outline" size="14" class="mr-1" />
+              Latest Updates
+            </div>
+            <h1 class="hero-title">NAVIGATÃš <span class="hero-title-italic">News</span></h1>
+            <p class="hero-sub mt-3">
+              Stay up to date with the latest announcements, breakthroughs, and stories from
+              NavigatÃº TBI and our growing startup ecosystem.
             </p>
-            <!-- Sort -->
-            <v-select
-              v-model="sortBy"
-              :items="['Newest First', 'Oldest First', 'A–Z']"
+          </v-col>
+          <v-col cols="12" md="5" class="d-flex justify-end d-none d-md-flex">
+            <div class="hero-deco-number">{{ news.length }}</div>
+            <div class="hero-deco-label">Stories<br />Published</div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <!-- ===== FILTER & SEARCH BAR ===== -->
+    <div class="filter-bar">
+      <v-container>
+        <v-row align="center" justify="space-between">
+          <!-- Category chips -->
+          <v-col cols="12" md="7" class="d-flex flex-wrap align-center" style="gap: 8px">
+            <button
+              v-for="cat in displayCategories"
+              :key="cat"
+              class="cat-chip"
+              :class="{ 'cat-chip--active': activeCategory === cat }"
+              @click="activeCategory = cat"
+            >
+              {{ cat }}
+            </button>
+          </v-col>
+
+          <!-- Search -->
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="searchQuery"
+              placeholder="Search news..."
+              prepend-inner-icon="mdi-magnify"
               variant="outlined"
               density="compact"
               rounded="lg"
               hide-details
-              style="max-width: 160px"
-              class="sort-select"
+              bg-color="white"
+              class="search-field"
             />
-          </div>
-
-          <!-- Empty state -->
-          <div v-if="filteredNews.length === 0" class="empty-state">
-            <v-icon icon="mdi-newspaper-remove-outline" size="64" color="#ccc" />
-            <p class="empty-title mt-4">No stories found</p>
-            <p class="empty-sub">Try a different category or search term.</p>
-            <v-btn
-              variant="outlined"
-              color="primary"
-              rounded="lg"
-              class="mt-4"
-              @click="resetFilters"
-            >
-              Clear Filters
-            </v-btn>
-          </div>
-
-          <!-- Cards grid -->
-          <v-row v-else>
-            <v-col
-              v-for="(item, index) in filteredNews"
-              :key="item.id"
-              cols="12"
-              sm="6"
-              md="4"
-              :class="`card-col-${index}`"
-            >
-              <v-card
-                class="news-card h-100"
-                rounded="xl"
-                elevation="0"
-                hover
-                @click="openDetail(item)"
-              >
-                <!-- Thumbnail -->
-                <div class="news-thumb-wrap">
-                  <v-img :src="item.image" height="200" cover class="news-thumb" />
-                  <!-- Category badge -->
-                  <div class="news-cat-badge" :style="{ background: categoryColor(item.category) }">
-                    {{ item.category }}
-                  </div>
-                </div>
-
-                <div class="news-body pa-5">
-                  <!-- Meta row -->
-                  <div class="news-meta-row mb-3">
-                    <span class="news-meta-item">
-                      <v-icon icon="mdi-map-marker-outline" size="13" class="mr-1" />
-                      {{ item.location }}
-                    </span>
-                    <span class="news-meta-sep">·</span>
-                    <span class="news-meta-item">
-                      <v-icon icon="mdi-calendar-outline" size="13" class="mr-1" />
-                      {{ item.date }}
-                    </span>
-                  </div>
-
-                  <!-- Title -->
-                  <h3 class="news-title mb-2">{{ item.title }}</h3>
-
-                  <!-- Description -->
-                  <p class="news-desc mb-4">{{ item.description }}</p>
-
-                  <!-- Footer row -->
-                  <div class="news-footer-row">
-                    <div class="author-row">
-                      <v-icon
-                        icon="mdi-account-circle-outline"
-                        size="14"
-                        color="#90A4AE"
-                        class="mr-1"
-                      />
-                      <span class="news-author">{{ item.author }}</span>
-                    </div>
-                    <v-btn
-                      variant="text"
-                      color="primary"
-                      size="x-small"
-                      append-icon="mdi-arrow-right"
-                      class="news-read-btn"
-                      >Read</v-btn
-                    >
-                  </div>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-
-          <!-- Load More -->
-          <div class="text-center mt-10" v-if="filteredNews.length > 0 && !allLoaded">
-            <v-btn
-              variant="outlined"
-              color="primary"
-              rounded="lg"
-              size="large"
-              :loading="loadingMore"
-              @click="loadMore"
-              prepend-icon="mdi-refresh"
-              >Load More Stories</v-btn
-            >
-          </div>
-        </v-container>
-      </v-container>
-    </v-main>
-
-    <!-- FOOTER -->
-    <footer class="footer-section">
-      <v-container class="py-12">
-        <v-row>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-brand mb-1">NAVIGATÚ</div>
-            <p class="footer-tag mb-4">Technology Business Incubator</p>
-            <p class="footer-desc">
-              Empowering the next generation of Filipino tech founders through mentorship,
-              innovation, and community.
-            </p>
-            <div class="d-flex" style="gap: 12px">
-              <button class="social-btn"><v-icon size="15">mdi-facebook</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-linkedin</v-icon></button>
-              <button class="social-btn"><v-icon size="15">mdi-twitter</v-icon></button>
-            </div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Programs</div>
-            <div class="footer-link mb-3">Incubation</div>
-            <div class="footer-link mb-3">Mentorship</div>
-            <div class="footer-link mb-3">Funding Access</div>
-          </v-col>
-          <v-col cols="6" md="2" class="mb-8">
-            <div class="footer-col-title mb-4">Company</div>
-            <div class="footer-link mb-3">About</div>
-            <div class="footer-link mb-3">Services</div>
-            <div class="footer-link mb-3">Events</div>
-          </v-col>
-          <v-col cols="12" md="4" class="mb-8">
-            <div class="footer-col-title mb-4">Newsletter</div>
-            <p class="footer-desc mb-4">Stay updated on events, funding, and startup news.</p>
-            <div class="newsletter">
-              <input class="nl-input" placeholder="your@email.com" />
-              <button class="nl-btn">
-                <v-icon size="17">mdi-send</v-icon>
-              </button>
-            </div>
           </v-col>
         </v-row>
-        <div class="footer-hr" />
-        <div class="d-flex flex-wrap justify-space-between align-center pt-6" style="gap: 8px">
-          <p class="footer-copy">© 2024 Navigatú TBI. All Rights Reserved.</p>
-          <p class="footer-copy">Empowering startups. Building futures.</p>
+      </v-container>
+    </div>
+
+    <!-- ===== FEATURED NEWS (first item) ===== -->
+    <v-container fluid class="featured-section pt-12 pb-6" v-if="featuredItem">
+      <v-container>
+        <p class="section-eyebrow mb-4">
+          <v-icon icon="mdi-star-four-points" size="13" class="mr-1" />
+          Featured Story
+        </p>
+        <v-card class="featured-card" rounded="xl" elevation="0" @click="openDetail(featuredItem)">
+          <v-row no-gutters align="stretch">
+            <!-- Image side -->
+            <v-col cols="12" md="6">
+              <div class="featured-img-wrap">
+                <v-img :src="featuredItem.image" height="100%" cover class="featured-img" />
+                <div class="featured-cat-badge">{{ featuredItem.category }}</div>
+              </div>
+            </v-col>
+
+            <!-- Text side -->
+            <v-col cols="12" md="6">
+              <div class="featured-content pa-8 pa-md-10">
+                <div class="featured-meta mb-4">
+                  <v-icon icon="mdi-map-marker-outline" size="15" class="mr-1" />
+                  {{ featuredItem.location }}
+                  <span class="meta-sep">Â·</span>
+                  <v-icon icon="mdi-calendar-outline" size="15" class="mr-1" />
+                  {{ featuredItem.date }}
+                </div>
+                <h2 class="featured-title mb-4">{{ featuredItem.title }}</h2>
+                <p class="featured-desc mb-6">{{ featuredItem.description }}</p>
+                <div class="d-flex align-center justify-space-between">
+                  <div class="author-row">
+                    <v-icon
+                      icon="mdi-account-circle-outline"
+                      size="15"
+                      color="#607D8B"
+                      class="mr-1"
+                    />
+                    <span class="author-name">{{ featuredItem.author }}</span>
+                  </div>
+                  <v-btn
+                    variant="outlined"
+                    color="primary"
+                    rounded="lg"
+                    size="small"
+                    append-icon="mdi-arrow-right"
+                    class="read-btn"
+                    >Read More</v-btn
+                  >
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-container>
+    </v-container>
+
+    <!-- ===== NEWS GRID ===== -->
+    <v-container fluid class="news-grid-section py-8 pb-16">
+      <v-container>
+        <!-- Results count -->
+        <div class="d-flex align-center justify-space-between mb-6">
+          <p class="results-count">
+            Showing <strong>{{ filteredNews.length }}</strong>
+            {{ activeCategory !== 'All' ? `"${activeCategory}"` : '' }} stories
+          </p>
+          <!-- Sort -->
+          <v-select
+            v-model="sortBy"
+            :items="['Newest First', 'Oldest First', 'Aâ€“Z']"
+            variant="outlined"
+            density="compact"
+            rounded="lg"
+            hide-details
+            style="max-width: 160px"
+            class="sort-select"
+          />
+        </div>
+
+        <!-- Empty state -->
+        <div v-if="filteredNews.length === 0" class="empty-state">
+          <v-icon icon="mdi-newspaper-remove-outline" size="64" color="#ccc" />
+          <p class="empty-title mt-4">No stories found</p>
+          <p class="empty-sub">Try a different category or search term.</p>
+          <v-btn variant="outlined" color="primary" rounded="lg" class="mt-4" @click="resetFilters">
+            Clear Filters
+          </v-btn>
+        </div>
+
+        <!-- Cards grid -->
+        <v-row v-else>
+          <v-col
+            v-for="(item, index) in filteredNews"
+            :key="item.id"
+            cols="12"
+            sm="6"
+            md="4"
+            :class="`card-col-${index}`"
+          >
+            <v-card
+              class="news-card h-100"
+              rounded="xl"
+              elevation="0"
+              hover
+              @click="openDetail(item)"
+            >
+              <!-- Thumbnail -->
+              <div class="news-thumb-wrap">
+                <v-img :src="item.image" height="200" cover class="news-thumb" />
+                <!-- Category badge -->
+                <div class="news-cat-badge" :style="{ background: categoryColor(item.category) }">
+                  {{ item.category }}
+                </div>
+              </div>
+
+              <div class="news-body pa-5">
+                <!-- Meta row -->
+                <div class="news-meta-row mb-3">
+                  <span class="news-meta-item">
+                    <v-icon icon="mdi-map-marker-outline" size="13" class="mr-1" />
+                    {{ item.location }}
+                  </span>
+                  <span class="news-meta-sep">Â·</span>
+                  <span class="news-meta-item">
+                    <v-icon icon="mdi-calendar-outline" size="13" class="mr-1" />
+                    {{ item.date }}
+                  </span>
+                </div>
+
+                <!-- Title -->
+                <h3 class="news-title mb-2">{{ item.title }}</h3>
+
+                <!-- Description -->
+                <p class="news-desc mb-4">{{ item.description }}</p>
+
+                <!-- Footer row -->
+                <div class="news-footer-row">
+                  <div class="author-row">
+                    <v-icon
+                      icon="mdi-account-circle-outline"
+                      size="14"
+                      color="#90A4AE"
+                      class="mr-1"
+                    />
+                    <span class="news-author">{{ item.author }}</span>
+                  </div>
+                  <v-btn
+                    variant="text"
+                    color="primary"
+                    size="x-small"
+                    append-icon="mdi-arrow-right"
+                    class="news-read-btn"
+                    >Read</v-btn
+                  >
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- Load More -->
+        <div class="text-center mt-10" v-if="filteredNews.length > 0 && !allLoaded">
+          <v-btn
+            variant="outlined"
+            color="primary"
+            rounded="lg"
+            size="large"
+            :loading="loadingMore"
+            @click="loadMore"
+            prepend-icon="mdi-refresh"
+            >Load More Stories</v-btn
+          >
         </div>
       </v-container>
-    </footer>
-  </v-app>
+    </v-container>
+  </NavigatuLayout>
 </template>
 
 <script setup>
+import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 
-const drawer = ref(false)
 const searchQuery = ref('')
 const activeCategory = ref('All')
 const sortBy = ref('Newest First')
@@ -405,11 +252,6 @@ const newsError = ref('')
 const news = ref([])
 const route = useRoute()
 const router = useRouter()
-
-function runNavbarSearch() {
-  const query = searchQuery.value.trim()
-  router.push({ path: '/news-navigatu', query: query ? { q: query } : {} })
-}
 
 watch(
   () => route.query.q,
@@ -457,7 +299,7 @@ function normalizeNewsItem(item) {
     category: item.category || 'Other',
     date: item.date || '',
     location: item.location || '',
-    author: item.author || 'Navigatú',
+    author: item.author || 'NavigatÃº',
   }
 }
 
@@ -504,7 +346,7 @@ const filteredNews = computed(() => {
   }
 
   if (sortBy.value === 'Oldest First') list = [...list].reverse()
-  if (sortBy.value === 'A–Z') list = [...list].sort((a, b) => a.title.localeCompare(b.title))
+  if (sortBy.value === 'Aâ€“Z') list = [...list].sort((a, b) => a.title.localeCompare(b.title))
   return list
 })
 
@@ -534,7 +376,7 @@ function loadMore() {
   font-family: 'DM Sans', sans-serif !important;
 }
 
-/* ── Navbar ──────────────────────────────────────────────────────────────────── */
+/* â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nav-brand {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
@@ -603,7 +445,7 @@ function loadMore() {
   transform: translateY(-1px);
 }
 
-/* ── HERO ────────────────────────────────────────────────────────────────────── */
+/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .news-hero {
   background: #0d47a1;
   position: relative;
@@ -677,7 +519,7 @@ function loadMore() {
   line-height: 1.6;
 }
 
-/* ── FILTER BAR ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ FILTER BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .filter-bar {
   background: #f5f7fb;
   border-bottom: 1px solid #e8eaf0;
@@ -710,7 +552,7 @@ function loadMore() {
   font-size: 0.85rem;
 }
 
-/* ── SECTION SHARED ──────────────────────────────────────────────────────────── */
+/* â”€â”€ SECTION SHARED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .section-eyebrow {
   font-size: 0.7rem;
   font-weight: 700;
@@ -721,7 +563,7 @@ function loadMore() {
   align-items: center;
 }
 
-/* ── FEATURED CARD ───────────────────────────────────────────────────────────── */
+/* â”€â”€ FEATURED CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .featured-section {
   background: #ffffff;
 }
@@ -804,7 +646,7 @@ function loadMore() {
   letter-spacing: 0 !important;
 }
 
-/* ── NEWS GRID ───────────────────────────────────────────────────────────────── */
+/* â”€â”€ NEWS GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .news-grid-section {
   background: #f5f7fb;
 }
@@ -906,7 +748,7 @@ function loadMore() {
   letter-spacing: 0 !important;
 }
 
-/* ── EMPTY STATE ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ EMPTY STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .empty-state {
   text-align: center;
   padding: 60px 0;
@@ -922,7 +764,7 @@ function loadMore() {
   color: #ccc;
 }
 
-/* ── DETAIL DIALOG ───────────────────────────────────────────────────────────── */
+/* â”€â”€ DETAIL DIALOG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .detail-dialog {
   overflow: hidden;
 }
@@ -970,7 +812,7 @@ function loadMore() {
   line-height: 1.9;
 }
 
-/* ── FOOTER ── */
+/* â”€â”€ FOOTER â”€â”€ */
 .footer-section {
   background: #06080f;
 }
