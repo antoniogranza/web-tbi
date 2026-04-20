@@ -324,6 +324,7 @@ import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
+import { useFaqs } from '@/composables/useFaqs'
 
 const router = useRouter()
 
@@ -480,28 +481,9 @@ async function fetchIncubatees() {
 onMounted(fetchIncubatees)
 
 // â”€â”€ FAQs â”€â”€
-const faqs = ref([
-  {
-    q: 'How long is the incubation program?',
-    a: 'The core program runs for 6 months, with optional alumni support and mentorship continuing beyond graduation.',
-  },
-  {
-    q: 'Is there an equity or fee requirement?',
-    a: 'NavigatÃº TBI does not take equity. Some programs may have a modest participation fee depending on services availed.',
-  },
-  {
-    q: 'Do I need a registered business to apply?',
-    a: 'No â€” you can apply as an individual or informal team. We assist with business registration as part of the program.',
-  },
-  {
-    q: 'Can teams outside Butuan City apply?',
-    a: 'Yes! We accept applications across Caraga and beyond through our hybrid program.',
-  },
-  {
-    q: 'What happens after the program ends?',
-    a: 'Graduates join the NavigatÃº Alumni Network with continued mentorship and investor introductions.',
-  },
-])
+const { faqs, loadFaqs } = useFaqs()
+
+onMounted(loadFaqs)
 </script>
 
 <style scoped>

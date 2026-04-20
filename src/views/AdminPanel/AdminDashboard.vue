@@ -220,7 +220,7 @@
           </div>
 
           <v-row>
-            <v-col v-for="cat in categories" :key="cat.id" cols="12" md="4">
+            <v-col v-for="cat in dashboardCategories" :key="cat.id" cols="12" md="4">
               <v-card
                 class="position-relative"
                 :style="categoryCardStyle(cat)"
@@ -318,7 +318,7 @@
                 </div>
                 <div class="d-flex flex-wrap mt-3" style="gap: 6px">
                   <v-btn
-                    v-for="cat in categories"
+                    v-for="cat in dashboardCategories"
                     :key="cat.id"
                     size="x-small"
                     variant="tonal"
@@ -2317,6 +2317,59 @@
               </v-row>
             </template>
 
+            <!-- FAQS FIELDS -->
+            <template v-else-if="activeSection === 'faqs'">
+              <v-row>
+                <v-col cols="12">
+                  <div class="form-label">Question *</div>
+                  <v-text-field
+                    v-model="form.question"
+                    placeholder="Enter the FAQ question"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Answer *</div>
+                  <v-textarea
+                    v-model="form.answer"
+                    placeholder="Enter the FAQ answer"
+                    variant="outlined"
+                    rounded="lg"
+                    rows="4"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Order</div>
+                  <v-text-field
+                    v-model="form.sort_order"
+                    type="number"
+                    placeholder="1"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['active', 'draft']"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+              </v-row>
+            </template>
+
             <v-divider class="my-5" />
             <div class="d-flex justify-end" style="gap: 10px">
               <v-btn variant="outlined" rounded="lg" @click="formDialog = false">Cancel</v-btn>
@@ -2421,8 +2474,10 @@
           <v-icon icon="mdi-trash-can-outline" size="40" color="#C62828" />
           <h3 class="dialog-title mt-3">Delete {{ activeSingular }}?</h3>
           <p class="dialog-sub mt-2">
-            <strong>{{ deleteTarget?.name || deleteTarget?.title }}</strong> will be permanently
-            removed.
+            <strong>{{
+              deleteTarget?.name || deleteTarget?.title || deleteTarget?.question
+            }}</strong>
+            will be permanently removed.
           </p>
         </div>
         <v-row dense>
@@ -2492,18 +2547,21 @@ const incubateesTable = useAdminTable('incubatees')
 const newsTable = useAdminTable('news')
 const eventsTable = useAdminTable('events')
 const mentorsTable = useAdminTable('mentors')
+const faqTable = useAdminTable('faqs')
 
 const tableMap = {
   incubatees: incubateesTable,
   news: newsTable,
   events: eventsTable,
   mentors: mentorsTable,
+  faqs: faqTable,
 }
 const activeTable = computed(() => tableMap[activeSection.value] || incubateesTable)
 
 const {
   tbiOptions,
   categories,
+  dashboardCategories,
   activeCategoryName,
   activeSingular,
   activeCategoryIcon,
@@ -2730,6 +2788,11 @@ const blankForm = () => ({
   photo: '',
   mentorPhotoPreview: null,
   expertise_raw: '',
+
+  // faqs
+  question: '',
+  answer: '',
+  sort_order: 1,
 })
 
 const form = reactive(blankForm())
@@ -2887,6 +2950,7 @@ function openAddDialog() {
   if (tbiFilter.value) form.tbi_id = tbiFilter.value
   if (activeSection.value === 'events') form.status = 'upcoming'
   if (activeSection.value === 'mentors') form.status = 'active'
+  if (activeSection.value === 'faqs') form.sort_order = activeTable.value.records.value.length + 1
   formDialog.value = true
 }
 
@@ -2938,6 +3002,9 @@ function openEditDialog(item) {
     team: (item.team || []).map((m) => ({ ...m, photoPreview: null })),
     testimonials: (item.testimonials || []).map((t) => ({ ...t, photoPreview: null })),
     logoPreview: null,
+    question: item.question || '',
+    answer: item.answer || '',
+    sort_order: item.sort_order || 1,
   })
 
   newsDatePicker.value = activeSection.value === 'news' ? normalizeToIsoDate(form.date) : null
@@ -2977,6 +3044,15 @@ function buildPayload() {
       role: form.role,
       photo: form.photo,
       expertise,
+      status: form.status || 'active',
+    }
+  }
+
+  if (activeSection.value === 'faqs') {
+    return {
+      question: form.question,
+      answer: form.answer,
+      sort_order: Number(form.sort_order) || 1,
       status: form.status || 'active',
     }
   }
@@ -3105,6 +3181,21 @@ async function handleSubmit() {
   if (!valid) return
   formError.value = ''
 
+  if (activeSection.value === 'faqs') {
+    const payload = buildPayload()
+    const table = activeTable.value
+    const result = isEditing.value
+      ? await table.updateRecord(editId.value, payload)
+      : await table.insertRecord(payload)
+
+    if (result.success) {
+      formDialog.value = false
+    } else {
+      formError.value = result.error?.message || 'Failed to save. Please try again.'
+    }
+    return
+  }
+
   publishError.value = ''
   publishDestination.value =
     activeSection.value === 'mentors' ? form.tbi_id || '' : form.tbi_id || tbiFilter.value || ''
@@ -3168,6 +3259,7 @@ onMounted(async () => {
     newsTable.fetchAll(),
     eventsTable.fetchAll(),
     mentorsTable.fetchAll(),
+    faqTable.fetchAll(),
   ])
 })
 </script>

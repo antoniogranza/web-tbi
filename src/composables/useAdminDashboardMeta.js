@@ -68,7 +68,19 @@ export function useAdminDashboardMeta({
       btnColor: 'secondary',
       desc: 'Add, edit, archive, and delete mentor profiles for each TBI portal.',
     },
+    {
+      id: 'faqs',
+      name: 'FAQS',
+      singular: 'FAQ',
+      icon: 'mdi-frequently-asked-questions',
+      color: '#FF8F00',
+      btnColor: 'warning',
+      desc: 'Create and manage frequently asked questions for the Navigatu pages.',
+      showOnDashboard: false,
+    },
   ]
+
+  const dashboardCategories = computed(() => categories.filter((c) => c.showOnDashboard !== false))
 
   const activeCategory = computed(() => categories.find((c) => c.id === activeSection.value))
   const activeCategoryName = computed(() => activeCategory.value?.name || 'Dashboard')
@@ -127,6 +139,16 @@ export function useAdminDashboardMeta({
   )
 
   const activeHeaders = computed(() => {
+    if (activeSection.value === 'faqs') {
+      return [
+        { title: 'Question', key: 'question', sortable: true },
+        { title: 'Answer', key: 'answer', sortable: false },
+        { title: 'Order', key: 'sort_order', sortable: true },
+        { title: 'Status', key: 'status', sortable: true },
+        { title: 'Actions', key: 'actions', sortable: false },
+      ]
+    }
+
     if (activeSection.value === 'incubatees') {
       return [
         { title: '', key: 'thumb', sortable: false, width: '52px' },
@@ -192,6 +214,7 @@ export function useAdminDashboardMeta({
   return {
     tbiOptions,
     categories,
+    dashboardCategories,
     activeCategory,
     activeCategoryName,
     activeSingular,

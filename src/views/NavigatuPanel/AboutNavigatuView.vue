@@ -76,7 +76,7 @@
           </v-col>
           <v-col cols="12" md="7" class="pl-md-14">
             <div class="eyebrow">About NavigatÃº</div>
-            <h2 class="sec-title">What is <em>NavigatÃº TBI?</em></h2>
+            <h2 class="sec-title">What is <em>Navigatu TBI?</em></h2>
             <p class="sec-body mt-5 mb-5">
               <strong>Navigatu Technology Business Incubator (TBI)</strong> is a DOST
               PCIEERD-supported startup incubator based at Butuan City, Agusan del Norte, Caraga.
@@ -328,7 +328,7 @@
       <v-container>
         <div class="text-center mb-10">
           <div class="eyebrow">Our Portfolio</div>
-          <h2 class="sec-title">NAVIGATÃš <em>Incubatees</em></h2>
+          <h2 class="sec-title">NAVIGATU <em>Incubatees</em></h2>
           <p class="sec-sub">Startups we have supported across 7 years of operations</p>
         </div>
 
@@ -481,6 +481,7 @@ import NavigatuLayout from '@/components/layout/NavigatuLayout.vue'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
+import { useFaqs } from '@/composables/useFaqs'
 
 const router = useRouter()
 
@@ -511,7 +512,7 @@ const keyFacts = ref([
   },
   {
     label: 'Facility Size',
-    val: '200 mÂ²',
+    val: '200 mq²',
     icon: 'mdi-office-building-outline',
     bg: '#ede9fe',
     color: '#7c3aed',
@@ -848,36 +849,9 @@ async function fetchIncubatees() {
 onMounted(fetchIncubatees)
 
 //  FAQs
-const faqs = ref([
-  {
-    q: 'What is Navigatu TBI?',
-    a: 'Navigatu Technology Business Incubator is a DOST PCIEERD-supported startup incubator at Caraga State University in Butuan City, established in 2017 to nurture technology-based ventures in Southern Philippines.',
-  },
-  {
-    q: 'Who can apply to the incubation program?',
-    a: 'Students, faculty researchers, early-stage startups, and technology entrepreneurs from any discipline can apply, provided their venture has a tech-driven component and a clear market opportunity.',
-  },
-  {
-    q: 'How long is the incubation program?',
-    a: 'The core program runs for 6 months, with optional alumni support and continued mentorship available after graduation for qualifying ventures.',
-  },
-  {
-    q: 'Is there an equity or fee requirement?',
-    a: 'Navigatu TBI does not take equity from incubatees. Some programs may have a modest participation fee depending on the specific services availed.',
-  },
-  {
-    q: 'Do I need a registered business to apply?',
-    a: 'No — you can apply as an individual or informal team. We assist with business registration and legal structuring as part of the program itself.',
-  },
-  {
-    q: 'Can teams outside Butuan City apply?',
-    a: 'Yes. We accept applications from across the Caraga region and beyond through our hybrid (online + in-person) program format.',
-  },
-  {
-    q: 'What happens after the program ends?',
-    a: 'Graduates join the Navigatu Alumni Network with continued access to mentorship, investor introductions, and co-working facilities at discounted rates.',
-  },
-])
+const { faqs, loadFaqs } = useFaqs()
+
+onMounted(loadFaqs)
 </script>
 
 <style scoped>
