@@ -162,55 +162,123 @@
           <!-- Stats -->
           <v-row class="mb-8">
             <v-col v-for="stat in dashStats" :key="stat.label" cols="6" md="3">
-              <div class="stat-card" @click="stat.section && setSection(stat.section)">
-                <div class="stat-icon-wrap" :style="{ background: stat.iconBg }">
+              <v-card
+                class="pa-5 d-flex flex-column align-start"
+                rounded="xl"
+                elevation="0"
+                border
+                hover
+                style="cursor: pointer"
+                @click="stat.section && setSection(stat.section)"
+              >
+                <div
+                  class="d-flex align-center justify-center mb-3"
+                  :style="{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '11px',
+                    background: stat.iconBg,
+                  }"
+                >
                   <v-icon :icon="stat.icon" :color="stat.color" size="22" />
                 </div>
-                <div class="stat-value">{{ stat.value }}</div>
-                <div class="stat-label">{{ stat.label }}</div>
-              </div>
+                <div
+                  class="font-weight-bold"
+                  style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #1a1a1a"
+                >
+                  {{ stat.value }}
+                </div>
+                <div class="font-weight-medium" style="font-size: 0.72rem; color: #888">
+                  {{ stat.label }}
+                </div>
+              </v-card>
             </v-col>
           </v-row>
 
           <!-- Category cards -->
-          <div class="section-eyebrow mb-5">
+          <div
+            class="d-flex align-center text-uppercase font-weight-bold mb-5"
+            style="font-size: 0.7rem; color: #1565c0; letter-spacing: 2px"
+          >
             <v-icon icon="mdi-lightning-bolt" size="13" class="mr-1" />
             Content Categories — Click to Manage
           </div>
 
           <v-row>
             <v-col v-for="cat in categories" :key="cat.id" cols="12" md="4">
-              <div class="cat-card" :class="`cat-card--${cat.id}`" @click="setSection(cat.id)">
+              <v-card
+                class="cat-card"
+                :style="categoryCardStyle(cat)"
+                rounded="xl"
+                elevation="0"
+                @click="setSection(cat.id)"
+              >
                 <div class="cat-card-pattern" />
-                <div class="cat-card-body">
-                  <div class="cat-card-icon-wrap mb-5">
+                <div class="pa-7" style="position: relative; z-index: 1">
+                  <div
+                    class="d-flex align-center justify-center mb-5"
+                    :style="{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '16px',
+                      ...categoryIconStyle(cat),
+                    }"
+                  >
                     <v-icon :icon="cat.icon" size="32" color="white" />
                   </div>
-                  <div class="cat-card-eyebrow">Content Type</div>
-                  <h3 class="cat-card-name">{{ cat.name }}</h3>
-                  <p class="cat-card-desc">{{ cat.desc }}</p>
-                  <div class="cat-chips mt-5">
+                  <div
+                    class="text-uppercase font-weight-bold"
+                    style="font-size: 0.62rem; color: rgba(255, 255, 255, 0.5); letter-spacing: 2px"
+                  >
+                    Content Type
+                  </div>
+                  <h3
+                    class="font-weight-bold"
+                    style="
+                      font-family: 'Playfair Display', serif;
+                      font-size: 1.6rem;
+                      color: #fff;
+                      margin: 4px 0 10px;
+                      line-height: 1.1;
+                    "
+                  >
+                    {{ cat.name }}
+                  </h3>
+                  <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.82); line-height: 1.7">
+                    {{ cat.desc }}
+                  </p>
+                  <div class="mt-5">
                     <v-chip
                       v-for="tbi in tbiOptions"
                       :key="tbi.id"
                       size="x-small"
                       variant="tonal"
                       color="white"
-                      class="cat-chip mr-1 mb-1"
+                      class="mr-1 mb-1"
+                      style="background: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.96)"
                       >{{ tbi.shortName }}</v-chip
                     >
                   </div>
-                  <div class="cat-card-cta mt-5">
+                  <v-chip
+                    class="mt-5"
+                    size="small"
+                    variant="outlined"
+                    color="white"
+                    style="font-weight: 700"
+                  >
                     Manage {{ cat.name }}
                     <v-icon icon="mdi-arrow-right" size="14" class="ml-1" />
-                  </div>
+                  </v-chip>
                 </div>
-              </div>
+              </v-card>
             </v-col>
           </v-row>
 
           <!-- TBI glance -->
-          <div class="section-eyebrow mb-4 mt-10">
+          <div
+            class="d-flex align-center text-uppercase font-weight-bold mb-4 mt-10"
+            style="font-size: 0.7rem; color: #1565c0; letter-spacing: 2px"
+          >
             <v-icon icon="mdi-office-building-outline" size="13" class="mr-1" />
             TBI Portals at a Glance
           </div>
@@ -2428,6 +2496,49 @@ const {
 const { searchQuery, tbiFilter, statusFilter, activeStatusItems, filteredRecords } =
   useAdminDashboardFilters({ activeSection, activeTable })
 
+function hexToRgb(hex) {
+  const raw = (hex || '').replace('#', '')
+  if (raw.length !== 3 && raw.length !== 6) return null
+
+  const normalized =
+    raw.length === 3
+      ? raw
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : raw
+
+  const intValue = Number.parseInt(normalized, 16)
+  if (Number.isNaN(intValue)) return null
+
+  return {
+    r: (intValue >> 16) & 255,
+    g: (intValue >> 8) & 255,
+    b: intValue & 255,
+  }
+}
+
+function rgbaFromHex(hex, alpha) {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return `rgba(255, 255, 255, ${alpha})`
+  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`
+}
+
+function categoryCardStyle(cat) {
+  const accent = cat?.color || '#1565C0'
+  return {
+    '--cat-accent': accent,
+  }
+}
+
+function categoryIconStyle(cat) {
+  const accent = cat?.color || '#1565C0'
+  return {
+    background: rgbaFromHex(accent, 0.28),
+    borderColor: rgbaFromHex(accent, 0.55),
+  }
+}
+
 const navigatuSections = ['incubatees', 'news', 'events', 'mentors']
 const isNavigatuHeadingActive = computed(() => navigatuSections.includes(activeSection.value))
 
@@ -3210,62 +3321,10 @@ onMounted(async () => {
   padding-top: 6px;
 }
 
-/* ── Stat cards ─────────────────────────────────────────────────────────────── */
-.stat-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid #edf0f7;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-}
-.stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.1);
-}
-.stat-icon-wrap {
-  width: 42px;
-  height: 42px;
-  border-radius: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-.stat-value {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1;
-}
-.stat-label {
-  font-size: 0.72rem;
-  color: #888;
-  font-weight: 600;
-  margin-top: 4px;
-}
-
-/* ── Section eyebrow ────────────────────────────────────────────────────────── */
-.section-eyebrow {
-  display: flex;
-  align-items: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #1565c0;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
 /* ── Category cards ─────────────────────────────────────────────────────────── */
 .cat-card {
-  border-radius: 20px;
-  overflow: hidden;
+  background: linear-gradient(145deg, #1d3553, #172a42);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   position: relative;
   cursor: pointer;
   min-height: 300px;
@@ -3276,18 +3335,6 @@ onMounted(async () => {
 .cat-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18) !important;
-}
-.cat-card--incubatees {
-  background: linear-gradient(145deg, #1565c0, #0d47a1);
-}
-.cat-card--news {
-  background: linear-gradient(145deg, #2e7d32, #1b5e20);
-}
-.cat-card--events {
-  background: linear-gradient(145deg, #e65100, #bf360c);
-}
-.cat-card--mentors {
-  background: linear-gradient(145deg, #6a1b9a, #4a148c);
 }
 .cat-card-pattern {
   position: absolute;
@@ -3301,63 +3348,6 @@ onMounted(async () => {
     auto,
     32px 32px,
     32px 32px;
-}
-.cat-card-body {
-  position: relative;
-  z-index: 1;
-  padding: 28px;
-}
-.cat-card-icon-wrap {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.cat-card-eyebrow {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-.cat-card-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #fff;
-  margin: 4px 0 10px;
-  line-height: 1.1;
-}
-.cat-card-desc {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.82);
-  line-height: 1.7;
-  margin: 0;
-}
-.cat-chip {
-  background: rgba(255, 255, 255, 0.2) !important;
-  color: rgba(255, 255, 255, 0.96) !important;
-  font-size: 0.62rem !important;
-  font-weight: 600 !important;
-}
-.cat-card-cta {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 6px 16px;
-  transition: background 0.18s ease;
-}
-.cat-card:hover .cat-card-cta {
-  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ── TBI Glance cards ───────────────────────────────────────────────────────── */
