@@ -78,6 +78,16 @@ export function useAdminDashboardMeta({
       desc: 'Create and manage frequently asked questions for the Navigatu pages.',
       showOnDashboard: false,
     },
+    {
+      id: 'milestones',
+      name: 'Milestones',
+      singular: 'Milestone',
+      icon: 'mdi-trophy-outline',
+      color: '#0F766E',
+      btnColor: 'teal',
+      desc: 'Manage Navigatu achievement milestone cards shown on the About page.',
+      showOnDashboard: false,
+    },
   ]
 
   const dashboardCategories = computed(() => categories.filter((c) => c.showOnDashboard !== false))
@@ -139,6 +149,17 @@ export function useAdminDashboardMeta({
   )
 
   const activeHeaders = computed(() => {
+    if (activeSection.value === 'milestones') {
+      return [
+        { title: 'Label', key: 'label', sortable: true },
+        { title: 'Value', key: 'value', sortable: false },
+        { title: 'Description', key: 'desc', sortable: false },
+        { title: 'Order', key: 'sort_order', sortable: true },
+        { title: 'Status', key: 'status', sortable: true },
+        { title: 'Actions', key: 'actions', sortable: false },
+      ]
+    }
+
     if (activeSection.value === 'faqs') {
       return [
         { title: 'Question', key: 'question', sortable: true },

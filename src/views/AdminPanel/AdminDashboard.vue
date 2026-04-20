@@ -83,7 +83,7 @@
 
         <v-list-item
           prepend-icon="mdi-sprout-outline"
-          title="TARA ATBI"
+          title="Tara ATBI"
           class="nav-item nav-item--placeholder"
           rounded="lg"
           disabled
@@ -2370,6 +2370,111 @@
               </v-row>
             </template>
 
+            <!-- MILESTONES FIELDS -->
+            <template v-else-if="activeSection === 'milestones'">
+              <v-row>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Label *</div>
+                  <v-text-field
+                    v-model="form.label"
+                    placeholder="e.g. Funding Received"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Value *</div>
+                  <v-text-field
+                    v-model="form.value"
+                    placeholder="e.g. 10.4M"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <div class="form-label">Description *</div>
+                  <v-textarea
+                    v-model="form.desc"
+                    placeholder="Short milestone description"
+                    variant="outlined"
+                    rounded="lg"
+                    rows="3"
+                    :rules="[(r) => !!r || 'Required']"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Icon (MDI)</div>
+                  <v-select
+                    v-model="form.icon"
+                    :items="milestoneIconOptions"
+                    item-title="title"
+                    item-value="value"
+                    placeholder="Select icon"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  >
+                    <template #selection="{ item }">
+                      <div class="d-flex align-center" style="gap: 8px">
+                        <v-icon :icon="item.raw.value" size="18" />
+                        <span>{{ item.raw.title }}</span>
+                      </div>
+                    </template>
+                    <template #item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :prepend-icon="item.raw.value"
+                        :title="item.raw.title"
+                        :subtitle="item.raw.value"
+                      />
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Color</div>
+                  <v-text-field
+                    v-model="form.color"
+                    placeholder="#1565C0"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Order</div>
+                  <v-text-field
+                    v-model="form.sort_order"
+                    type="number"
+                    placeholder="1"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <div class="form-label">Status</div>
+                  <v-select
+                    v-model="form.status"
+                    :items="['active', 'draft']"
+                    variant="outlined"
+                    density="comfortable"
+                    rounded="lg"
+                    class="form-field"
+                  />
+                </v-col>
+              </v-row>
+            </template>
+
             <v-divider class="my-5" />
             <div class="d-flex justify-end" style="gap: 10px">
               <v-btn variant="outlined" rounded="lg" @click="formDialog = false">Cancel</v-btn>
@@ -2475,7 +2580,10 @@
           <h3 class="dialog-title mt-3">Delete {{ activeSingular }}?</h3>
           <p class="dialog-sub mt-2">
             <strong>{{
-              deleteTarget?.name || deleteTarget?.title || deleteTarget?.question
+              deleteTarget?.name ||
+              deleteTarget?.title ||
+              deleteTarget?.question ||
+              deleteTarget?.label
             }}</strong>
             will be permanently removed.
           </p>
@@ -2548,6 +2656,7 @@ const newsTable = useAdminTable('news')
 const eventsTable = useAdminTable('events')
 const mentorsTable = useAdminTable('mentors')
 const faqTable = useAdminTable('faqs')
+const milestonesTable = useAdminTable('milestones')
 
 const tableMap = {
   incubatees: incubateesTable,
@@ -2555,6 +2664,7 @@ const tableMap = {
   events: eventsTable,
   mentors: mentorsTable,
   faqs: faqTable,
+  milestones: milestonesTable,
 }
 const activeTable = computed(() => tableMap[activeSection.value] || incubateesTable)
 
@@ -2580,6 +2690,7 @@ const {
   newsTable,
   eventsTable,
   mentorsTable,
+  milestonesTable,
 })
 
 const { searchQuery, tbiFilter, statusFilter, activeStatusItems, filteredRecords } =
@@ -2641,7 +2752,7 @@ function categoryIconStyle(cat) {
   }
 }
 
-const navigatuSections = ['incubatees', 'news', 'events', 'mentors']
+const navigatuSections = ['incubatees', 'news', 'events', 'mentors', 'faqs', 'milestones']
 const isNavigatuHeadingActive = computed(() => navigatuSections.includes(activeSection.value))
 
 watch(activeSection, (section) => {
@@ -2793,6 +2904,13 @@ const blankForm = () => ({
   question: '',
   answer: '',
   sort_order: 1,
+
+  // milestones
+  label: '',
+  value: '',
+  desc: '',
+  icon: 'mdi-trophy-outline',
+  color: '#1565C0',
 })
 
 const form = reactive(blankForm())
@@ -2861,6 +2979,21 @@ const MONTH_ABBR = [
   'OCT',
   'NOV',
   'DEC',
+]
+
+const milestoneIconOptions = [
+  { title: 'Trophy', value: 'mdi-trophy-outline' },
+  { title: 'Cash Multiple', value: 'mdi-cash-multiple' },
+  { title: 'Office Building', value: 'mdi-office-building-outline' },
+  { title: 'Account Group', value: 'mdi-account-group-outline' },
+  { title: 'Sack', value: 'mdi-sack' },
+  { title: 'Handshake', value: 'mdi-handshake-outline' },
+  { title: 'Account Tie', value: 'mdi-account-tie-outline' },
+  { title: 'Briefcase Check', value: 'mdi-briefcase-check-outline' },
+  { title: 'Hub', value: 'mdi-hub-outline' },
+  { title: 'School', value: 'mdi-school-outline' },
+  { title: 'Rocket Launch', value: 'mdi-rocket-launch-outline' },
+  { title: 'Calendar Star', value: 'mdi-calendar-star' },
 ]
 
 function normalizeToIsoDate(value) {
@@ -2951,6 +3084,11 @@ function openAddDialog() {
   if (activeSection.value === 'events') form.status = 'upcoming'
   if (activeSection.value === 'mentors') form.status = 'active'
   if (activeSection.value === 'faqs') form.sort_order = activeTable.value.records.value.length + 1
+  if (activeSection.value === 'milestones') {
+    form.status = 'active'
+    form.sort_order = activeTable.value.records.value.length + 1
+    form.tbi_id = 'navigatu'
+  }
   formDialog.value = true
 }
 
@@ -3005,6 +3143,11 @@ function openEditDialog(item) {
     question: item.question || '',
     answer: item.answer || '',
     sort_order: item.sort_order || 1,
+    label: item.label || '',
+    value: item.value || '',
+    desc: item.desc || '',
+    icon: item.icon || 'mdi-trophy-outline',
+    color: item.color || '#1565C0',
   })
 
   newsDatePicker.value = activeSection.value === 'news' ? normalizeToIsoDate(form.date) : null
@@ -3052,6 +3195,19 @@ function buildPayload() {
     return {
       question: form.question,
       answer: form.answer,
+      sort_order: Number(form.sort_order) || 1,
+      status: form.status || 'active',
+    }
+  }
+
+  if (activeSection.value === 'milestones') {
+    return {
+      tbi_id: form.tbi_id || 'navigatu',
+      label: form.label,
+      value: form.value,
+      desc: form.desc,
+      icon: form.icon || 'mdi-trophy-outline',
+      color: form.color || '#1565C0',
       sort_order: Number(form.sort_order) || 1,
       status: form.status || 'active',
     }
@@ -3181,7 +3337,7 @@ async function handleSubmit() {
   if (!valid) return
   formError.value = ''
 
-  if (activeSection.value === 'faqs') {
+  if (activeSection.value === 'faqs' || activeSection.value === 'milestones') {
     const payload = buildPayload()
     const table = activeTable.value
     const result = isEditing.value
@@ -3260,6 +3416,7 @@ onMounted(async () => {
     eventsTable.fetchAll(),
     mentorsTable.fetchAll(),
     faqTable.fetchAll(),
+    milestonesTable.fetchAll(),
   ])
 })
 </script>
