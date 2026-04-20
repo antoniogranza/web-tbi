@@ -55,18 +55,32 @@
           Content Management
         </v-list-subheader>
 
-        <v-list-item
-          v-for="cat in categories"
-          :key="cat.id"
-          :prepend-icon="cat.icon"
-          :title="cat.name"
-          :value="cat.id"
-          :active="activeSection === cat.id"
-          active-color="white"
-          class="nav-item"
-          rounded="lg"
-          @click="setSection(cat.id)"
-        />
+        <v-list-group v-model="navigatuMenuOpen" class="nav-group">
+          <template #activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="mdi-compass-outline"
+              title="Navigatu"
+              :active="isNavigatuHeadingActive"
+              active-color="white"
+              class="nav-item"
+              rounded="lg"
+            />
+          </template>
+
+          <v-list-item
+            v-for="cat in categories"
+            :key="cat.id"
+            :prepend-icon="cat.icon"
+            :title="cat.name"
+            :value="cat.id"
+            :active="activeSection === cat.id"
+            active-color="white"
+            class="nav-item nav-sub-item"
+            rounded="lg"
+            @click="setSection(cat.id)"
+          />
+        </v-list-group>
 
         <v-divider color="rgba(255,255,255,0.1)" class="my-3" />
 
@@ -2356,6 +2370,7 @@ const sidebarRail = ref(false)
 const activeSection = ref('home')
 const currentUser = ref(null)
 const logoutDialog = ref(false)
+const navigatuMenuOpen = ref(true)
 
 // ── Supabase tables ───────────────────────────────────────────────────────────
 const incubateesTable = useAdminTable('incubatees')
@@ -2396,6 +2411,15 @@ const {
 
 const { searchQuery, tbiFilter, statusFilter, activeStatusItems, filteredRecords } =
   useAdminDashboardFilters({ activeSection, activeTable })
+
+const navigatuSections = ['incubatees', 'news', 'events', 'mentors']
+const isNavigatuHeadingActive = computed(() => navigatuSections.includes(activeSection.value))
+
+watch(activeSection, (section) => {
+  if (navigatuSections.includes(section)) {
+    navigatuMenuOpen.value = true
+  }
+})
 
 // ── Section switching ─────────────────────────────────────────────────────────
 function setSection(sectionId, preselectedTbi = '') {
@@ -3070,6 +3094,18 @@ onMounted(async () => {
 }
 .sidebar-nav :deep(.v-list-item:hover:not(.v-list-item--active)) {
   background: rgba(255, 255, 255, 0.08) !important;
+}
+.nav-group {
+  margin-top: 2px;
+}
+.nav-sub-item :deep(.v-list-item-title) {
+  font-size: 0.8rem !important;
+}
+.nav-sub-item :deep(.v-list-item__prepend) {
+  margin-inline-end: 8px !important;
+}
+.nav-sub-item :deep(.v-list-item__content) {
+  padding-left: 8px;
 }
 .nav-subheader {
   font-size: 0.62rem !important;
