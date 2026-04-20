@@ -82,6 +82,22 @@
           />
         </v-list-group>
 
+        <v-list-item
+          prepend-icon="mdi-sprout-outline"
+          title="TARA ATBI"
+          class="nav-item nav-item--placeholder"
+          rounded="lg"
+          disabled
+        />
+
+        <v-list-item
+          prepend-icon="mdi-school-outline"
+          title="CSU TBI"
+          class="nav-item nav-item--placeholder"
+          rounded="lg"
+          disabled
+        />
+
         <v-divider color="rgba(255,255,255,0.1)" class="my-3" />
 
         <v-list-item
@@ -2370,7 +2386,7 @@ const sidebarRail = ref(false)
 const activeSection = ref('home')
 const currentUser = ref(null)
 const logoutDialog = ref(false)
-const navigatuMenuOpen = ref(true)
+const navigatuMenuOpen = ref(false)
 
 // ── Supabase tables ───────────────────────────────────────────────────────────
 const incubateesTable = useAdminTable('incubatees')
@@ -3120,6 +3136,16 @@ onMounted(async () => {
 .nav-item--logout :deep(.v-icon) {
   color: rgba(255, 160, 160, 0.7) !important;
 }
+.nav-item--placeholder {
+  opacity: 0.7;
+}
+.nav-item--placeholder :deep(.v-list-item-title) {
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-weight: 600 !important;
+}
+.nav-item--placeholder :deep(.v-icon) {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
 .sidebar-toggle-wrap {
   padding: 12px;
   display: flex;
@@ -3260,6 +3286,9 @@ onMounted(async () => {
 .cat-card--events {
   background: linear-gradient(145deg, #e65100, #bf360c);
 }
+.cat-card--mentors {
+  background: linear-gradient(145deg, #6a1b9a, #4a148c);
+}
 .cat-card-pattern {
   position: absolute;
   inset: 0;
@@ -3305,13 +3334,13 @@ onMounted(async () => {
 }
 .cat-card-desc {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(255, 255, 255, 0.82);
   line-height: 1.7;
   margin: 0;
 }
 .cat-chip {
-  background: rgba(255, 255, 255, 0.12) !important;
-  color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.96) !important;
   font-size: 0.62rem !important;
   font-weight: 600 !important;
 }
