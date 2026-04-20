@@ -71,7 +71,6 @@
           <v-list-item
             v-for="cat in categories"
             :key="cat.id"
-            :prepend-icon="cat.icon"
             :title="cat.name"
             :value="cat.id"
             :active="activeSection === cat.id"
@@ -3272,9 +3271,6 @@ onMounted(async () => {
 }
 .nav-sub-item :deep(.v-list-item-title) {
   font-size: 0.8rem !important;
-}
-.nav-sub-item :deep(.v-list-item__prepend) {
-  margin-inline-end: 8px !important;
 }
 .nav-sub-item :deep(.v-list-item__content) {
   padding-left: 8px;
