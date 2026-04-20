@@ -130,10 +130,19 @@
         <div class="d-flex align-center" style="gap: 8px">
           <div
             v-if="activeSection !== 'home'"
-            class="appbar-dot"
-            :style="{ background: activeCategoryColor }"
+            :style="{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              flexShrink: 0,
+              background: activeCategoryColor,
+            }"
           />
-          <span class="appbar-page-label">{{ appBarTitle }}</span>
+          <span
+            class="font-weight-bold"
+            style="font-family: 'Playfair Display', serif; font-size: 1rem; color: #1a1a1a"
+            >{{ appBarTitle }}</span
+          >
         </div>
       </v-app-bar-title>
       <template #append>
@@ -151,12 +160,19 @@
       <div class="content-area">
         <!-- HOME SECTION -->
         <div v-if="activeSection === 'home'">
-          <div class="welcome-strip mb-8">
+          <div class="d-flex justify-space-between flex-wrap align-start mb-8" style="gap: 12px">
             <div>
-              <div class="welcome-greeting">Good day, Administrator 👋</div>
-              <div class="welcome-sub">Manage all content across TBI portals from here.</div>
+              <div
+                class="font-weight-bold"
+                style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #1a1a1a"
+              >
+                Good day, Administrator 👋
+              </div>
+              <div class="mt-1" style="font-size: 0.85rem; color: #888">
+                Manage all content across TBI portals from here.
+              </div>
             </div>
-            <div class="welcome-date">{{ todayLabel }}</div>
+            <div class="pt-1" style="font-size: 0.78rem; color: #aaa">{{ todayLabel }}</div>
           </div>
 
           <!-- Stats -->
@@ -207,13 +223,14 @@
           <v-row>
             <v-col v-for="cat in categories" :key="cat.id" cols="12" md="4">
               <v-card
-                class="cat-card"
+                class="position-relative"
                 :style="categoryCardStyle(cat)"
                 rounded="xl"
                 elevation="0"
+                hover
                 @click="setSection(cat.id)"
               >
-                <div class="cat-card-pattern" />
+                <div class="position-absolute" :style="categoryCardPatternStyle" />
                 <div class="pa-7" style="position: relative; z-index: 1">
                   <div
                     class="d-flex align-center justify-center mb-5"
@@ -284,26 +301,41 @@
           </div>
           <v-row>
             <v-col v-for="tbi in tbiOptions" :key="tbi.id" cols="12" md="4">
-              <div class="tbi-glance-card">
-                <div class="tbi-glance-dot" :style="{ background: tbi.color }" />
-                <div class="tbi-glance-info">
-                  <div class="tbi-glance-name">{{ tbi.name }}</div>
-                  <div class="tbi-glance-sub">{{ tbi.sub }}</div>
+              <v-card rounded="xl" elevation="0" border class="pa-5" hover>
+                <div
+                  class="mb-1"
+                  :style="{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    background: tbi.color,
+                  }"
+                />
+                <div>
+                  <div class="font-weight-bold" style="font-size: 0.92rem; color: #1a1a1a">
+                    {{ tbi.name }}
+                  </div>
+                  <div style="font-size: 0.7rem; color: #aaa">{{ tbi.sub }}</div>
                 </div>
-                <div class="tbi-glance-actions">
+                <div class="d-flex flex-wrap mt-3" style="gap: 6px">
                   <v-btn
                     v-for="cat in categories"
                     :key="cat.id"
                     size="x-small"
                     variant="tonal"
                     :color="cat.btnColor"
-                    class="tbi-glance-btn"
                     :prepend-icon="cat.icon"
+                    style="
+                      text-transform: none;
+                      font-size: 0.72rem;
+                      font-weight: 600;
+                      letter-spacing: 0;
+                    "
                     @click="setSection(cat.id, tbi.id)"
                     >{{ cat.name }}</v-btn
                   >
                 </div>
-              </div>
+              </v-card>
             </v-col>
           </v-row>
         </div>
@@ -2527,8 +2559,21 @@ function rgbaFromHex(hex, alpha) {
 function categoryCardStyle(cat) {
   const accent = cat?.color || '#1565C0'
   return {
-    '--cat-accent': accent,
+    background: 'linear-gradient(145deg, #1d3553, #172a42)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    minHeight: '300px',
+    cursor: 'pointer',
+    transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+    boxShadow: `inset 4px 0 0 ${rgbaFromHex(accent, 0.75)}`,
   }
+}
+
+const categoryCardPatternStyle = {
+  inset: 0,
+  pointerEvents: 'none',
+  backgroundImage:
+    'radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.08) 0%, transparent 50%), linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
+  backgroundSize: 'auto, 32px 32px, 32px 32px',
 }
 
 function categoryIconStyle(cat) {
@@ -3268,18 +3313,6 @@ onMounted(async () => {
 .admin-appbar :deep(.v-toolbar__content) {
   padding: 0 20px;
 }
-.appbar-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.appbar-page-label {
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
 
 /* ── Main ───────────────────────────────────────────────────────────────────── */
 .admin-main {
@@ -3293,103 +3326,6 @@ onMounted(async () => {
   .content-area {
     padding: 20px 16px;
   }
-}
-
-/* ── Welcome ────────────────────────────────────────────────────────────────── */
-.welcome-strip {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.welcome-greeting {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-.welcome-sub {
-  font-size: 0.85rem;
-  color: #888;
-  margin-top: 4px;
-}
-.welcome-date {
-  font-size: 0.78rem;
-  color: #aaa;
-  font-weight: 500;
-  padding-top: 6px;
-}
-
-/* ── Category cards ─────────────────────────────────────────────────────────── */
-.cat-card {
-  background: linear-gradient(145deg, #1d3553, #172a42);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  position: relative;
-  cursor: pointer;
-  min-height: 300px;
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-}
-.cat-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18) !important;
-}
-.cat-card-pattern {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size:
-    auto,
-    32px 32px,
-    32px 32px;
-}
-
-/* ── TBI Glance cards ───────────────────────────────────────────────────────── */
-.tbi-glance-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 18px 20px;
-  border: 1px solid #edf0f7;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: box-shadow 0.2s;
-}
-.tbi-glance-card:hover {
-  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.09);
-}
-.tbi-glance-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-bottom: 2px;
-}
-.tbi-glance-name {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-.tbi-glance-sub {
-  font-size: 0.7rem;
-  color: #aaa;
-  margin-top: 1px;
-}
-.tbi-glance-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.tbi-glance-btn {
-  text-transform: none !important;
-  font-size: 0.72rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0 !important;
 }
 
 /* ── Content section header ─────────────────────────────────────────────────── */

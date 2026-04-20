@@ -108,14 +108,6 @@ export function useAdminDashboardMeta({
       section: 'events',
     },
     {
-      label: 'TBI Portals',
-      value: tbiOptions.length,
-      icon: 'mdi-office-building-outline',
-      color: '#6A1B9A',
-      iconBg: '#EDE7F6',
-      section: null,
-    },
-    {
       label: 'Active Mentors',
       value: mentorsTable.records.value.filter((m) => m.status === 'active').length || '—',
       icon: 'mdi-account-tie-outline',
