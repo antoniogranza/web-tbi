@@ -112,7 +112,7 @@
 import { ref } from 'vue'
 import FormField from './Formfield.vue'
 import SubmitBtn from './Submitbtn.vue'
-import { labelStyle, sectionTitleStyle } from './formStyles.js'
+import { labelStyle, sectionTitleStyle } from './FormStyles.js'
 
 const formRef = ref(null)
 const valid = ref(false)
