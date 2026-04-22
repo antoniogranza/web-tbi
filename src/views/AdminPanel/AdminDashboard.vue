@@ -2440,14 +2440,52 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                   <div class="form-label">Color</div>
-                  <v-text-field
+                  <v-select
                     v-model="form.color"
-                    placeholder="#1565C0"
+                    :items="milestoneColorOptions"
+                    item-title="title"
+                    item-value="value"
+                    placeholder="Select color"
                     variant="outlined"
                     density="comfortable"
                     rounded="lg"
                     class="form-field"
-                  />
+                  >
+                    <template #selection="{ item }">
+                      <div class="d-flex align-center" style="gap: 8px">
+                        <span
+                          :style="{
+                            width: '12px',
+                            height: '12px',
+                            borderRadius: '50%',
+                            display: 'inline-block',
+                            background: item.raw.value,
+                          }"
+                        />
+                        <span>{{ item.raw.title }}</span>
+                      </div>
+                    </template>
+                    <template #item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :title="item.raw.title"
+                        :subtitle="item.raw.value"
+                      >
+                        <template #prepend>
+                          <span
+                            :style="{
+                              width: '14px',
+                              height: '14px',
+                              borderRadius: '50%',
+                              display: 'inline-block',
+                              border: '1px solid rgba(0,0,0,0.15)',
+                              background: item.raw.value,
+                            }"
+                          />
+                        </template>
+                      </v-list-item>
+                    </template>
+                  </v-select>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <div class="form-label">Order</div>
@@ -2994,6 +3032,19 @@ const milestoneIconOptions = [
   { title: 'School', value: 'mdi-school-outline' },
   { title: 'Rocket Launch', value: 'mdi-rocket-launch-outline' },
   { title: 'Calendar Star', value: 'mdi-calendar-star' },
+]
+
+const milestoneColorOptions = [
+  { title: 'Blue', value: '#1565C0' },
+  { title: 'Teal', value: '#00897B' },
+  { title: 'Orange', value: '#EF6C00' },
+  { title: 'Red', value: '#C62828' },
+  { title: 'Purple', value: '#6A1B9A' },
+  { title: 'Green', value: '#558B2F' },
+  { title: 'Amber', value: '#F9A825' },
+  { title: 'Deep Red', value: '#B71C1C' },
+  { title: 'Indigo', value: '#3949AB' },
+  { title: 'Slate', value: '#455A64' },
 ]
 
 function normalizeToIsoDate(value) {
