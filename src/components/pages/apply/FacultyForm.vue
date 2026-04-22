@@ -71,9 +71,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import FormField from './FormField.vue'
-import SubmitBtn from './SubmitBtn.vue'
-import { labelStyle, sectionTitleStyle } from '../../../components/pages/apply/Formstyles'
+import FormField from './Formfield.vue'
+import SubmitBtn from './Submitbtn.vue'
+import { labelStyle, sectionTitleStyle } from './formStyles.js'
 
 const formRef = ref(null)
 const valid = ref(false)
