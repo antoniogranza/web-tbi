@@ -37,7 +37,7 @@ const impactMetrics = [
   { pre: '',  target: 0,   suf: '',  isFloat: false, label: 'Spin-offs Created',   delta: 'Update later' },
   { pre: '',  target: 0,   suf: '',  isFloat: false, label: 'IP Filed / Licensed', delta: 'Update later' },
   { pre: '',  target: 0,   suf: '+', isFloat: false, label: 'Jobs Generated',      delta: 'Update later' },
-  { pre: '₱', target: 0.0, suf: 'B', isFloat: true,  label: 'Revenue Generated',   delta: 'Update later' },
+  { pre: '₱', target: 0.0, suf: 'M', isFloat: true,  label: 'Revenue Generated',   delta: 'Update later' },
 ]
 
 const displayed = reactive(impactMetrics.map(m => m.isFloat ? '0.0' : '0'))

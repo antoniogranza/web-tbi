@@ -83,6 +83,8 @@ const routes = [
       { path: 'ecosystem', component: Ecosystem },
       { path: 'impact', component: Impact },
       { path: 'events', component: Events },
+      { path: 'events/:slug', component: Events },
+      { path: 'technologies', redirect: '/apply' },
       { path: 'news', component: News },
       { path: 'news/:id', component: NewsArticle },
       { path: 'apply', component: Apply },
